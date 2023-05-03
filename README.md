@@ -47,17 +47,63 @@ cd hybrid-cache
 ```
 
 2. Navigate to the folder you want to run. Algorithms and kernels have two different flow of execution. 
-    - To run the algorithms (e.g., Kyber), navigate to the `algorithms/kyber/ref` folder:
+    1. To run the algorithms (e.g., Kyber), navigate to the `algorithms/kyber/ref` folder:
     ```
     cd algorithms/kyber/ref
     make test_kyber512
     ./test_kyber512
     ```
-    - To run the kernels (e.g., AES), navigate to the `kernels/aes` folder:
+    * The output shows the number of instructions and cycles:
+    ```
+    ReadCC += 1024768;
+    WriteCC += 1024768;
+    LeftShiftInst += 3507803;
+    LeftShift += 4927515;
+    RightShiftInst += 826880;
+    RightShift += 3295872;
+    OrCC += 1081440;
+    AndCC += 7271504;
+    XorCC += 6404208;
+    NotCC += 56385;
+    EBCC += 1024768;
+    Total instruction = 56184281;
+
+    ReadCC Cycle: 1024768
+    WriteCC Cycle: 1024768
+    LeftShift Cycle: 8435318
+    RightShift Cycle: 4122752
+    OrCC Cycle: 3244320
+    AndCC Cycle: 21814512
+    XorCC Cycle: 19212624
+    NotCC Cycle: 169155
+    EBCC Cycle: 1024768
+    Total Cycle: 60072985
+    ```
+    2. To run the kernels (e.g., AES), navigate to the `kernels/aes` folder:
     ```
     cd kernels/ase
     cc aes.c aes_test.c -o aes_test
     ./aes_test
+    ```
+    * The output shows the number of instructions and cycles:
+    ```
+    WriteCC: 16
+    LeftShiftInst: 930
+    RightShiftInst: 820
+    OrCC: 1598
+    AndCC: 3036
+    XorCC: 1990
+    NotCC: 80
+    Total instruction: 23628
+
+    WriteCC Cycle: 16
+    LeftShift Cycle: 11214
+    RightShift Cycle: 7568
+    OrCC Cycle: 4794
+    AndCC Cycle: 9108
+    XorCC Cycle: 5970
+    NotCC Cycle: 240
+    Total Cycle: 38910
     ```
 
 ## 4. License

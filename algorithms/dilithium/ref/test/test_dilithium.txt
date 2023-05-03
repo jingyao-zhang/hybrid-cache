@@ -1,0 +1,24 @@
+ReadCC += 4097024;
+WriteCC += 4097024;
+LeftShiftInst += 17495824;
+LeftShift += 22548160;
+RightShiftInst += 3450822;
+RightShift += 12275158;
+OrCC += 4742282;
+AndCC += 33054938;
+XorCC += 29576544;
+NotCC += 207264;
+EBCC += 4097024;
+Total instruction = 256927448;
+
+ReadCC Cycle: 4097024
+WriteCC Cycle: 4097024
+LeftShift Cycle: 40043984
+RightShift Cycle: 15725980
+OrCC Cycle: 14226846
+AndCC Cycle: 99164814
+XorCC Cycle: 88729632
+NotCC Cycle: 621792
+EBCC Cycle: 4097024
+CoreCycle: 218640
+Total CC Cycle: 271022760

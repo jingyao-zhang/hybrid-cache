@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "../randombytes.h"
 #include "../sign.h"
+#include <string.h>
 
 #define MLEN 59
 #define NTESTS 1
@@ -85,43 +86,93 @@ int main(void)
       }
     }
 
-      // printf("ReadCC += %d;\n", ReadCC);
-      // printf("WriteCC += %d;\n", WriteCC);
-      // printf("LeftShiftInst += %d;\n", LeftShiftInst);
-      // printf("LeftShift += %d;\n", LeftShift);
-      // printf("RightShiftInst += %d;\n", RightShiftInst);
-      // printf("RightShift += %d;\n", RightShift);
-      // printf("OrCC += %d;\n", OrCC);
-      // printf("AndCC += %d;\n", AndCC);
-      // printf("XorCC += %d;\n", XorCC);
-      // printf("NotCC += %d;\n", NotCC);
-      // printf("EBCC += %d;\n", EBCC);
-      // printf("Total = %d;\n", ReadCC + WriteCC + EBCC + (LeftShiftInst + RightShiftInst) * 2 + (OrCC + AndCC + XorCC + NotCC) * 3); // 1 for operation, 1 for write
+      printf("ReadCC += %ld;\n", ReadCC);
+      printf("WriteCC += %ld;\n", WriteCC);
+      printf("LeftShiftInst += %ld;\n", LeftShiftInst);
+      printf("LeftShift += %ld;\n", LeftShift);
+      printf("RightShiftInst += %ld;\n", RightShiftInst);
+      printf("RightShift += %ld;\n", RightShift);
+      printf("OrCC += %ld;\n", OrCC);
+      printf("AndCC += %ld;\n", AndCC);
+      printf("XorCC += %ld;\n", XorCC);
+      printf("NotCC += %ld;\n", NotCC);
+      printf("EBCC += %ld;\n", EBCC);
+      printf("Total = %ld;\n", ReadCC + WriteCC + EBCC + (LeftShiftInst + RightShiftInst) * 2 + (OrCC + AndCC + XorCC + NotCC) * 3); // 1 for operation, 1 for write
 
-      // printf("\nReadCC Cycle: %d\n", ReadCC);
-      // printf("WriteCC Cycle: %d\n", WriteCC);
-      // printf("LeftShift Cycle: %d\n", LeftShift + LeftShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
-      // printf("RightShift Cycle: %d\n", RightShift + RightShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
-      // printf("OrCC Cycle: %d\n", OrCC * (2 + 1)); // 1 for activate, 1 for or, 1 for write
-      // printf("AndCC Cycle: %d\n", AndCC * (2 + 1)); // 1 for activate, 1 for and, 1 for write
-      // printf("XorCC Cycle: %d\n", XorCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write
-      // printf("NotCC Cycle: %d\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. Not is implemented by Xoring a constant full of 1s.
-      // printf("EBCC Cycle: %d\n", EBCC); // 1 for bit extention and write back
-      // printf("Total Cycle: %d\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC); // If for shift, we can avoid the write back in the middle of shifting multiple bits, the total cycle will be improved by 30%.
-    // printf("CoreCycle: %d\n", CoreCycle);
-    total = ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC + CoreCycle;
-    // printf("Total CC Cycle + Core Cycle: %ld\n", total);
-    if (iter == 0){
-      total_min = total;
-    }
-    else if (total < total_min){
-      total_min = total;
-    }
-    // total = 0;
-  }
+      printf("\nReadCC Cycle: %ld\n", ReadCC);
+      printf("WriteCC Cycle: %ld\n", WriteCC);
+      printf("LeftShift Cycle: %ld\n", LeftShift + LeftShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
+      printf("RightShift Cycle: %ld\n", RightShift + RightShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
+      printf("OrCC Cycle: %ld\n", OrCC * (2 + 1)); // 1 for activate, 1 for or, 1 for write
+      printf("AndCC Cycle: %ld\n", AndCC * (2 + 1)); // 1 for activate, 1 for and, 1 for write
+      printf("XorCC Cycle: %ld\n", XorCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write
+      printf("NotCC Cycle: %ld\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. Not is implemented by Xoring a constant full of 1s.
+      printf("EBCC Cycle: %ld\n", EBCC); // 1 for bit extention and write back
+      printf("Total Cycle: %ld\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC); // If for shift, we can avoid the write back in the middle of shifting multiple bits, the total cycle will be improved by 30%.
+      printf("CoreCycle: %ld\n", CoreCycle);
+      printf("Total CC Cycle + Core Cycle: %ld\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC + CoreCycle);
 
-  printf("total_min: %ld\n", total_min);
+  //   total = ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC + CoreCycle;
+  //   // printf("Total CC Cycle + Core Cycle: %ld\n", total);
+  //   if (iter == 0){
+  //     total_min = total;
+  //   }
+  //   else if (total < total_min){
+  //     total_min = total;
+  //   }
+  //   // total = 0;
+  // }
+
+  // printf("total_min: %ld\n", total_min);
   printf("\nTest End\n");
 
+  char filename[256];
+    strcpy(filename, __FILE__);
+    // Find the position of the last '.' in the filename
+    char *pos = strrchr(filename, '.');
+    if (pos != NULL) {
+        // Replace everything after the '.' with ".txt"
+        strcpy(pos, ".txt");
+    } else {
+        // If there's no '.', just append ".txt" to the end
+        strcat(filename, ".txt");
+    }
+
+    FILE *outfile = fopen(filename, "w");
+    if (outfile == NULL) {
+        fprintf(stderr, "Failed to open file %s for writing.\n", filename);
+        return 1;
+    }
+
+    // Write output to the file
+    fprintf(outfile, "ReadCC += %ld;\n", ReadCC);
+    fprintf(outfile, "WriteCC += %ld;\n", WriteCC);
+    fprintf(outfile, "LeftShiftInst += %ld;\n", LeftShiftInst);
+    fprintf(outfile, "LeftShift += %ld;\n", LeftShift);
+    fprintf(outfile, "RightShiftInst += %ld;\n", RightShiftInst);
+    fprintf(outfile, "RightShift += %ld;\n", RightShift);
+    fprintf(outfile, "OrCC += %ld;\n", OrCC);
+    fprintf(outfile, "AndCC += %ld;\n", AndCC);
+    fprintf(outfile, "XorCC += %ld;\n", XorCC);
+    fprintf(outfile, "NotCC += %ld;\n", NotCC);
+    fprintf(outfile, "EBCC += %ld;\n", EBCC);
+    fprintf(outfile, "Total instruction = %ld;\n", ReadCC + WriteCC + EBCC + (LeftShiftInst + RightShiftInst) * 2 + (OrCC + AndCC + XorCC + NotCC) * 3);
+
+    fprintf(outfile, "\nReadCC Cycle: %ld\n", ReadCC);
+    fprintf(outfile, "WriteCC Cycle: %ld\n", WriteCC);
+    fprintf(outfile, "LeftShift Cycle: %ld\n", LeftShift + LeftShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
+    fprintf(outfile, "RightShift Cycle: %ld\n", RightShift + RightShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
+    fprintf(outfile, "OrCC Cycle: %ld\n", OrCC * (2 + 1)); // 1 for activate, 1 for or, 1 for write
+    fprintf(outfile, "AndCC Cycle: %ld\n", AndCC * (2 + 1)); // 1 for activate, 1 for and, 1 for write
+    fprintf(outfile, "XorCC Cycle: %ld\n", XorCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write
+    fprintf(outfile, "NotCC Cycle: %ld\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. NOT is implemented by Xoring a constant full of 1s.
+    fprintf(outfile, "EBCC Cycle: %ld\n", EBCC); // 1 for bit extention and write back
+    fprintf(outfile, "CoreCycle: %ld\n", CoreCycle);
+    fprintf(outfile, "Total Cycle: %ld\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC + CoreCycle);
+
+    fclose(outfile);
+
   return 0;
+}
+
 }

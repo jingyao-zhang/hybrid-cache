@@ -2,7 +2,9 @@
 #include <bitset>
 #include "stdlib.h"
 #include <math.h>
-
+#include <fstream>
+#include <iostream>
+#include <string>
 
 #define BitW 32
 #define PolyO 256
@@ -190,6 +192,45 @@ int main()
     printf("NotCC Cycle: %d\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. NOT is implemented by Xoring a constant full of 1s.
     printf("EBCC Cycle: %d\n", EBCC); // 1 for bit extention and write back
     printf("Total Cycle: %d\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC); 
+
+    std::string filename(__FILE__);
+    // Find the position of the last '.' in the filename
+    size_t pos = filename.rfind(".");
+    // Replace everything after the '.' with ".txt"
+    filename.replace(pos, filename.length() - pos, ".txt");
+
+    std::ofstream outfile(filename);
+    if (!outfile.is_open()) {
+        std::cerr << "Failed to open file " << filename << " for writing.\n";
+        return 1;
+    } 
+
+    // Write output to the file
+    outfile << "ReadCC += " << ReadCC << ";\n";
+    outfile << "WriteCC += " << WriteCC << ";\n";
+    outfile << "LeftShiftInst += " << LeftShiftInst << ";\n";
+    outfile << "LeftShift += " << LeftShift << ";\n";
+    outfile << "RightShiftInst += " << RightShiftInst << ";\n";
+    outfile << "RightShift += " << RightShift << ";\n";
+    outfile << "OrCC += " << OrCC << ";\n";
+    outfile << "AndCC += " << AndCC << ";\n";
+    outfile << "XorCC += " << XorCC << ";\n";
+    outfile << "NotCC += " << NotCC << ";\n";
+    outfile << "EBCC += " << EBCC << ";\n";
+    outfile << "Total instruction = " << ReadCC + WriteCC + EBCC + (LeftShiftInst + RightShiftInst) * 2 + (OrCC + AndCC + XorCC + NotCC) * 3 << ";\n";
+
+    outfile << "\nReadCC Cycle: " << ReadCC << "\n";
+    outfile << "WriteCC Cycle: " << WriteCC << "\n";
+    outfile << "LeftShift Cycle: " << LeftShift + LeftShiftInst << "\n"; // 1 for shift, 1 for write, no write back in the middle of the shifting
+    outfile << "RightShift Cycle: " << RightShift + RightShiftInst << "\n"; // 1 for shift, 1 for write, no write back in the middle of the shifting
+    outfile << "OrCC Cycle: " << OrCC * (2 + 1) << "\n"; // 1 for activate, 1 for or, 1 for write
+    outfile << "AndCC Cycle: " << AndCC * (2 + 1) << "\n"; // 1 for activate, 1 for and, 1 for write
+    outfile << "XorCC Cycle: " << XorCC * (2 + 1) << "\n"; // 1 for activate, 1 for xor, 1 for write
+    outfile << "NotCC Cycle: " << NotCC * (2 + 1) << "\n"; // 1 for activate, 1 for xor, 1 for write. NOT is implemented by Xoring a constant full of 1s.
+    outfile << "EBCC Cycle: " << EBCC << "\n"; // 1 for bit extention and write back
+    outfile << "Total Cycle: " << ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC << "\n";
+
+    outfile.close();
 
     return 0;
 }

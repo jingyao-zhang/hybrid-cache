@@ -1,0 +1,23 @@
+ReadCC += 34816;
+WriteCC += 34816;
+LeftShiftInst += 201735;
+LeftShift += 201735;
+RightShiftInst += 32768;
+RightShift += 32768;
+OrCC += 44039;
+AndCC += 351246;
+XorCC += 316430;
+NotCC += 0;
+EBCC += 34816;
+Total instruction = 2708599;
+
+ReadCC Cycle: 34816
+WriteCC Cycle: 34816
+LeftShift Cycle: 403470
+RightShift Cycle: 65536
+OrCC Cycle: 132117
+AndCC Cycle: 1053738
+XorCC Cycle: 949290
+NotCC Cycle: 0
+EBCC Cycle: 34816
+Total Cycle: 2708599

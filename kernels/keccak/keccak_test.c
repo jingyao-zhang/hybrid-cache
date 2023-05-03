@@ -292,6 +292,47 @@ static int test_shake128(void) {
     
     printf("\nTest end\n");
 
+    char filename[256];
+    strcpy(filename, __FILE__);
+    // Find the position of the last '.' in the filename
+    char *pos = strrchr(filename, '.');
+    if (pos != NULL) {
+        // Replace everything after the '.' with ".txt"
+        strcpy(pos, ".txt");
+    } else {
+        // If there's no '.', just append ".txt" to the end
+        strcat(filename, ".txt");
+    }
+
+    FILE *outfile = fopen(filename, "w");
+    if (outfile == NULL) {
+        fprintf(stderr, "Failed to open file %s for writing.\n", filename);
+        return 1;
+    }
+
+    // Write output to the file
+    fprintf(outfile, "ReadCC: %d\n", ReadCC);
+    fprintf(outfile, "WriteCC: %d\n", WriteCC);
+    fprintf(outfile, "LeftShiftInst: %d\n", LeftShiftInst);
+    fprintf(outfile, "RightShiftInst: %d\n", RightShiftInst);
+    fprintf(outfile, "OrCC: %d\n", OrCC);
+    fprintf(outfile, "AndCC: %d\n", AndCC);
+    fprintf(outfile, "XorCC: %d\n", XorCC);
+    fprintf(outfile, "NotCC: %d\n", NotCC);
+    fprintf(outfile, "Total: %d\n", ReadCC + WriteCC + (LeftShiftInst + RightShiftInst) * 2 + (OrCC + AndCC + XorCC + NotCC) * 3); // 1 for operation, 1 for write
+
+    fprintf(outfile, "\nReadCC Cycle: %d\n", ReadCC);
+    fprintf(outfile, "WriteCC Cycle: %d\n", WriteCC);
+    fprintf(outfile, "LeftShift Cycle: %d\n", LeftShift + LeftShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
+    fprintf(outfile, "RightShift Cycle: %d\n", RightShift + RightShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
+    fprintf(outfile, "OrCC Cycle: %d\n", OrCC * (2 + 1)); // 1 for activate, 1 for or, 1 for write
+    fprintf(outfile, "AndCC Cycle: %d\n", AndCC * (2 + 1)); // 1 for activate, 1 for and, 1 for write
+    fprintf(outfile, "XorCC Cycle: %d\n", XorCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write
+    fprintf(outfile, "NotCC Cycle: %d\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. Not is implemented by Xoring a constant full of 1s.
+    fprintf(outfile, "Total Cycle: %d\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1));
+
+    fclose(outfile);
+
     return 0;
 }
 
