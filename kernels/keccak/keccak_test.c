@@ -288,13 +288,8 @@ static int test_shake128(void) {
     printf("AndCC Cycle: %d\n", AndCC * (2 + 1)); // 1 for activate, 1 for and, 1 for write
     printf("XorCC Cycle: %d\n", XorCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write
     printf("NotCC Cycle: %d\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. Not is implemented by Xoring a constant full of 1s.
-    printf("Total Cycle: %d\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1)); // If for shift, we can avoid the write back in the middle of shifting multiple bits, the total cycle will be improved by 30%.
-    // LeftShift means the cycle number of left shifting, and the LeftShiftInst means the cycle number for writing the result back. One instruction means one write back. So the total cycle number is the sum of the two.
-    // The reason why the total cycle number is high is that for each rotate shift, all the 64 bits are shifted while if rotate shifter is used, only the required bits are shifted.
-    printf("\nReadWriteCC Cycle: %d\n", ReadCC + WriteCC);
-    printf("Shift Cycle: %d\n", LeftShift + LeftShiftInst + RightShift + RightShiftInst);
-    printf("Logic Cycle: %d\n", OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1));
-
+    printf("Total Cycle: %d\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1)); 
+    
     printf("\nTest end\n");
 
     return 0;

@@ -144,8 +144,7 @@ int main(void)
   printf("AndCC Cycle: %d\n", AndCC * (2 + 1)); // 1 for activate, 1 for and, 1 for write
   printf("XorCC Cycle: %d\n", XorCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write
   printf("NotCC Cycle: %d\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. Not is implemented by Xoring a constant full of 1s.
-  printf("Total Cycle: %d\n", WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1)); // If for shift, we can avoid the write back in the middle of shifting multiple bits, the total cycle will be improved by 30%.
-  // LeftShift means the cycle number of left shifting, and the LeftShiftInst means the cycle number for writing the result back. One instruction means one write back. So the total cycle number is the sum of the two.
+  printf("Total Cycle: %d\n", WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1)); 
 
   printf("\nReadWriteCC Cycle: %d\n", WriteCC);
   printf("Shift Cycle: %d\n", LeftShift + LeftShiftInst + RightShift + RightShiftInst);
