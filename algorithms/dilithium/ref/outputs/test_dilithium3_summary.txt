@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8f5fdfd2ac838e5f2ae1f72148404b8d7ad1e00d69d17d03249b0f368ca6e382
-size 243
+ReadCC: 8021248
+WriteCC: 184094779
+LeftShiftInst: 32822585
+RightShiftInst: 6691083
+ActCC: 128538615
+OrCC: 9290019
+AndCC: 62379788
+XorCC: 56441614
+NotCC: 427194
+EBCC: 8021248
+CoreCycle: 501397
+Total instruction: 496728173
+Total cycle: 498934287
