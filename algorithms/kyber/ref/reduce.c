@@ -8,12 +8,23 @@ extern int LeftShiftInst;
 extern int RightShiftInst;
 extern int LeftShift;
 extern int RightShift;
+extern int ActCC;
 extern int OrCC;
 extern int AndCC;
 extern int XorCC;
 extern int NotCC;
 extern int CoreCycle;
 extern int EBCC;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
+extern void EBCC_counter(int);
 
 #define BitW 16
 
@@ -54,75 +65,48 @@ int16_t barrett_reduce(int16_t a) {
   t  = ((int32_t)v*a + (1<<25)) >> 26;
   t *= KYBER_Q;
   // write to a fixed row
-  ReadCC += 1;
-  WriteCC += 1;
-  // bit extention and write back
-  EBCC += 1;
-  // AND bit with B
-  AndCC += 1;
+  ReadCC_counter(1);
+  WriteCC_counter(1);
+  EBCC_counter(1);
+  AndCC_counter(1);
   // add B with q (Q or 0)
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  LeftShift_counter(BitW-1, 1);
+  AndCC_counter(BitW-1);
+  XorCC_counter(BitW);
   // montgomery multiplication data from bit-parallel_mont_mult/kyber_mont_mult.cpp
   ReadCC += 16;
-  WriteCC += 16;
+  WriteCC += 227;
   LeftShiftInst += 16;
-  LeftShift += 16;
   RightShiftInst += 16;
-  RightShift += 16;
+  ActCC += 163;
   OrCC += 17;
   AndCC += 81;
   XorCC += 65;
   NotCC += 0;
   EBCC += 16;
   // subtract Q/2 from B （B + (- Q/2)）to get b
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  LeftShift_counter(BitW-1, 1);
+  AndCC_counter(BitW-1);
+  XorCC_counter(BitW);
   // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
-  // extend MSB of b
-  // write to a fixed row
-  ReadCC += 1;
-  WriteCC += 1;
-  // bit extention and write back
-  EBCC += 1;
-  // AND bit with B
-  AndCC += 1;
+  ReadCC_counter(1);
+  WriteCC_counter(1);
+  EBCC_counter(1);
+  AndCC_counter(1);
   // add B with q (-Q/2 or 0)
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  LeftShift_counter(BitW-1, 1);
+  AndCC_counter(BitW-1);
+  XorCC_counter(BitW);
 
+  // - t
+  NotCC_counter(1);
+  LeftShift_counter(BitW-1, 1);
+  AndCC_counter(BitW-1);
+  XorCC_counter(BitW);
+  // a + (- t)
+  LeftShift_counter(BitW-1, 1);
+  AndCC_counter(BitW-1);
+  XorCC_counter(BitW);
 
-  // // t = ((int32_t)v*a + (1<<25)) >> 26;
-  // AndCC += 31 + 30 + 29 + 29 + 27 + 25 + 23 + 22 + 21 + 18;
-  // XorCC += 31 + 30 + 29 + 29 + 27 + 25 + 23 + 22 + 21 + 18;
-  // LeftShiftInst += (31 + 30 + 29 + 29 + 27 + 25 + 23 + 22 + 21 + 18 - 1 * 10);
-  // LeftShift += (31 + 30 + 29 + 29 + 27 + 25 + 23 + 22 + 21 + 18 - 1 * 10);
-  // AndCC += 7;
-  // XorCC += 7;
-  // LeftShiftInst += (7 - 1);
-  // LeftShift += (7 - 1);
-  // RightShiftInst += 1;
-  // RightShift += 26;
-  // AndCC += 8 + 6 + 5;
-  // XorCC += 8 + 6 + 5;
-  // LeftShiftInst += (8 + 6 + 5 - 1 * 3);
-  // LeftShift += (8 + 6 + 5 - 1 * 3);
-  
-  // NotCC += 1;
-  // AndCC += BitW;
-  // XorCC += BitW;
-  // LeftShiftInst += (BitW - 1);
-  // LeftShift += (BitW - 1);
-  // // a + (- t)
-  // AndCC += BitW;
-  // XorCC += BitW;
-  // LeftShiftInst += (BitW - 1);
-  // LeftShift += (BitW - 1);
   return a - t;
 }

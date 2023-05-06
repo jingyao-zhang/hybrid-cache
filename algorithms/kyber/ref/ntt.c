@@ -9,11 +9,22 @@ extern int LeftShiftInst;
 extern int RightShiftInst;
 extern int LeftShift;
 extern int RightShift;
+extern int ActCC;
 extern int OrCC;
 extern int AndCC;
 extern int XorCC;
 extern int NotCC;
 extern int EBCC;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
+extern void EBCC_counter(int);
 
 #define BitW 16
 
@@ -107,15 +118,14 @@ void ntt(int16_t r[256]) {
     }
   }
 
-  // ntt data from bit-parallel_mont_mult/kyber_ntt.cpp
+  // ntt data from hybrid-cache/kernels/NTT/NTT_Kyber
   ReadCC += 16128;
-  WriteCC += 16128;
+  WriteCC += 441152;
   LeftShiftInst += 85920;
-  LeftShift += 85920;
   RightShiftInst += 14336;
-  RightShift += 14336;
+  ActCC += 308640;
   OrCC += 19616;
-  AndCC += 154816;
+  AndCC += 150336;
   XorCC += 138688;
   NotCC += 0;
   EBCC += 16128;
@@ -148,66 +158,55 @@ void invntt(int16_t r[256]) {
     }
   }
 
-  // ntt data from bit-parallel_mont_mult/kyber_ntt.cpp
+  // ntt data from hybrid-cache/kernels/NTT/NTT_Kyber
   ReadCC += 16128;
-  WriteCC += 16128;
+  WriteCC += 441152;
   LeftShiftInst += 85920;
-  LeftShift += 85920;
   RightShiftInst += 14336;
-  RightShift += 14336;
+  ActCC += 308640;
   OrCC += 19616;
-  AndCC += 154816;
+  AndCC += 150336;
   XorCC += 138688;
   NotCC += 0;
   EBCC += 16128;
 
   for(j = 0; j < 256; j++){
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (Q or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
 
     r[j] = fqmul(r[j], f);
 
-    // montgomery multiplication data from bit-parallel_mont_mult/kyber_mont_mult.cpp
-    ReadCC += 16;
-    WriteCC += 16;
-    LeftShiftInst += 20;
-    LeftShift += 20;
+    // montgomery multiplication data from kernels/NTT/Montgomery_Mul_Kyber_General
+    ReadCC += 32;
+    WriteCC += 365;
+    LeftShiftInst += 31;
     RightShiftInst += 16;
-    RightShift += 16;
-    OrCC += 21;
-    AndCC += 89;
-    XorCC += 73;
+    ActCC += 254;
+    OrCC += 32;
+    AndCC += 127;
+    XorCC += 95;
     NotCC += 0;
-    EBCC += 16;
+    EBCC += 32;
+
     // subtract Q/2 from B （B + (- Q/2)）to get b
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
-    // extend MSB of b
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (-Q/2 or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
   }
     
 }
@@ -226,31 +225,26 @@ void invntt(int16_t r[256]) {
 void basemul(int16_t r[2], const int16_t a[2], const int16_t b[2], int16_t zeta)
 {
   for (int ii = 0; ii < 4; ii++){
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (Q or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
   }
   // a[0] and a[1] are converted into montgomery form, which is enough
-  // data from bit-parallel_mont_mult/kyber_mont_mult_R.cpp
+  // data from kernels/NTT/Montgomery_Mul_Kyber_Fixed_R
   for (int ii = 0; ii < 2; ii++){
     ReadCC += 16;
-    WriteCC += 16;
-    LeftShiftInst += 19;
-    LeftShift += 19;
+    WriteCC += 263;
+    LeftShiftInst += 22;
     RightShiftInst += 16;
-    RightShift += 16;
-    OrCC += 20;
-    AndCC += 87;
-    XorCC += 71;
+    ActCC += 193;
+    OrCC += 23;
+    AndCC += 93;
+    XorCC += 77;
     NotCC += 0;
     EBCC += 16;
   }
@@ -259,14 +253,13 @@ void basemul(int16_t r[2], const int16_t a[2], const int16_t b[2], int16_t zeta)
   r[0] += fqmul(a[0], b[0]);
   r[1]  = fqmul(a[0], b[1]);
   r[1] += fqmul(a[1], b[0]);
-  // montgomery multiplication data from bit-parallel_mont_mult/kyber_mont_mult.cpp
+  // montgomery multiplication data from kernels/NTT/Montgomery_Mul_Kyber_General
   for (int ii = 0; ii < 5; ii++){
     ReadCC += 32;
-    WriteCC += 32;
+    WriteCC += 365;
     LeftShiftInst += 31;
-    LeftShift += 31;
     RightShiftInst += 16;
-    RightShift += 16;
+    ActCC += 254;
     OrCC += 32;
     AndCC += 127;
     XorCC += 95;
@@ -276,28 +269,22 @@ void basemul(int16_t r[2], const int16_t a[2], const int16_t b[2], int16_t zeta)
 
   for (int ii = 0; ii < 2; ii++){
     // add twice
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     // subtract Q/2 from B （B + (- Q/2)）to get b
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    // subtract Q/2 from B （B + (- Q/2)）to get b
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
-    // extend MSB of b
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (-Q/2 or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
   }
 }

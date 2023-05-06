@@ -9,11 +9,22 @@ extern int LeftShiftInst;
 extern int RightShiftInst;
 extern int LeftShift;
 extern int RightShift;
+extern int ActCC;
 extern int OrCC;
 extern int AndCC;
 extern int XorCC;
 extern int NotCC;
 extern int EBCC;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
+extern void EBCC_counter(int);
 
 #define BitW 32
 
@@ -75,19 +86,17 @@ void ntt(int32_t a[N]) {
       }
     }
   }
-  // ntt data from bit-parallel_mont_mult/dilithium_ntt.cpp
-  ReadCC += 34816;
-  WriteCC += 34816;
-  LeftShiftInst += 201735;
-  LeftShift += 201735;
-  RightShiftInst += 32768;
-  RightShift += 32768;
-  OrCC += 44039;
-  AndCC += 351246;
-  XorCC += 316430;
-  NotCC += 0;
-  EBCC += 34816;
-  NotCC += 0;
+  // ntt data from kernels/NTT/NTT_Dilithium/dilithium_ntt.cpp
+  ReadCC += 34816; 
+  WriteCC += 1010730; 
+  LeftShiftInst += 201735; 
+  RightShiftInst += 32768; 
+  ActCC += 706595; 
+  OrCC += 44039; 
+  AndCC += 346126; 
+  XorCC += 316430; 
+  NotCC += 0; 
+  EBCC += 34816; 
 }
 
 /*************************************************
@@ -118,64 +127,52 @@ void invntt_tomont(int32_t a[N]) {
       }
     }
   }
-  // ntt data from bit-parallel_mont_mult/dilithium_ntt.cpp
-  ReadCC += 34816;
-  WriteCC += 34816;
-  LeftShiftInst += 201735;
-  LeftShift += 201735;
-  RightShiftInst += 32768;
-  RightShift += 32768;
-  OrCC += 44039;
-  AndCC += 351246;
-  XorCC += 316430;
-  NotCC += 0;
-  EBCC += 34816;
-  NotCC += 0;
+  // ntt data from kernels/NTT/NTT_Dilithium
+  ReadCC += 34816; 
+  WriteCC += 1010730; 
+  LeftShiftInst += 201735; 
+  RightShiftInst += 32768; 
+  ActCC += 706595; 
+  OrCC += 44039; 
+  AndCC += 346126; 
+  XorCC += 316430; 
+  NotCC += 0; 
+  EBCC += 34816; 
 
   for(j = 0; j < N; ++j) {
-    // check MSB, and then AND Q with all 1s or 0s to get q
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (Q or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
+
     a[j] = montgomery_reduce((int64_t)f * a[j]);
-    // montgomery multiplication data from bit-parallel_mont_mult/dilithium_mont_mult.cpp
+    // montgomery multiplication data from kernels/NTT/Montgomery_Mul_Dilithium_General
     ReadCC += 64;
-    WriteCC += 64;
+    WriteCC += 733;
     LeftShiftInst += 63;
-    LeftShift += 63;
     RightShiftInst += 32;
-    RightShift += 32;
+    ActCC += 510;
     OrCC += 64;
     AndCC += 255;
     XorCC += 191;
     NotCC += 0;
     EBCC += 64;
     // subtract Q/2 from B （B + (- Q/2)）to get b
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
-    // subtract Q/2 from B （B + (- Q/2)）to get b
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
+    // add B with q (-Q/2 or 0)
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
   }
 }

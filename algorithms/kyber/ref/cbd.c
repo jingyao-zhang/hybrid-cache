@@ -2,17 +2,26 @@
 #include "params.h"
 #include "cbd.h"
 
-extern int ReadCC;
-extern int WriteCC;
-extern int LeftShiftInst;
-extern int RightShiftInst;
-extern int LeftShift;
-extern int RightShift;
-extern int OrCC;
-extern int AndCC;
-extern int XorCC;
-extern int NotCC;
-extern int CoreCycle;
+// extern int ReadCC;
+// extern int WriteCC;
+// extern int LeftShiftInst;
+// extern int RightShiftInst;
+// extern int LeftShift;
+// extern int RightShift;
+// extern int OrCC;
+// extern int AndCC;
+// extern int XorCC;
+// extern int NotCC;
+// extern int CoreCycle;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
 
 #define BitW 16
 
@@ -33,9 +42,10 @@ static uint32_t load32_littleendian(const uint8_t x[4])
   r |= (uint32_t)x[1] << 8;
   r |= (uint32_t)x[2] << 16;
   r |= (uint32_t)x[3] << 24;
-  LeftShiftInst += 3;
-  LeftShift += 8 + 16 + 24;
-  OrCC += 3;
+  LeftShift_counter(1, 8);
+  LeftShift_counter(1, 16);
+  LeftShift_counter(1, 24);
+  OrCC_counter(3);
   return r;
 }
 
@@ -57,9 +67,9 @@ static uint32_t load24_littleendian(const uint8_t x[3])
   r  = (uint32_t)x[0];
   r |= (uint32_t)x[1] << 8;
   r |= (uint32_t)x[2] << 16;
-  LeftShiftInst += 2;
-  LeftShift += 8 + 16;
-  OrCC += 2;
+  LeftShift_counter(1, 8);
+  LeftShift_counter(1, 16);
+  OrCC_counter(2);
   return r;
 }
 #endif
@@ -85,29 +95,26 @@ static void cbd2(poly *r, const uint8_t buf[2*KYBER_N/4])
     t  = load32_littleendian(buf+4*i);
     d  = t & 0x55555555;
     d += (t>>1) & 0x55555555;
-    AndCC += 2;
-    RightShiftInst += 1;
-    RightShift += 1;
-    XorCC += 1;
+    AndCC_counter(2);
+    RightShift_counter(1, 1);
+    XorCC_counter(1);
 
     for(j=0;j<8;j++) {
       a = (d >> (4*j+0)) & 0x3;
       b = (d >> (4*j+2)) & 0x3;
-      AndCC += 2;
-      RightShiftInst += 2;
-      RightShift += 4*j + 2;
+      AndCC_counter(2);
+      RightShift_counter(1, 4*j);
+      RightShift_counter(1, 4*j + 2);
       r->coeffs[8*i+j] = a - b;
       // -b
-      NotCC += 1;
-      AndCC += BitW;
-      XorCC += BitW;
-      LeftShiftInst += (BitW - 1);
-      LeftShift += (BitW - 1);
+      NotCC_counter(1);
+      AndCC_counter(BitW);
+      XorCC_counter(BitW);
+      LeftShift_counter(BitW - 1, 1);
       // a - b
-      AndCC += BitW;
-      XorCC += BitW;
-      LeftShiftInst += (BitW - 1);
-      LeftShift += (BitW - 1);
+      AndCC_counter(BitW);
+      XorCC_counter(BitW);
+      LeftShift_counter(BitW - 1, 1);
     }
   }
 }
@@ -135,29 +142,27 @@ static void cbd3(poly *r, const uint8_t buf[3*KYBER_N/4])
     d  = t & 0x00249249;
     d += (t>>1) & 0x00249249;
     d += (t>>2) & 0x00249249;
-    AndCC += 3;
-    RightShiftInst += 2;
-    RightShift += 1 + 2;
-    XorCC += 2;
+    AndCC_counter(3);
+    RightShift_counter(1, 1);
+    RightShift_counter(1, 2);
+    XorCC_counter(2);
 
     for(j=0;j<4;j++) {
       a = (d >> (6*j+0)) & 0x7;
       b = (d >> (6*j+3)) & 0x7;
-      AndCC += 2;
-      RightShiftInst += 2;
-      RightShift += 6*j + 3;
+      AndCC_counter(2);
+      RightShift_counter(1, 6*j);
+      RightShift_counter(1, 6*j + 3);
       r->coeffs[4*i+j] = a - b;
       // -b
-      NotCC += 1;
-      AndCC += BitW;
-      XorCC += BitW;
-      LeftShiftInst += (BitW - 1);
-      LeftShift += (BitW - 1);
+      NotCC_counter(1);
+      AndCC_counter(BitW);
+      XorCC_counter(BitW);
+      LeftShift_counter(BitW - 1, 1);
       // a - b
-      AndCC += BitW;
-      XorCC += BitW;
-      LeftShiftInst += (BitW - 1);
-      LeftShift += (BitW - 1);
+      AndCC_counter(BitW);
+      XorCC_counter(BitW);
+      LeftShift_counter(BitW - 1, 1);
     }
   }
 }

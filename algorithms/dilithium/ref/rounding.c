@@ -8,11 +8,24 @@ extern int LeftShiftInst;
 extern int RightShiftInst;
 extern int LeftShift;
 extern int RightShift;
+extern int ActCC;
 extern int OrCC;
 extern int AndCC;
 extern int XorCC;
 extern int NotCC;
 extern int CoreCycle;
+extern int EBCC;
+extern int CoreCycle;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
+extern void EBCC_counter(int);
 
 #define BitW 32
 
@@ -33,42 +46,36 @@ int32_t power2round(int32_t *a0, int32_t a)  {
 
   a1 = (a + (1 << (D-1)) - 1) >> D;
   // a + (1 << (D - 1))
-  AndCC += 1;
-  XorCC += 1;
-  AndCC += 20 - 1; 
-  XorCC += 20 - 1;
-  LeftShiftInst += 20 - 1;
-  LeftShift += 20 - 1;
+  AndCC_counter(1);
+  XorCC_counter(1);
+  AndCC_counter(20 - 1);
+  XorCC_counter(20 - 1);
+  LeftShift_counter(20 - 1, 1);
   // a + (1 << (D - 1)) - 1
-  AndCC += 1;
-  XorCC += 1;
-  AndCC += BitW - 1; 
-  XorCC += BitW - 1;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  AndCC_counter(1);
+  XorCC_counter(1);
+  AndCC_counter(BitW - 1);
+  XorCC_counter(BitW - 1);
+  LeftShift_counter(BitW - 1, 1);
   // >> D
-  RightShiftInst += 1;
-  RightShift += D;
+  RightShift_counter(1, D);
 
   *a0 = a - (a1 << D);
   // a1 << D
-  LeftShiftInst += 1;
-  LeftShift += D;
+  LeftShift_counter(1, D);
   // - (a1 << D)
-  NotCC += 1;
-  AndCC += 1;
-  XorCC += 1;
-  AndCC += BitW - 1; 
-  XorCC += BitW - 1;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  NotCC_counter(1);
+  AndCC_counter(1);
+  XorCC_counter(1);
+  AndCC_counter(BitW - 1);
+  XorCC_counter(BitW - 1);
+  LeftShift_counter(BitW - 1, 1);
   // a - (a1 << D)
-  AndCC += 1;
-  XorCC += 1;
-  AndCC += BitW - 1; 
-  XorCC += BitW - 1;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  AndCC_counter(1);
+  XorCC_counter(1);
+  AndCC_counter(BitW - 1);
+  XorCC_counter(BitW - 1);
+  LeftShift_counter(BitW - 1, 1);
 
   return a1;
 }
@@ -92,163 +99,138 @@ int32_t decompose(int32_t *a0, int32_t a) {
 
   a1  = (a + 127) >> 7;
   // a + 127
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // >> 7
-  RightShiftInst += 1;
-  RightShift += 7;
+  RightShift_counter(1, 7);
 #if GAMMA2 == (Q-1)/32
   a1  = (a1*1025 + (1 << 21)) >> 22;
   a1 &= 15;
   // a1*1025
-  LeftShiftInst += 1;
-  LeftShift += 10;
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  LeftShift_counter(1, 10);
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // + (1 << 21)
-  AndCC += 11; 
-  XorCC += 11;
-  LeftShiftInst += 11 - 1;
-  LeftShift += 11 - 1;
+  AndCC_counter(11);
+  XorCC_counter(11);
+  LeftShift_counter(10, 1);
   // >> 22
-  RightShiftInst += 1;
-  RightShift += 22;
+  RightShift_counter(1, 22);
   // & 15
-  AndCC += 1;
+  AndCC_counter(1);
   // a1 * (2 * GAMMA2)
-  LeftShiftInst += 10;
-  LeftShift += 9 + 1 * 9;
-  AndCC += 22 + 21 + 19 + 18 + 17 + 16 + 15 + 14 + 13;
-  XorCC += 22 + 21 + 19 + 18 + 17 + 16 + 15 + 14 + 13;
-  LeftShiftInst += (22 + 21 + 19 + 18 + 17 + 16 + 15 + 14 + 13 - 1 * 9);
-  LeftShift += (22 + 21 + 19 + 18 + 17 + 16 + 15 + 14 + 13 - 1 * 9);
+  LeftShift_counter(1, 9);
+  LeftShift_counter(9, 1);
+  AndCC_counter(22 + 21 + 19 + 18 + 17 + 16 + 15 + 14 + 13);
+  XorCC_counter(22 + 21 + 19 + 18 + 17 + 16 + 15 + 14 + 13);
+  LeftShift_counter(22 + 21 + 19 + 18 + 17 + 16 + 15 + 14 + 13 - 1 * 9, 1);
   // - (a1 * (2 * GAMMA2))
-  NotCC += 1;
-  AndCC += BitW;
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  NotCC_counter(1);
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // a - (a1 * (2 * GAMMA2))
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
 
 #elif GAMMA2 == (Q-1)/88
   a1  = (a1*11275 + (1 << 23)) >> 24;
   a1 ^= ((43 - a1) >> 31) & a1;
   // a1*11275
-  LeftShiftInst += 5;
-  LeftShift += 1 + 2 + 7 + 1 + 2;
-  AndCC += BitW * 5;
-  XorCC += BitW * 5;
-  LeftShiftInst += (BitW - 1) * 5;
-  LeftShift += (BitW - 1) * 5;
+  LeftShift_counter(1, 1);
+  LeftShift_counter(1, 2);
+  LeftShift_counter(1, 7);
+  LeftShift_counter(1, 1);
+  LeftShift_counter(1, 2);
+  AndCC_counter(BitW*5);
+  XorCC_counter(BitW*5);
+  LeftShift_counter((BitW-1)*5, 1);
   // + (1 << 23)
-  AndCC += 9;
-  XorCC += 9;
-  LeftShiftInst += (9 - 1);
-  LeftShift += (9 - 1);
+  AndCC_counter(9);
+  XorCC_counter(9);
+  LeftShift_counter(8, 1);
   // >> 24
-  RightShiftInst += 1;
-  RightShift += 24;
+  RightShift_counter(1, 24);
   // - ai
-  NotCC += 1;
-  AndCC += BitW;
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  NotCC_counter(1);
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // 43 + (-ai)
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // >> 31
-  RightShiftInst += 1;
-  RightShift += 31;
+  RightShift_counter(1, 31);
   // & ai
-  AndCC += 1;
+  AndCC_counter(1);
   // ^ ai
-  XorCC += 1;
+  XorCC_counter(1);
   // a1 * (2 * GAMMA2)
-  LeftShiftInst += 10;
-  LeftShift += 10;
-  LeftShiftInst += 1;
-  LeftShift += 1;
-  AndCC += 22; 
-  XorCC += 22;
-  LeftShiftInst += (22 - 1);
-  LeftShift += (22 - 1);
-  LeftShiftInst += 2;
-  LeftShift += 2;
-  AndCC += 20; 
-  XorCC += 20;
-  LeftShiftInst += (20 - 1);
-  LeftShift += (20 - 1);
-  LeftShiftInst += 1;
-  LeftShift += 1;
-  AndCC += 19; 
-  XorCC += 19;
-  LeftShiftInst += (19 - 1);
-  LeftShift += (19 - 1);
-  LeftShiftInst += 1;
-  LeftShift += 1;
-  AndCC += 18; 
-  XorCC += 18;
-  LeftShiftInst += (18 - 1);
-  LeftShift += (18 - 1);
-  LeftShiftInst += 2;
-  LeftShift += 2;
-  AndCC += 16; 
-  XorCC += 16;
-  LeftShiftInst += (16 - 1);
-  LeftShift += (16 - 1);
+  LeftShift_counter(10, 1);
+  LeftShift_counter(1, 1);
+  AndCC_counter(22);
+  XorCC_counter(22);
+  LeftShift_counter(21, 1);
+  LeftShift_counter(2, 1);
+
+  AndCC_counter(20);
+  XorCC_counter(20);
+  LeftShift_counter(19, 1); 
+  LeftShift_counter(1, 1);
+
+  AndCC_counter(19);
+  XorCC_counter(19);
+  LeftShift_counter(18, 1);
+  LeftShift_counter(1, 1);
+
+  AndCC_counter(18);
+  XorCC_counter(18);
+  LeftShift_counter(17, 1);
+  LeftShift_counter(2, 1);
+
+  AndCC_counter(16);
+  XorCC_counter(16);
+  LeftShift_counter(15, 1);
   // - (a1 * (2 * GAMMA2))
-  NotCC += 1;
-  AndCC += BitW;
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  NotCC_counter(1);
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // a - (a1 * (2 * GAMMA2))
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
 #endif
 
   *a0  = a - a1*2*GAMMA2;
   *a0 -= (((Q-1)/2 - *a0) >> 31) & Q;
   // - *a0
-  NotCC += 1;
-  AndCC += BitW;
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  NotCC_counter(1);
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // (Q - 1) / 2 - *a0
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // >> 31
-  RightShiftInst += 1;
-  RightShift += 31;
+  RightShift_counter(1, 31);
   // & Q
-  AndCC += 1;
+  AndCC_counter(1);
   // -
-  NotCC += 1;
-  AndCC += BitW;
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  NotCC_counter(1);
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
   // *a0 -=
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  AndCC_counter(BitW);
+  XorCC_counter(BitW);
+  LeftShift_counter(BitW-1, 1);
+
   return a1;
 }
 

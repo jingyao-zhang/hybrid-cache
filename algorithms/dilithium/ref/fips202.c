@@ -10,17 +10,14 @@
 #define NROUNDS 24
 #define ROL(a, offset) ((a << offset) ^ (a >> (64-offset)))
 
-extern int ReadCC;
-extern int WriteCC;
-extern int LeftShiftInst;
-extern int RightShiftInst;
-extern int LeftShift;
-extern int RightShift;
-extern int OrCC;
-extern int AndCC;
-extern int XorCC;
-extern int NotCC;
-extern int CoreCycle;
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
 
 #define BitW 32
 
@@ -93,653 +90,553 @@ const uint64_t KeccakF_RoundConstants[NROUNDS] = {
 *
 * Arguments:   - uint64_t *state: pointer to input/output Keccak state
 **************************************************/
-static void KeccakF1600_StatePermute(uint64_t state[25])
-{
-        int round;
-
-        uint64_t Aba, Abe, Abi, Abo, Abu;
-        uint64_t Aga, Age, Agi, Ago, Agu;
-        uint64_t Aka, Ake, Aki, Ako, Aku;
-        uint64_t Ama, Ame, Ami, Amo, Amu;
-        uint64_t Asa, Ase, Asi, Aso, Asu;
-        uint64_t BCa, BCe, BCi, BCo, BCu;
-        uint64_t Da, De, Di, Do, Du;
-        uint64_t Eba, Ebe, Ebi, Ebo, Ebu;
-        uint64_t Ega, Ege, Egi, Ego, Egu;
-        uint64_t Eka, Eke, Eki, Eko, Eku;
-        uint64_t Ema, Eme, Emi, Emo, Emu;
-        uint64_t Esa, Ese, Esi, Eso, Esu;
-
-        //copyFromState(A, state)
-        Aba = state[ 0];
-        Abe = state[ 1];
-        Abi = state[ 2];
-        Abo = state[ 3];
-        Abu = state[ 4];
-        Aga = state[ 5];
-        Age = state[ 6];
-        Agi = state[ 7];
-        Ago = state[ 8];
-        Agu = state[ 9];
-        Aka = state[10];
-        Ake = state[11];
-        Aki = state[12];
-        Ako = state[13];
-        Aku = state[14];
-        Ama = state[15];
-        Ame = state[16];
-        Ami = state[17];
-        Amo = state[18];
-        Amu = state[19];
-        Asa = state[20];
-        Ase = state[21];
-        Asi = state[22];
-        Aso = state[23];
-        Asu = state[24];
-
-        for(round = 0; round < NROUNDS; round += 2) {
-            //    prepareTheta
-            BCa = Aba ^ Aga ^ Aka ^ Ama ^ Asa;
-            BCe = Abe ^ Age ^ Ake ^ Ame ^ Ase;
-            BCi = Abi ^ Agi ^ Aki ^ Ami ^ Asi;
-            BCo = Abo ^ Ago ^ Ako ^ Amo ^ Aso;
-            BCu = Abu ^ Agu ^ Aku ^ Amu ^ Asu;
-            XorCC = XorCC + 4 * 5;
-
-            // thetaRhoPiChiIotaPrepareTheta(round  , A, E)
-            Da = BCu ^ ROL(BCe, 1);
-            De = BCa ^ ROL(BCi, 1);
-            Di = BCe ^ ROL(BCo, 1);
-            Do = BCi ^ ROL(BCu, 1);
-            Du = BCo ^ ROL(BCa, 1);
-            XorCC = XorCC + 5;
-            LeftShiftInst = LeftShiftInst + 5;
-            LeftShift = LeftShift + 5 * 1;
-            RightShiftInst = RightShiftInst + 5;
-            RightShift = RightShift + 5 * (64 - 1);
-            XorCC = XorCC + 5;
-
-            Aba ^= Da;
-            BCa = Aba;
-            Age ^= De;
-            BCe = ROL(Age, 44);
-            XorCC = XorCC + 2;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 44;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 44);
-            XorCC = XorCC + 1;
-
-            Aki ^= Di;
-            BCi = ROL(Aki, 43);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 43;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 43);
-            XorCC = XorCC + 1;
-
-            Amo ^= Do;
-            BCo = ROL(Amo, 21);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 21;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 21);
-            XorCC = XorCC + 1;
-
-            Asu ^= Du;
-            BCu = ROL(Asu, 14);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 14;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 14);
-            XorCC = XorCC + 1;
-
-            Eba = BCa ^ ((~BCe) & BCi);
-            Eba ^= KeccakF_RoundConstants[round];
-            Ebe = BCe ^ ((~BCi) & BCo);
-            Ebi = BCi ^ ((~BCo) & BCu);
-            Ebo = BCo ^ ((~BCu) & BCa);
-            Ebu = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-            XorCC = XorCC + 1;
-
-            Abo ^= Do;
-            BCa = ROL(Abo, 28);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 28;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 28);
-            XorCC = XorCC + 1;
-
-            Agu ^= Du;
-            BCe = ROL(Agu, 20);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 20;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 20);
-            XorCC = XorCC + 1;
-
-            Aka ^= Da;
-            BCi = ROL(Aka, 3);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 3;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 3);
-            XorCC = XorCC + 1;
-
-            Ame ^= De;
-            BCo = ROL(Ame, 45);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 45;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 45);
-            XorCC = XorCC + 1;
-
-            Asi ^= Di;
-            BCu = ROL(Asi, 61);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 61;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 61);
-            XorCC = XorCC + 1;
-
-            Ega = BCa ^ ((~BCe) & BCi);
-            Ege = BCe ^ ((~BCi) & BCo);
-            Egi = BCi ^ ((~BCo) & BCu);
-            Ego = BCo ^ ((~BCu) & BCa);
-            Egu = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-
-            Abe ^= De;
-            BCa = ROL(Abe, 1);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 1;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 1);
-            XorCC = XorCC + 1;
-
-            Agi ^= Di;
-            BCe = ROL(Agi, 6);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 6;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 6);
-            XorCC = XorCC + 1;
-
-            Ako ^= Do;
-            BCi = ROL(Ako, 25);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 25;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 25);
-            XorCC = XorCC + 1;
-            
-            Amu ^= Du;
-            BCo = ROL(Amu, 8);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 8;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 8);
-            XorCC = XorCC + 1;
-
-            Asa ^= Da;
-            BCu = ROL(Asa, 18);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 18;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 18);
-            XorCC = XorCC + 1;
-
-            Eka = BCa ^ ((~BCe) & BCi);
-            Eke = BCe ^ ((~BCi) & BCo);
-            Eki = BCi ^ ((~BCo) & BCu);
-            Eko = BCo ^ ((~BCu) & BCa);
-            Eku = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-
-            Abu ^= Du;
-            BCa = ROL(Abu, 27);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 27;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 27);
-            XorCC = XorCC + 1;
-
-            Aga ^= Da;
-            BCe = ROL(Aga, 36);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 36;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 36);
-            XorCC = XorCC + 1;
-
-            Ake ^= De;
-            BCi = ROL(Ake, 10);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 10;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 10);
-            XorCC = XorCC + 1;
-
-            Ami ^= Di;
-            BCo = ROL(Ami, 15);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 15;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 15);
-            XorCC = XorCC + 1;
-
-            Aso ^= Do;
-            BCu = ROL(Aso, 56);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 56;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 56);
-            XorCC = XorCC + 1;
-
-            Ema = BCa ^ ((~BCe) & BCi);
-            Eme = BCe ^ ((~BCi) & BCo);
-            Emi = BCi ^ ((~BCo) & BCu);
-            Emo = BCo ^ ((~BCu) & BCa);
-            Emu = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-            
-
-            Abi ^= Di;
-            BCa = ROL(Abi, 62);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 62;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 62);
-            XorCC = XorCC + 1;
-
-            Ago ^= Do;
-            BCe = ROL(Ago, 55);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 55;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 55);
-            XorCC = XorCC + 1;
-
-            Aku ^= Du;
-            BCi = ROL(Aku, 39);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 39;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 39);
-            XorCC = XorCC + 1;
-
-            Ama ^= Da;
-            BCo = ROL(Ama, 41);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 41;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 41);
-            XorCC = XorCC + 1;
-
-            Ase ^= De;
-            BCu = ROL(Ase, 2);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 2;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 2);
-            XorCC = XorCC + 1;
-
-            Esa = BCa ^ ((~BCe) & BCi);
-            Ese = BCe ^ ((~BCi) & BCo);
-            Esi = BCi ^ ((~BCo) & BCu);
-            Eso = BCo ^ ((~BCu) & BCa);
-            Esu = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-
-
-            //    prepareTheta
-            BCa = Eba ^ Ega ^ Eka ^ Ema ^ Esa;
-            BCe = Ebe ^ Ege ^ Eke ^ Eme ^ Ese;
-            BCi = Ebi ^ Egi ^ Eki ^ Emi ^ Esi;
-            BCo = Ebo ^ Ego ^ Eko ^ Emo ^ Eso;
-            BCu = Ebu ^ Egu ^ Eku ^ Emu ^ Esu;
-            XorCC = XorCC + 4 * 5;
-
-            // thetaRhoPiChiIotaPrepareTheta(round+1, E, A)
-            Da = BCu ^ ROL(BCe, 1);
-            De = BCa ^ ROL(BCi, 1);
-            Di = BCe ^ ROL(BCo, 1);
-            Do = BCi ^ ROL(BCu, 1);
-            Du = BCo ^ ROL(BCa, 1);
-            XorCC = XorCC + 5;
-            LeftShiftInst = LeftShiftInst + 5;
-            LeftShift = LeftShift + 5 * 1;
-            RightShiftInst = RightShiftInst + 5;
-            RightShift = RightShift + 5 * (64 - 1);
-            XorCC = XorCC + 5;
-
-            Eba ^= Da;
-            BCa = Eba;
-            Ege ^= De;
-            BCe = ROL(Ege, 44);
-            XorCC = XorCC + 2;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 44;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 44);
-            XorCC = XorCC + 1;
-            
-            Eki ^= Di;
-            BCi = ROL(Eki, 43);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 43;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 43);
-            XorCC = XorCC + 1;
-
-            Emo ^= Do;
-            BCo = ROL(Emo, 21);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 21;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 21);
-            XorCC = XorCC + 1;
-
-            Esu ^= Du;
-            BCu = ROL(Esu, 14);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 14;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 14);
-            XorCC = XorCC + 1;
-
-            Aba = BCa ^ ((~BCe) & BCi);
-            Aba ^= KeccakF_RoundConstants[round + 1];
-            Abe = BCe ^ ((~BCi) & BCo);
-            Abi = BCi ^ ((~BCo) & BCu);
-            Abo = BCo ^ ((~BCu) & BCa);
-            Abu = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-            XorCC = XorCC + 1;
-
-            Ebo ^= Do;
-            BCa = ROL(Ebo, 28);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 28;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 28);
-            XorCC = XorCC + 1;
-
-            Egu ^= Du;
-            BCe = ROL(Egu, 20);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 20;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 20);
-            XorCC = XorCC + 1;
-
-            Eka ^= Da;
-            BCi = ROL(Eka, 3);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 3;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 3);
-            XorCC = XorCC + 1;
-
-            Eme ^= De;
-            BCo = ROL(Eme, 45);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 45;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 45);
-            XorCC = XorCC + 1;
-
-            Esi ^= Di;
-            BCu = ROL(Esi, 61);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 61;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 61);
-            XorCC = XorCC + 1;
-
-            Aga = BCa ^ ((~BCe) & BCi);
-            Age = BCe ^ ((~BCi) & BCo);
-            Agi = BCi ^ ((~BCo) & BCu);
-            Ago = BCo ^ ((~BCu) & BCa);
-            Agu = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-
-            Ebe ^= De;
-            BCa = ROL(Ebe, 1);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 1;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 1);
-            XorCC = XorCC + 1;
-
-            Egi ^= Di;
-            BCe = ROL(Egi, 6);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 6;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 6);
-            XorCC = XorCC + 1;
-
-            Eko ^= Do;
-            BCi = ROL(Eko, 25);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 25;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 25);
-            XorCC = XorCC + 1;
-
-            Emu ^= Du;
-            BCo = ROL(Emu, 8);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 8;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 8);
-            XorCC = XorCC + 1;
-
-            Esa ^= Da;
-            BCu = ROL(Esa, 18);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 18;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 18);
-            XorCC = XorCC + 1;
-
-            Aka = BCa ^ ((~BCe) & BCi);
-            Ake = BCe ^ ((~BCi) & BCo);
-            Aki = BCi ^ ((~BCo) & BCu);
-            Ako = BCo ^ ((~BCu) & BCa);
-            Aku = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-
-
-            Ebu ^= Du;
-            BCa = ROL(Ebu, 27);
-            Ega ^= Da;
-            BCe = ROL(Ega, 36);
-            Eke ^= De;
-            BCi = ROL(Eke, 10);
-            Emi ^= Di;
-            BCo = ROL(Emi, 15);
-            Eso ^= Do;
-            BCu = ROL(Eso, 56);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 27;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 27);
-            XorCC = XorCC + 1;
-
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 36;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 36);
-            XorCC = XorCC + 1;
-
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 10;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 10);
-            XorCC = XorCC + 1;
-
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 15;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 15);
-            XorCC = XorCC + 1;
-
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 56;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 56);
-            XorCC = XorCC + 1;
-
-            Ama = BCa ^ ((~BCe) & BCi);
-            Ame = BCe ^ ((~BCi) & BCo);
-            Ami = BCi ^ ((~BCo) & BCu);
-            Amo = BCo ^ ((~BCu) & BCa);
-            Amu = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-
-
-            Ebi ^= Di;
-            BCa = ROL(Ebi, 62);
-            Ego ^= Do;
-            BCe = ROL(Ego, 55);
-            Eku ^= Du;
-            BCi = ROL(Eku, 39);
-            Ema ^= Da;
-            BCo = ROL(Ema, 41);
-            Ese ^= De;
-            BCu = ROL(Ese, 2);
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 62;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 62);
-            XorCC = XorCC + 1;
-
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 55;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 55);
-            XorCC = XorCC + 1;
-
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 39;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 39);
-            XorCC = XorCC + 1;
-
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 41;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 41);
-            XorCC = XorCC + 1;
-
-            XorCC = XorCC + 1;
-            LeftShiftInst = LeftShiftInst + 1;
-            LeftShift = LeftShift + 1 * 2;
-            RightShiftInst = RightShiftInst + 1;
-            RightShift = RightShift + 1 * (64 - 2);
-            XorCC = XorCC + 1;
-
-            Asa = BCa ^ ((~BCe) & BCi);
-            Ase = BCe ^ ((~BCi) & BCo);
-            Asi = BCi ^ ((~BCo) & BCu);
-            Aso = BCo ^ ((~BCu) & BCa);
-            Asu = BCu ^ ((~BCa) & BCe);
-            XorCC = XorCC + 5;
-            NotCC = NotCC + 5;
-            AndCC = AndCC + 5;
-        }
-
-        //copyToState(state, A)
-        state[ 0] = Aba;
-        state[ 1] = Abe;
-        state[ 2] = Abi;
-        state[ 3] = Abo;
-        state[ 4] = Abu;
-        state[ 5] = Aga;
-        state[ 6] = Age;
-        state[ 7] = Agi;
-        state[ 8] = Ago;
-        state[ 9] = Agu;
-        state[10] = Aka;
-        state[11] = Ake;
-        state[12] = Aki;
-        state[13] = Ako;
-        state[14] = Aku;
-        state[15] = Ama;
-        state[16] = Ame;
-        state[17] = Ami;
-        state[18] = Amo;
-        state[19] = Amu;
-        state[20] = Asa;
-        state[21] = Ase;
-        state[22] = Asi;
-        state[23] = Aso;
-        state[24] = Asu;
+static void KeccakF1600_StatePermute(uint64_t *state) {
+    int round;
+
+    uint64_t Aba, Abe, Abi, Abo, Abu;
+    uint64_t Aga, Age, Agi, Ago, Agu;
+    uint64_t Aka, Ake, Aki, Ako, Aku;
+    uint64_t Ama, Ame, Ami, Amo, Amu;
+    uint64_t Asa, Ase, Asi, Aso, Asu;
+    uint64_t BCa, BCe, BCi, BCo, BCu;
+    uint64_t Da, De, Di, Do, Du;
+    uint64_t Eba, Ebe, Ebi, Ebo, Ebu;
+    uint64_t Ega, Ege, Egi, Ego, Egu;
+    uint64_t Eka, Eke, Eki, Eko, Eku;
+    uint64_t Ema, Eme, Emi, Emo, Emu;
+    uint64_t Esa, Ese, Esi, Eso, Esu;
+
+    // copyFromState(A, state)
+    Aba = state[0];
+    Abe = state[1];
+    Abi = state[2];
+    Abo = state[3];
+    Abu = state[4];
+    Aga = state[5];
+    Age = state[6];
+    Agi = state[7];
+    Ago = state[8];
+    Agu = state[9];
+    Aka = state[10];
+    Ake = state[11];
+    Aki = state[12];
+    Ako = state[13];
+    Aku = state[14];
+    Ama = state[15];
+    Ame = state[16];
+    Ami = state[17];
+    Amo = state[18];
+    Amu = state[19];
+    Asa = state[20];
+    Ase = state[21];
+    Asi = state[22];
+    Aso = state[23];
+    Asu = state[24];
+
+    for (round = 0; round < NROUNDS; round += 2) {
+        //    prepareTheta
+        BCa = Aba ^ Aga ^ Aka ^ Ama ^ Asa;
+        BCe = Abe ^ Age ^ Ake ^ Ame ^ Ase;
+        BCi = Abi ^ Agi ^ Aki ^ Ami ^ Asi;
+        BCo = Abo ^ Ago ^ Ako ^ Amo ^ Aso;
+        BCu = Abu ^ Agu ^ Aku ^ Amu ^ Asu;
+        XorCC_counter(4*5);
+
+        // thetaRhoPiChiIotaPrepareTheta(round  , A, E)
+        Da = BCu ^ ROL(BCe, 1);
+        De = BCa ^ ROL(BCi, 1);
+        Di = BCe ^ ROL(BCo, 1);
+        Do = BCi ^ ROL(BCu, 1);
+        Du = BCo ^ ROL(BCa, 1);
+        XorCC_counter(5);
+        LeftShift_counter(5, 1);
+        RightShift_counter(5, (64-1));
+        XorCC_counter(5);
+
+        Aba ^= Da;
+        BCa = Aba;
+        Age ^= De;
+        BCe = ROL(Age, 44);
+        XorCC_counter(2);
+        LeftShift_counter(1, 44);
+        RightShift_counter(1, (64-44));
+        XorCC_counter(1);
+
+        Aki ^= Di;
+        BCi = ROL(Aki, 43);
+        XorCC_counter(1);
+        LeftShift_counter(1, 43);
+        RightShift_counter(1, (64-43));
+        XorCC_counter(1);
+
+        Amo ^= Do;
+        BCo = ROL(Amo, 21);
+        XorCC_counter(1);
+        LeftShift_counter(1, 21);
+        RightShift_counter(1, (64-21));
+        XorCC_counter(1);
+
+        Asu ^= Du;
+        BCu = ROL(Asu, 14);
+        XorCC_counter(1);
+        LeftShift_counter(1, 14);
+        RightShift_counter(1, (64-14));
+        XorCC_counter(1);
+
+        Eba = BCa ^ ((~BCe) & BCi);
+        Eba ^= KeccakF_RoundConstants[round];
+        Ebe = BCe ^ ((~BCi) & BCo);
+        Ebi = BCi ^ ((~BCo) & BCu);
+        Ebo = BCo ^ ((~BCu) & BCa);
+        Ebu = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(3);
+        AndCC_counter(5);
+        XorCC_counter(1);
+
+        Abo ^= Do;
+        BCa = ROL(Abo, 28);
+        XorCC_counter(1);
+        LeftShift_counter(1, 28);
+        RightShift_counter(1, (64-28));
+        XorCC_counter(1);
+
+        Agu ^= Du;
+        BCe = ROL(Agu, 20);
+        XorCC_counter(1);
+        LeftShift_counter(1, 20);
+        RightShift_counter(1, (64-20));
+        XorCC_counter(1);
+
+        Aka ^= Da;
+        BCi = ROL(Aka, 3);
+        XorCC_counter(1);
+        LeftShift_counter(1, 3);
+        RightShift_counter(1, (64-3));
+        XorCC_counter(1);
+
+        Ame ^= De;
+        BCo = ROL(Ame, 45);
+        XorCC_counter(1);
+        LeftShift_counter(1, 45);
+        RightShift_counter(1, (64-45));
+        XorCC_counter(1);
+
+        Asi ^= Di;
+        BCu = ROL(Asi, 61);
+        XorCC_counter(1);
+        LeftShift_counter(1, 61);
+        RightShift_counter(1, (64-61));
+        XorCC_counter(1);
+
+        Ega = BCa ^ ((~BCe) & BCi);
+        Ege = BCe ^ ((~BCi) & BCo);
+        Egi = BCi ^ ((~BCo) & BCu);
+        Ego = BCo ^ ((~BCu) & BCa);
+        Egu = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(5);
+        AndCC_counter(5);
+
+        Abe ^= De;
+        BCa = ROL(Abe, 1);
+        XorCC_counter(1);
+        LeftShift_counter(1, 1);
+        RightShift_counter(1, (64-1));
+        XorCC_counter(1);
+
+        Agi ^= Di;
+        BCe = ROL(Agi, 6);
+        XorCC_counter(1);
+        LeftShift_counter(1, 6);
+        RightShift_counter(1, (64-6));
+        XorCC_counter(1);
+
+        Ako ^= Do;
+        BCi = ROL(Ako, 25);
+        XorCC_counter(1);
+        LeftShift_counter(1, 25);
+        RightShift_counter(1, (64-25));
+        XorCC_counter(1);
+        
+        Amu ^= Du;
+        BCo = ROL(Amu, 8);
+        XorCC_counter(1);
+        LeftShift_counter(1, 8);
+        RightShift_counter(1, (64-8));
+        XorCC_counter(1);
+
+        Asa ^= Da;
+        BCu = ROL(Asa, 18);
+        XorCC_counter(1);
+        LeftShift_counter(1, 18);
+        RightShift_counter(1, (64-18));
+        XorCC_counter(1);
+
+        Eka = BCa ^ ((~BCe) & BCi);
+        Eke = BCe ^ ((~BCi) & BCo);
+        Eki = BCi ^ ((~BCo) & BCu);
+        Eko = BCo ^ ((~BCu) & BCa);
+        Eku = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(5);
+        AndCC_counter(5);
+
+        Abu ^= Du;
+        BCa = ROL(Abu, 27);
+        XorCC_counter(1);
+        LeftShift_counter(1, 27);
+        RightShift_counter(1, (64-27));
+        XorCC_counter(1);
+
+        Aga ^= Da;
+        BCe = ROL(Aga, 36);
+        XorCC_counter(1);
+        LeftShift_counter(1, 36);
+        RightShift_counter(1, (64-36));
+        XorCC_counter(1);
+
+        Ake ^= De;
+        BCi = ROL(Ake, 10);
+        XorCC_counter(1);
+        LeftShift_counter(1, 10);
+        RightShift_counter(1, (64-10));
+        XorCC_counter(1);
+
+        Ami ^= Di;
+        BCo = ROL(Ami, 15);
+        XorCC_counter(1);
+        LeftShift_counter(1, 15);
+        RightShift_counter(1, (64-15));
+        XorCC_counter(1);
+
+        Aso ^= Do;
+        BCu = ROL(Aso, 56);
+        XorCC_counter(1);
+        LeftShift_counter(1, 56);
+        RightShift_counter(1, (64-56));
+        XorCC_counter(1);
+
+        Ema = BCa ^ ((~BCe) & BCi);
+        Eme = BCe ^ ((~BCi) & BCo);
+        Emi = BCi ^ ((~BCo) & BCu);
+        Emo = BCo ^ ((~BCu) & BCa);
+        Emu = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(5);
+        AndCC_counter(5);
+        
+
+        Abi ^= Di;
+        BCa = ROL(Abi, 62);
+        XorCC_counter(1);
+        LeftShift_counter(1, 62);
+        RightShift_counter(1, (64-62));
+        XorCC_counter(1);
+
+        Ago ^= Do;
+        BCe = ROL(Ago, 55);
+        XorCC_counter(1);
+        LeftShift_counter(1, 55);
+        RightShift_counter(1, (64-55));
+        XorCC_counter(1);
+
+        Aku ^= Du;
+        BCi = ROL(Aku, 39);
+        XorCC_counter(1);
+        LeftShift_counter(1, 39);
+        RightShift_counter(1, (64-39));
+        XorCC_counter(1);
+
+        Ama ^= Da;
+        BCo = ROL(Ama, 41);
+        XorCC_counter(1);
+        LeftShift_counter(1, 41);
+        RightShift_counter(1, (64-41));
+        XorCC_counter(1);
+
+        Ase ^= De;
+        BCu = ROL(Ase, 2);
+        XorCC_counter(1);
+        LeftShift_counter(1, 2);
+        RightShift_counter(1, (64-2));
+        XorCC_counter(1);
+
+        Esa = BCa ^ ((~BCe) & BCi);
+        Ese = BCe ^ ((~BCi) & BCo);
+        Esi = BCi ^ ((~BCo) & BCu);
+        Eso = BCo ^ ((~BCu) & BCa);
+        Esu = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(5);
+        AndCC_counter(5);
+
+
+        //    prepareTheta
+        BCa = Eba ^ Ega ^ Eka ^ Ema ^ Esa;
+        BCe = Ebe ^ Ege ^ Eke ^ Eme ^ Ese;
+        BCi = Ebi ^ Egi ^ Eki ^ Emi ^ Esi;
+        BCo = Ebo ^ Ego ^ Eko ^ Emo ^ Eso;
+        BCu = Ebu ^ Egu ^ Eku ^ Emu ^ Esu;
+        XorCC_counter(4*5);
+
+        // thetaRhoPiChiIotaPrepareTheta(round+1, E, A)
+        Da = BCu ^ ROL(BCe, 1);
+        De = BCa ^ ROL(BCi, 1);
+        Di = BCe ^ ROL(BCo, 1);
+        Do = BCi ^ ROL(BCu, 1);
+        Du = BCo ^ ROL(BCa, 1);
+        XorCC_counter(5);
+        LeftShift_counter(5, 1);
+        RightShift_counter(5, (64-1));
+        XorCC_counter(5);
+
+        Eba ^= Da;
+        BCa = Eba;
+        Ege ^= De;
+        BCe = ROL(Ege, 44);
+        XorCC_counter(2);
+        LeftShift_counter(1, 44);
+        RightShift_counter(1, (64-44));
+        XorCC_counter(1);
+        
+        Eki ^= Di;
+        BCi = ROL(Eki, 43);
+        XorCC_counter(1);
+        LeftShift_counter(1, 43);
+        RightShift_counter(1, (64-43));
+        XorCC_counter(1);
+
+        Emo ^= Do;
+        BCo = ROL(Emo, 21);
+        XorCC_counter(1);
+        LeftShift_counter(1, 21);
+        RightShift_counter(1, (64-21));
+        XorCC_counter(1);
+
+        Esu ^= Du;
+        BCu = ROL(Esu, 14);
+        XorCC_counter(1);
+        LeftShift_counter(1, 14);
+        RightShift_counter(1, (64-14));
+        XorCC_counter(1);
+
+        Aba = BCa ^ ((~BCe) & BCi);
+        Aba ^= KeccakF_RoundConstants[round + 1];
+        Abe = BCe ^ ((~BCi) & BCo);
+        Abi = BCi ^ ((~BCo) & BCu);
+        Abo = BCo ^ ((~BCu) & BCa);
+        Abu = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(3);
+        AndCC_counter(5);
+        XorCC_counter(1);
+
+        Ebo ^= Do;
+        BCa = ROL(Ebo, 28);
+        XorCC_counter(1);
+        LeftShift_counter(1, 28);
+        RightShift_counter(1, (64-28));
+        XorCC_counter(1);
+
+        Egu ^= Du;
+        BCe = ROL(Egu, 20);
+        XorCC_counter(1);
+        LeftShift_counter(1, 20);
+        RightShift_counter(1, (64-20));
+        XorCC_counter(1);
+
+        Eka ^= Da;
+        BCi = ROL(Eka, 3);
+        XorCC_counter(1);
+        LeftShift_counter(1, 3);
+        RightShift_counter(1, (64-3));
+        XorCC_counter(1);
+
+        Eme ^= De;
+        BCo = ROL(Eme, 45);
+        XorCC_counter(1);
+        LeftShift_counter(1, 45);
+        RightShift_counter(1, (64-45));
+        XorCC_counter(1);
+
+        Esi ^= Di;
+        BCu = ROL(Esi, 61);
+        XorCC_counter(1);
+        LeftShift_counter(1, 61);
+        RightShift_counter(1, (64-61));
+        XorCC_counter(1);
+
+        Aga = BCa ^ ((~BCe) & BCi);
+        Age = BCe ^ ((~BCi) & BCo);
+        Agi = BCi ^ ((~BCo) & BCu);
+        Ago = BCo ^ ((~BCu) & BCa);
+        Agu = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(5);
+        AndCC_counter(5);
+
+        Ebe ^= De;
+        BCa = ROL(Ebe, 1);
+        XorCC_counter(1);
+        LeftShift_counter(1, 1);
+        RightShift_counter(1, (64-1));
+        XorCC_counter(1);
+
+        Egi ^= Di;
+        BCe = ROL(Egi, 6);
+        XorCC_counter(1);
+        LeftShift_counter(1, 6);
+        RightShift_counter(1, (64-6));
+        XorCC_counter(1);
+
+        Eko ^= Do;
+        BCi = ROL(Eko, 25);
+        XorCC_counter(1);
+        LeftShift_counter(1, 25);
+        RightShift_counter(1, (64-25));
+        XorCC_counter(1);
+
+        Emu ^= Du;
+        BCo = ROL(Emu, 8);
+        XorCC_counter(1);
+        LeftShift_counter(1, 8);
+        RightShift_counter(1, (64-8));
+        XorCC_counter(1);
+
+        Esa ^= Da;
+        BCu = ROL(Esa, 18);
+        XorCC_counter(1);
+        LeftShift_counter(1, 18);
+        RightShift_counter(1, (64-18));
+        XorCC_counter(1);
+
+        Aka = BCa ^ ((~BCe) & BCi);
+        Ake = BCe ^ ((~BCi) & BCo);
+        Aki = BCi ^ ((~BCo) & BCu);
+        Ako = BCo ^ ((~BCu) & BCa);
+        Aku = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(5);
+        AndCC_counter(5);
+
+
+        Ebu ^= Du;
+        BCa = ROL(Ebu, 27);
+        Ega ^= Da;
+        BCe = ROL(Ega, 36);
+        Eke ^= De;
+        BCi = ROL(Eke, 10);
+        Emi ^= Di;
+        BCo = ROL(Emi, 15);
+        Eso ^= Do;
+        BCu = ROL(Eso, 56);
+        XorCC_counter(1);
+        LeftShift_counter(1, 27);
+        RightShift_counter(1, (64-27));
+        XorCC_counter(1);
+
+        XorCC_counter(1);
+        LeftShift_counter(1, 36);
+        RightShift_counter(1, (64-36));
+        XorCC_counter(1);
+
+        XorCC_counter(1);
+        LeftShift_counter(1, 10);
+        RightShift_counter(1, (64-10));
+        XorCC_counter(1);
+
+        XorCC_counter(1);
+        LeftShift_counter(1, 15);
+        RightShift_counter(1, (64-15));
+        XorCC_counter(1);
+
+        XorCC_counter(1);
+        LeftShift_counter(1, 56);
+        RightShift_counter(1, (64-56));
+        XorCC_counter(1);
+
+        Ama = BCa ^ ((~BCe) & BCi);
+        Ame = BCe ^ ((~BCi) & BCo);
+        Ami = BCi ^ ((~BCo) & BCu);
+        Amo = BCo ^ ((~BCu) & BCa);
+        Amu = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(5);
+        AndCC_counter(5);
+
+
+        Ebi ^= Di;
+        BCa = ROL(Ebi, 62);
+        Ego ^= Do;
+        BCe = ROL(Ego, 55);
+        Eku ^= Du;
+        BCi = ROL(Eku, 39);
+        Ema ^= Da;
+        BCo = ROL(Ema, 41);
+        Ese ^= De;
+        BCu = ROL(Ese, 2);
+        XorCC_counter(1);
+        LeftShift_counter(1, 62);
+        RightShift_counter(1, (64-62));
+        XorCC_counter(1);
+
+        XorCC_counter(1);
+        LeftShift_counter(1, 55);
+        RightShift_counter(1, (64-55));
+        XorCC_counter(1);
+
+        XorCC_counter(1);
+        LeftShift_counter(1, 39);
+        RightShift_counter(1, (64-39));
+        XorCC_counter(1);
+
+        XorCC_counter(1);
+        LeftShift_counter(1, 41);
+        RightShift_counter(1, (64-41));
+        XorCC_counter(1);
+
+        XorCC_counter(1);
+        LeftShift_counter(1, 2);
+        RightShift_counter(1, (64-2));
+        XorCC_counter(1);
+
+        Asa = BCa ^ ((~BCe) & BCi);
+        Ase = BCe ^ ((~BCi) & BCo);
+        Asi = BCi ^ ((~BCo) & BCu);
+        Aso = BCo ^ ((~BCu) & BCa);
+        Asu = BCu ^ ((~BCa) & BCe);
+        XorCC_counter(5);
+        NotCC_counter(5);
+        AndCC_counter(5);
+    }
+
+    // copyToState(state, A)
+    state[0] = Aba;
+    state[1] = Abe;
+    state[2] = Abi;
+    state[3] = Abo;
+    state[4] = Abu;
+    state[5] = Aga;
+    state[6] = Age;
+    state[7] = Agi;
+    state[8] = Ago;
+    state[9] = Agu;
+    state[10] = Aka;
+    state[11] = Ake;
+    state[12] = Aki;
+    state[13] = Ako;
+    state[14] = Aku;
+    state[15] = Ama;
+    state[16] = Ame;
+    state[17] = Ami;
+    state[18] = Amo;
+    state[19] = Amu;
+    state[20] = Asa;
+    state[21] = Ase;
+    state[22] = Asi;
+    state[23] = Aso;
+    state[24] = Asu;
 }
 
 /*************************************************

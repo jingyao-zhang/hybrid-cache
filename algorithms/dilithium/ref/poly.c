@@ -23,12 +23,24 @@ extern int LeftShiftInst;
 extern int RightShiftInst;
 extern int LeftShift;
 extern int RightShift;
+extern int ActCC;
 extern int OrCC;
 extern int AndCC;
 extern int XorCC;
 extern int NotCC;
 extern int CoreCycle;
 extern int EBCC;
+extern int CoreCycle;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
+extern void EBCC_counter(int);
 
 #define BitW 32
 
@@ -83,10 +95,9 @@ void poly_add(poly *c, const poly *a, const poly *b)  {
 
   for(i = 0; i < N; ++i)
     c->coeffs[i] = a->coeffs[i] + b->coeffs[i];
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
 
   DBENCH_STOP(*tadd);
 }
@@ -109,16 +120,14 @@ void poly_sub(poly *c, const poly *a, const poly *b) {
   for(i = 0; i < N; ++i)
     c->coeffs[i] = a->coeffs[i] - b->coeffs[i];
     // - b->coeffs[i];
-    NotCC += 1;
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    NotCC_counter(1);
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     // +
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
 
   DBENCH_STOP(*tadd);
 }
@@ -137,8 +146,7 @@ void poly_shiftl(poly *a) {
 
   for(i = 0; i < N; ++i){
     a->coeffs[i] <<= D;
-    LeftShiftInst += 1;
-    LeftShift += D;
+    LeftShift_counter(1, D);
   }
 
   DBENCH_STOP(*tmul);
@@ -193,62 +201,51 @@ void poly_pointwise_montgomery(poly *c, const poly *a, const poly *b) {
   DBENCH_START();
 
   for(i = 0; i < N; ++i){
-    // check MSB, and then AND Q with all 1s or 0s to get q
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (Q or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
-    // convert one multiplier to montgomery domain. data from bit-parallel_mont_mult/dilithium_mont_mult_R.cpp
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
+    // convert one multiplier to montgomery domain. data from kernels/NTT/Montgomery_Mul_Dilithium_Fixed_R
     ReadCC += 32;
-    WriteCC += 32;
-    LeftShiftInst += 42;
-    LeftShift += 42;
+    WriteCC += 523;
+    LeftShiftInst += 44;
     RightShiftInst += 32;
-    RightShift += 32;
-    OrCC += 43;
-    AndCC += 181;
-    XorCC += 149;
+    ActCC += 383;
+    OrCC += 45;
+    AndCC += 185;
+    XorCC += 153;
     NotCC += 0;
     EBCC += 32;
+
     c->coeffs[i] = montgomery_reduce((int64_t)a->coeffs[i] * b->coeffs[i]);
-    // montgomery multiplication data from bit-parallel_mont_mult/dilithium_mont_mult.cpp
+    // montgomery multiplication data from kernels/NTT/Montgomery_Mul_Dilithium_General
     ReadCC += 64;
-    WriteCC += 64;
+    WriteCC += 733;
     LeftShiftInst += 63;
-    LeftShift += 63;
     RightShiftInst += 32;
-    RightShift += 32;
+    ActCC += 510;
     OrCC += 64;
     AndCC += 255;
     XorCC += 191;
     NotCC += 0;
     EBCC += 64;
     // subtract Q/2 from B （B + (- Q/2)）to get b
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
-    // subtract Q/2 from B （B + (- Q/2)）to get b
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
+    // add B with q (-Q/2 or 0)
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
   }
 
 
@@ -612,9 +609,15 @@ void poly_challenge(poly *c, const uint8_t seed[SEEDBYTES]) {
   for(i = 0; i < 8; ++i)
     signs |= (uint64_t)buf[i] << 8*i;
   pos = 8;
-  LeftShiftInst += 8;
-  LeftShift += 8 + 16 + 24 + 32 + 40 + 48 + 56 + 64;
-  OrCC += 8;
+  LeftShift_counter(1, 8);
+  LeftShift_counter(1, 16);
+  LeftShift_counter(1, 24);
+  LeftShift_counter(1, 32);
+  LeftShift_counter(1, 40);
+  LeftShift_counter(1, 48);
+  LeftShift_counter(1, 56);
+  LeftShift_counter(1, 64);
+  OrCC_counter(8);
 
   for(i = 0; i < N; ++i)
     c->coeffs[i] = 0;
@@ -631,11 +634,9 @@ void poly_challenge(poly *c, const uint8_t seed[SEEDBYTES]) {
     c->coeffs[i] = c->coeffs[b];
     c->coeffs[b] = 1 - 2*(signs & 1);
     signs >>= 1;
-    AndCC += 1;
-    LeftShiftInst += 1;
-    LeftShift += 1;
-    RightShiftInst += 1;
-    RightShift += 1;
+    AndCC_counter(1);
+    LeftShift_counter(1, 1);
+    RightShift_counter(1, 1);
   }
 }
 
@@ -664,46 +665,47 @@ void polyeta_pack(uint8_t *r, const poly *a) {
     t[6] = ETA - a->coeffs[8*i+6];
     t[7] = ETA - a->coeffs[8*i+7];
     // -a->coeffs[8*i+0]
-    NotCC += 1 * 8;
-    AndCC += 2 * 8;
-    XorCC += 2 * 8;
-    LeftShiftInst += 1 * 8;
-    LeftShift += 1 * 8;
+    NotCC_counter(8);
+    AndCC_counter(2*8);
+    XorCC_counter(2*8);
+    LeftShift_counter(8, 1);
     // ETA + (-a->coeffs[8*i+0])
-    AndCC += 2 * 8;
-    XorCC += 2 * 8;
-    LeftShiftInst += 1 * 8;
-    LeftShift += 1 * 8;
+    AndCC_counter(2*8);
+    XorCC_counter(2*8);
+    LeftShift_counter(8, 1);
 
     r[3*i+0]  = (t[0] >> 0) | (t[1] << 3) | (t[2] << 6);
     r[3*i+1]  = (t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7);
     r[3*i+2]  = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
-    RightShiftInst += 2;
-    RightShift += 2 + 1;
-    LeftShiftInst += 7;
-    LeftShift += 3 + 6 + 1 + 4 + 7 + 2 + 5;
-    OrCC += 7;
+    RightShift_counter(1, 2);
+    RightShift_counter(1, 1);
+    LeftShift_counter(1, 3);
+    LeftShift_counter(1, 6);
+    LeftShift_counter(1, 1);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 7);
+    LeftShift_counter(1, 2);
+    RightShift_counter(1, 5);
+    OrCC_counter(7);
   }
 #elif ETA == 4
   for(i = 0; i < N/2; ++i) {
     t[0] = ETA - a->coeffs[2*i+0];
     t[1] = ETA - a->coeffs[2*i+1];
     // -a->coeffs[8*i+0]
-    NotCC += 1 * 2;
-    AndCC += 2 * 2;
-    XorCC += 2 * 2;
-    LeftShiftInst += 1 * 2;
-    LeftShift += 1 * 2;
+    NotCC_counter(1*2);
+    AndCC_counter(2*2);
+    XorCC_counter(2*2);
+    LeftShift_counter(2, 1);
     // ETA + (-a->coeffs[8*i+0])
-    AndCC += 3 * 2;
-    XorCC += 3 * 2;
-    LeftShiftInst += 2 * 2;
-    LeftShift += 2 * 2;
+    AndCC_counter(3*2);
+    XorCC_counter(3*2);
+    LeftShift_counter(2, 1);
+    LeftShift_counter(2, 1);
 
     r[i] = t[0] | (t[1] << 4);
-    LeftShiftInst += 1;
-    LeftShift += 4;
-    OrCC += 1;
+    LeftShift_counter(1, 4);
+    OrCC_counter(1);
   }
 #endif
 
@@ -732,12 +734,17 @@ void polyeta_unpack(poly *r, const uint8_t *a) {
     r->coeffs[8*i+5] = ((a[3*i+1] >> 7) | (a[3*i+2] << 1)) & 7;
     r->coeffs[8*i+6] =  (a[3*i+2] >> 2) & 7;
     r->coeffs[8*i+7] =  (a[3*i+2] >> 5) & 7;
-    RightShiftInst += 7;
-    RightShift += 3 + 6 + 1 + 4 + 7 + 2 + 5;
-    AndCC += 8;
-    OrCC += 2;
-    LeftShiftInst += 2;
-    LeftShift += 2 + 1;
+    RightShift_counter(1, 3);
+    RightShift_counter(1, 6);
+    RightShift_counter(1, 1);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 7);
+    RightShift_counter(1, 2);
+    RightShift_counter(1, 5);
+    AndCC_counter(8);
+    OrCC_counter(2);
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 1);
 
     r->coeffs[8*i+0] = ETA - r->coeffs[8*i+0];
     r->coeffs[8*i+1] = ETA - r->coeffs[8*i+1];
@@ -748,38 +755,34 @@ void polyeta_unpack(poly *r, const uint8_t *a) {
     r->coeffs[8*i+6] = ETA - r->coeffs[8*i+6];
     r->coeffs[8*i+7] = ETA - r->coeffs[8*i+7];
     // -a->coeffs[8*i+0]
-    NotCC += 1 * 8;
-    AndCC += 2 * 8;
-    XorCC += 2 * 8;
-    LeftShiftInst += 1 * 8;
-    LeftShift += 1 * 8;
+    NotCC_counter(8);
+    AndCC_counter(2*8);
+    XorCC_counter(2*8);
+    LeftShift_counter(8, 1);
     // ETA + (-a->coeffs[8*i+0])
-    AndCC += 2 * 8;
-    XorCC += 2 * 8;
-    LeftShiftInst += 1 * 8;
-    LeftShift += 1 * 8;
+    AndCC_counter(2*8);
+    XorCC_counter(2*8);
+    LeftShift_counter(8, 1);
   }
 #elif ETA == 4
   for(i = 0; i < N/2; ++i) {
     r->coeffs[2*i+0] = a[i] & 0x0F;
     r->coeffs[2*i+1] = a[i] >> 4;
-    RightShiftInst += 1;
-    RightShift += 4;
-    AndCC += 1;
+    RightShift_counter(1, 4);
+    AndCC_counter(1);
 
     r->coeffs[2*i+0] = ETA - r->coeffs[2*i+0];
     r->coeffs[2*i+1] = ETA - r->coeffs[2*i+1];
     // -a->coeffs[8*i+0]
-    NotCC += 1 * 2;
-    AndCC += 2 * 2;
-    XorCC += 2 * 2;
-    LeftShiftInst += 1 * 2;
-    LeftShift += 1 * 2;
+    NotCC_counter(1*2);
+    AndCC_counter(2*2);
+    XorCC_counter(2*2);
+    LeftShift_counter(2, 1);
     // ETA + (-a->coeffs[8*i+0])
-    AndCC += 3 * 2;
-    XorCC += 3 * 2;
-    LeftShiftInst += 2 * 2;
-    LeftShift += 2 * 2;
+    AndCC_counter(3*2);
+    XorCC_counter(3*2);
+    LeftShift_counter(2, 1);
+    LeftShift_counter(2, 1);
   }
 #endif
 
@@ -806,11 +809,14 @@ void polyt1_pack(uint8_t *r, const poly *a) {
     r[5*i+2] = (a->coeffs[4*i+1] >> 6) | (a->coeffs[4*i+2] << 4);
     r[5*i+3] = (a->coeffs[4*i+2] >> 4) | (a->coeffs[4*i+3] << 6);
     r[5*i+4] = (a->coeffs[4*i+3] >> 2);
-    RightShiftInst += 4;
-    RightShift += 8 + 4 + 6 + 2;
-    LeftShiftInst += 3;
-    LeftShift += 2 + 4 + 6;
-    OrCC += 3;
+    RightShift_counter(1, 8);
+    RightShift_counter(1, 6);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 2);
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 6);
+    OrCC_counter(3);
   }
 
   DBENCH_STOP(*tpack);
@@ -834,12 +840,15 @@ void polyt1_unpack(poly *r, const uint8_t *a) {
     r->coeffs[4*i+1] = ((a[5*i+1] >> 2) | ((uint32_t)a[5*i+2] << 6)) & 0x3FF;
     r->coeffs[4*i+2] = ((a[5*i+2] >> 4) | ((uint32_t)a[5*i+3] << 4)) & 0x3FF;
     r->coeffs[4*i+3] = ((a[5*i+3] >> 6) | ((uint32_t)a[5*i+4] << 2)) & 0x3FF;
-    RightShiftInst += 3;
-    RightShift += 2 + 4 + 6;
-    LeftShiftInst += 4;
-    LeftShift += 8 + 2 + 4 + 6;
-    OrCC += 4;
-    AndCC += 4;
+    RightShift_counter(1, 2);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 6);
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 6);
+    LeftShift_counter(1, 8);
+    OrCC_counter(4);
+    AndCC_counter(4);
   }
 
   DBENCH_STOP(*tpack);
@@ -869,16 +878,14 @@ void polyt0_pack(uint8_t *r, const poly *a) {
     t[6] = (1 << (D-1)) - a->coeffs[8*i+6];
     t[7] = (1 << (D-1)) - a->coeffs[8*i+7];
     // -
-    NotCC += 1 * 8;
-    AndCC += 1* 8;
-    XorCC += BitW * 8;
-    LeftShiftInst += (BitW - 1) * 8;
-    LeftShift += (BitW - 1) * 8;
+    NotCC_counter(1*8);
+    AndCC_counter(1*8);
+    XorCC_counter(BitW*8);
+    LeftShift_counter((BitW-1)*8, 1);
     // 1 << (D - 1) + (- a->coeffs[8 * i + 0])
-    AndCC += (BitW - D) * 8;
-    XorCC += (BitW - D) * 8;
-    LeftShiftInst += (BitW - D - 1) * 8;
-    LeftShift += (BitW - D - 1) * 8;
+    AndCC_counter((BitW-D)*8);
+    XorCC_counter((BitW-D)*8);
+    LeftShift_counter((BitW-D-1)*8, 1);
 
     r[13*i+ 0]  =  t[0];
     r[13*i+ 1]  =  t[0] >>  8;
@@ -900,10 +907,25 @@ void polyt0_pack(uint8_t *r, const poly *a) {
     r[13*i+11]  =  t[6] >> 10;
     r[13*i+11] |=  t[7] <<  3;
     r[13*i+12]  =  t[7] >>  5;
-    RightShiftInst += 12;
-    RightShift += 8 + 3 + 11 + 6 + 1 + 9 + 4 + 12 + 7 + 2 + 10 + 5;
-    LeftShiftInst += 7;
-    LeftShift += 5 + 2 + 7 + 4 + 1 + 6 + 3;
+    RightShift_counter(1, 8);
+    RightShift_counter(1, 3);
+    RightShift_counter(1, 11);
+    RightShift_counter(1, 6);
+    RightShift_counter(1, 1);
+    RightShift_counter(1, 9);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 12);
+    RightShift_counter(1, 7);
+    RightShift_counter(1, 2);
+    RightShift_counter(1, 10);
+    RightShift_counter(1, 5);
+    LeftShift_counter(1, 5);
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 7);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 1);
+    LeftShift_counter(1, 6);
+    LeftShift_counter(1, 3);
   }
 
   DBENCH_STOP(*tpack);
@@ -925,84 +947,74 @@ void polyt0_unpack(poly *r, const uint8_t *a) {
     r->coeffs[8*i+0]  = a[13*i+0];
     r->coeffs[8*i+0] |= (uint32_t)a[13*i+1] << 8;
     r->coeffs[8*i+0] &= 0x1FFF;
-    LeftShiftInst += 1;
-    LeftShift += 8;
-    OrCC += 1;
-    AndCC += 1;
+    LeftShift_counter(1, 8);
+    OrCC_counter(1);
+    AndCC_counter(1);
 
     r->coeffs[8*i+1]  = a[13*i+1] >> 5;
     r->coeffs[8*i+1] |= (uint32_t)a[13*i+2] << 3;
     r->coeffs[8*i+1] |= (uint32_t)a[13*i+3] << 11;
     r->coeffs[8*i+1] &= 0x1FFF;
-    LeftShiftInst += 2;
-    LeftShift += 3 + 8;
-    RightShiftInst += 1;
-    RightShift += 5;
-    OrCC += 2;
-    AndCC += 1;
+    LeftShift_counter(1, 3);
+    LeftShift_counter(1, 8);
+    RightShift_counter(1, 5);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[8*i+2]  = a[13*i+3] >> 2;
     r->coeffs[8*i+2] |= (uint32_t)a[13*i+4] << 6;
     r->coeffs[8*i+2] &= 0x1FFF;
-    LeftShiftInst += 1;
-    LeftShift += 6;
-    RightShiftInst += 1;
-    RightShift += 2;
-    OrCC += 1;
-    AndCC += 1;
+    LeftShift_counter(1, 6);
+    RightShift_counter(1, 2);
+    OrCC_counter(1);
+    AndCC_counter(1);
+
 
     r->coeffs[8*i+3]  = a[13*i+4] >> 7;
     r->coeffs[8*i+3] |= (uint32_t)a[13*i+5] << 1;
     r->coeffs[8*i+3] |= (uint32_t)a[13*i+6] << 9;
     r->coeffs[8*i+3] &= 0x1FFF;
-    LeftShiftInst += 2;
-    LeftShift += 1 + 9;
-    RightShiftInst += 1;
-    RightShift += 7;
-    OrCC += 2;
-    AndCC += 1;
+    LeftShift_counter(1, 1);
+    LeftShift_counter(1, 9);
+    RightShift_counter(1, 7);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[8*i+4]  = a[13*i+6] >> 4;
     r->coeffs[8*i+4] |= (uint32_t)a[13*i+7] << 4;
     r->coeffs[8*i+4] |= (uint32_t)a[13*i+8] << 12;
     r->coeffs[8*i+4] &= 0x1FFF;
-    LeftShiftInst += 2;
-    LeftShift += 4 + 12;
-    RightShiftInst += 1;
-    RightShift += 4;
-    OrCC += 2;
-    AndCC += 1;
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 12);
+    RightShift_counter(1, 4);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[8*i+5]  = a[13*i+8] >> 1;
     r->coeffs[8*i+5] |= (uint32_t)a[13*i+9] << 7;
     r->coeffs[8*i+5] &= 0x1FFF;
-    LeftShiftInst += 1;
-    LeftShift += 7;
-    RightShiftInst += 1;
-    RightShift += 1;
-    OrCC += 1;
-    AndCC += 1;
+    LeftShift_counter(1, 7);
+    RightShift_counter(1, 1);
+    OrCC_counter(1);
+    AndCC_counter(1);
 
     r->coeffs[8*i+6]  = a[13*i+9] >> 6;
     r->coeffs[8*i+6] |= (uint32_t)a[13*i+10] << 2;
     r->coeffs[8*i+6] |= (uint32_t)a[13*i+11] << 10;
     r->coeffs[8*i+6] &= 0x1FFF;
-    LeftShiftInst += 2;
-    LeftShift += 2 + 10;
-    RightShiftInst += 1;
-    RightShift += 6;
-    OrCC += 2;
-    AndCC += 1;
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 10);
+    RightShift_counter(1, 6);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[8*i+7]  = a[13*i+11] >> 3;
     r->coeffs[8*i+7] |= (uint32_t)a[13*i+12] << 5;
     r->coeffs[8*i+7] &= 0x1FFF;
-    LeftShiftInst += 1;
-    LeftShift += 5;
-    RightShiftInst += 1;
-    RightShift += 3;
-    OrCC += 1;
-    AndCC += 1;
+    LeftShift_counter(1, 5);
+    RightShift_counter(1, 3);
+    OrCC_counter(1);
+    AndCC_counter(1);
 
     r->coeffs[8*i+0] = (1 << (D-1)) - r->coeffs[8*i+0];
     r->coeffs[8*i+1] = (1 << (D-1)) - r->coeffs[8*i+1];
@@ -1013,16 +1025,14 @@ void polyt0_unpack(poly *r, const uint8_t *a) {
     r->coeffs[8*i+6] = (1 << (D-1)) - r->coeffs[8*i+6];
     r->coeffs[8*i+7] = (1 << (D-1)) - r->coeffs[8*i+7];
     // -
-    NotCC += 1 * 8;
-    AndCC += BitW * 8;
-    XorCC += BitW * 8;
-    LeftShiftInst += (BitW - 1) * 8;
-    LeftShift += (BitW - 1) * 8;
+    NotCC_counter(1*8);
+    AndCC_counter(BitW*8);
+    XorCC_counter(BitW*8);
+    LeftShift_counter((BitW-1)*8, 1);
     // 1 << (D - 1) + (- a->coeffs[8 * i + 0])
-    AndCC += (BitW - D) * 8;
-    XorCC += (BitW - D) * 8;
-    LeftShiftInst += (BitW - D - 1) * 8;
-    LeftShift += (BitW - D - 1) * 8;
+    AndCC_counter((BitW-D)*8);
+    XorCC_counter((BitW-D)*8);
+    LeftShift_counter((BitW-D-1)*8, 1);
   }
 
   DBENCH_STOP(*tpack);
@@ -1050,16 +1060,14 @@ void polyz_pack(uint8_t *r, const poly *a) {
     t[2] = GAMMA1 - a->coeffs[4*i+2];
     t[3] = GAMMA1 - a->coeffs[4*i+3];
     // -r->coeffs[4 * i + 0]
-    NotCC += 1 * 4;
-    AndCC += 17 * 4;
-    XorCC += 17 * 4;
-    LeftShiftInst += 16 * 4;
-    LeftShift += 16 * 4;
+    NotCC_counter(1*4);
+    AndCC_counter(17*4);
+    XorCC_counter(17*4);
+    LeftShift_counter(16*4, 1);
     // GAMMA1 + (-r->coeffs[4 * i + 0])
-    AndCC += 17 * 4;
-    XorCC += 17 * 4;
-    LeftShiftInst += 16 * 4;
-    LeftShift += 16 * 4;
+    AndCC_counter(17*4);
+    XorCC_counter(17*4);
+    LeftShift_counter(16*4, 1);
 
     r[9*i+0]  = t[0];
     r[9*i+1]  = t[0] >> 8;
@@ -1073,27 +1081,33 @@ void polyz_pack(uint8_t *r, const poly *a) {
     r[9*i+6] |= t[3] << 6;
     r[9*i+7]  = t[3] >> 2;
     r[9*i+8]  = t[3] >> 10;
-    RightShiftInst += 7;
-    RightShift += 8 + 16 + 6 + 14 + 4 + 12 + 2 + 10;
-    LeftShiftInst += 3;
-    LeftShift += 2 + 4 + 6;
-    OrCC += 3;
+    RightShift_counter(1, 8);
+    RightShift_counter(1, 16);
+    RightShift_counter(1, 6);
+    RightShift_counter(1, 14);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 12);
+    RightShift_counter(1, 2);
+    RightShift_counter(1, 10);
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 6);
+    OrCC_counter(3);
   }
 #elif GAMMA1 == (1 << 19)
   for(i = 0; i < N/2; ++i) {
     t[0] = GAMMA1 - a->coeffs[2*i+0];
     t[1] = GAMMA1 - a->coeffs[2*i+1];
     // -r->coeffs[4 * i + 0]
-    NotCC += 1 * 2;
-    AndCC += 19 * 2;
-    XorCC += 19 * 2;
-    LeftShiftInst += 18 * 2;
-    LeftShift += 18 * 2;
+    NotCC_counter(1*2);
+    AndCC_counter(19*2);
+    XorCC_counter(19*2);
+    LeftShift_counter(18*2, 1);
     // GAMMA1 + (-r->coeffs[2 * i + 0])
-    AndCC += 19 * 2;
-    XorCC += 19 * 2;
-    LeftShiftInst += 18 * 2;
-    LeftShift += 18 * 2;
+    AndCC_counter(19*2);
+    XorCC_counter(19*2);
+    LeftShift_counter(18*2, 1);
+
 
     r[5*i+0]  = t[0];
     r[5*i+1]  = t[0] >> 8;
@@ -1101,11 +1115,12 @@ void polyz_pack(uint8_t *r, const poly *a) {
     r[5*i+2] |= t[1] << 4;
     r[5*i+3]  = t[1] >> 4;
     r[5*i+4]  = t[1] >> 12;
-    RightShiftInst += 4;
-    RightShift += 8 + 16 + 4 + 12;
-    LeftShiftInst += 1;
-    LeftShift += 4;
-    OrCC += 1;
+    RightShift_counter(1, 8);
+    RightShift_counter(1, 16);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 12);
+    LeftShift_counter(1, 4);
+    OrCC_counter(1);
   }
 #endif
 
@@ -1131,59 +1146,54 @@ void polyz_unpack(poly *r, const uint8_t *a) {
     r->coeffs[4*i+0] |= (uint32_t)a[9*i+1] << 8;
     r->coeffs[4*i+0] |= (uint32_t)a[9*i+2] << 16;
     r->coeffs[4*i+0] &= 0x3FFFF;
-    LeftShiftInst += 2;
-    LeftShift += 8 + 16;
-    OrCC += 2;
-    AndCC += 1;
+    LeftShift_counter(1, 8);
+    LeftShift_counter(1, 16);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[4*i+1]  = a[9*i+2] >> 2;
     r->coeffs[4*i+1] |= (uint32_t)a[9*i+3] << 6;
     r->coeffs[4*i+1] |= (uint32_t)a[9*i+4] << 14;
     r->coeffs[4*i+1] &= 0x3FFFF;
-    RightShiftInst += 1;
-    RightShift += 2;
-    LeftShiftInst += 2;
-    LeftShift += 6 + 14;
-    OrCC += 2;
-    AndCC += 1;
+    RightShift_counter(1, 2);
+    LeftShift_counter(1, 6);
+    LeftShift_counter(1, 14);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[4*i+2]  = a[9*i+4] >> 4;
     r->coeffs[4*i+2] |= (uint32_t)a[9*i+5] << 4;
     r->coeffs[4*i+2] |= (uint32_t)a[9*i+6] << 12;
     r->coeffs[4*i+2] &= 0x3FFFF;
-    RightShiftInst += 1;
-    RightShift += 4;
-    LeftShiftInst += 2;
-    LeftShift += 4 + 12;
-    OrCC += 2;
-    AndCC += 1;
+    RightShift_counter(1, 4);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 12);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[4*i+3]  = a[9*i+6] >> 6;
     r->coeffs[4*i+3] |= (uint32_t)a[9*i+7] << 2;
     r->coeffs[4*i+3] |= (uint32_t)a[9*i+8] << 10;
     r->coeffs[4*i+3] &= 0x3FFFF;
-    RightShiftInst += 1;
-    RightShift += 6;
-    LeftShiftInst += 2;
-    LeftShift += 2 + 10;
-    OrCC += 2;
-    AndCC += 1;
+    RightShift_counter(1, 6);
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 10);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[4*i+0] = GAMMA1 - r->coeffs[4*i+0];
     r->coeffs[4*i+1] = GAMMA1 - r->coeffs[4*i+1];
     r->coeffs[4*i+2] = GAMMA1 - r->coeffs[4*i+2];
     r->coeffs[4*i+3] = GAMMA1 - r->coeffs[4*i+3];
     // -r->coeffs[4 * i + 0]
-    NotCC += 1 * 4;
-    AndCC += 17 * 4;
-    XorCC += 17 * 4;
-    LeftShiftInst += 16 * 4;
-    LeftShift += 16 * 4;
+    NotCC_counter(1*4);
+    AndCC_counter(17*4);
+    XorCC_counter(17*4);
+    LeftShift_counter(16*4, 1);
     // GAMMA1 + (-r->coeffs[4 * i + 0])
-    AndCC += 17 * 4;
-    XorCC += 17 * 4;
-    LeftShiftInst += 16 * 4;
-    LeftShift += 16 * 4;
+    AndCC_counter(17*4);
+    XorCC_counter(17*4);
+    LeftShift_counter(16*4, 1);
   }
 #elif GAMMA1 == (1 << 19)
   for(i = 0; i < N/2; ++i) {
@@ -1191,35 +1201,32 @@ void polyz_unpack(poly *r, const uint8_t *a) {
     r->coeffs[2*i+0] |= (uint32_t)a[5*i+1] << 8;
     r->coeffs[2*i+0] |= (uint32_t)a[5*i+2] << 16;
     r->coeffs[2*i+0] &= 0xFFFFF;
-    LeftShiftInst += 2;
-    LeftShift += 8 + 16;
-    OrCC += 2;
-    AndCC += 1;
+    LeftShift_counter(1, 8);
+    LeftShift_counter(1, 16);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[2*i+1]  = a[5*i+2] >> 4;
     r->coeffs[2*i+1] |= (uint32_t)a[5*i+3] << 4;
     r->coeffs[2*i+1] |= (uint32_t)a[5*i+4] << 12;
     r->coeffs[2*i+0] &= 0xFFFFF;
-    RightShiftInst += 1;
-    RightShift += 4;
-    LeftShiftInst += 2;
-    LeftShift += 4 + 12;
-    OrCC += 2;
-    AndCC += 1;
+    RightShift_counter(1, 4);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 12);
+    OrCC_counter(2);
+    AndCC_counter(1);
 
     r->coeffs[2*i+0] = GAMMA1 - r->coeffs[2*i+0];
     r->coeffs[2*i+1] = GAMMA1 - r->coeffs[2*i+1];
     // -r->coeffs[2 * i + 0]
-    NotCC += 1 * 2;
-    AndCC += 19 * 2;
-    XorCC += 19 * 2;
-    LeftShiftInst += 18 * 2;
-    LeftShift += 18 * 2;
+    NotCC_counter(1*2);
+    AndCC_counter(19*2);
+    XorCC_counter(19*2);
+    LeftShift_counter(18*2, 1);
     // GAMMA1 + (-r->coeffs[2 * i + 0])
-    AndCC += 19 * 2;
-    XorCC += 19 * 2;
-    LeftShiftInst += 18 * 2;
-    LeftShift += 18 * 2;
+    AndCC_counter(19*2);
+    XorCC_counter(19*2);
+    LeftShift_counter(18*2, 1);
   }
 #endif
 
@@ -1248,18 +1255,18 @@ void polyw1_pack(uint8_t *r, const poly *a) {
     r[3*i+1] |= a->coeffs[4*i+2] << 4;
     r[3*i+2]  = a->coeffs[4*i+2] >> 4;
     r[3*i+2] |= a->coeffs[4*i+3] << 2;
-    RightShiftInst += 2;
-    RightShift += 2 + 4;
-    LeftShiftInst += 3;
-    LeftShift += 6 + 2 + 4;
-    OrCC += 3;
+    RightShift_counter(1, 2);
+    RightShift_counter(1, 4);
+    LeftShift_counter(1, 6);
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 4);
+    OrCC_counter(3);
   }
 #elif GAMMA2 == (Q-1)/32
   for(i = 0; i < N/2; ++i){
     r[i] = a->coeffs[2*i+0] | (a->coeffs[2*i+1] << 4);
-    LeftShiftInst += 1;
-    LeftShift += 4;
-    OrCC += 1;
+    LeftShift_counter(1, 4);
+    OrCC_counter(1);
   }
     
 #endif

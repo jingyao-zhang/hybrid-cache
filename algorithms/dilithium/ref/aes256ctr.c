@@ -26,15 +26,14 @@
 #include <string.h>
 #include "aes256ctr.h"
 
-extern int WriteCC;
-extern int LeftShiftInst;
-extern int RightShiftInst;
-extern int LeftShift;
-extern int RightShift;
-extern int OrCC;
-extern int AndCC;
-extern int XorCC;
-extern int NotCC;
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
 
 static inline uint32_t br_dec32le(const uint8_t *src)
 {
@@ -42,9 +41,10 @@ static inline uint32_t br_dec32le(const uint8_t *src)
 		| ((uint32_t)src[1] << 8)
 		| ((uint32_t)src[2] << 16)
 		| ((uint32_t)src[3] << 24);
-	LeftShiftInst += 3;
-	LeftShift += 8 + 16 + 24;
-	OrCC += 3;
+  LeftShift_counter(1, 8);
+  LeftShift_counter(1, 16);
+  LeftShift_counter(1, 24);
+  OrCC_counter(3);
 }
 
 static void br_range_dec32le(uint32_t *v, size_t num, const uint8_t *src)
@@ -59,16 +59,13 @@ static inline uint32_t br_swap32(uint32_t x)
 {
 	x = ((x & (uint32_t)0x00FF00FF) << 8)
 		| ((x >> 8) & (uint32_t)0x00FF00FF);
-	LeftShiftInst += 1;
-	LeftShift += 8;
-	RightShiftInst += 1;
-	RightShift += 8;
-	AndCC += 2;
-	OrCC += 1;
-	LeftShiftInst += 1;
-	LeftShift += 16;
-	RightShiftInst += 1;
-	RightShift += 16;
+  LeftShift_counter(1, 8);
+  RightShift_counter(1, 8);
+  AndCC_counter(2);
+  OrCC_counter(1);
+  LeftShift_counter(1, 16);
+  RightShift_counter(1, 16);
+  OrCC_counter(1);
 	return (x << 16) | (x >> 16);
 }
 
@@ -78,8 +75,9 @@ static inline void br_enc32le(uint8_t *dst, uint32_t x)
 	dst[1] = (uint8_t)(x >> 8);
 	dst[2] = (uint8_t)(x >> 16);
 	dst[3] = (uint8_t)(x >> 24);
-	RightShiftInst += 3;
-	RightShift += 8 + 16 + 24;
+  RightShift_counter(1, 8);
+  RightShift_counter(1, 16);
+  RightShift_counter(1, 24);
 }
 
 static void br_range_enc32le(uint8_t *dst, const uint32_t *v, size_t num)
@@ -103,175 +101,178 @@ static void br_aes_ct64_bitslice_Sbox(uint64_t *q)
 	 */
 
 	uint64_t x0, x1, x2, x3, x4, x5, x6, x7;
-    uint64_t y1, y2, y3, y4, y5, y6, y7, y8, y9;
-    uint64_t y10, y11, y12, y13, y14, y15, y16, y17, y18, y19;
-    uint64_t y20, y21;
-    uint64_t z0, z1, z2, z3, z4, z5, z6, z7, z8, z9;
-    uint64_t z10, z11, z12, z13, z14, z15, z16, z17;
-    uint64_t t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
-    uint64_t t10, t11, t12, t13, t14, t15, t16, t17, t18, t19;
-    uint64_t t20, t21, t22, t23, t24, t25, t26, t27, t28, t29;
-    uint64_t t30, t31, t32, t33, t34, t35, t36, t37, t38, t39;
-    uint64_t t40, t41, t42, t43, t44, t45, t46, t47, t48, t49;
-    uint64_t t50, t51, t52, t53, t54, t55, t56, t57, t58, t59;
-    uint64_t t60, t61, t62, t63, t64, t65, t66, t67;
-    uint64_t s0, s1, s2, s3, s4, s5, s6, s7;
+  uint64_t y1, y2, y3, y4, y5, y6, y7, y8, y9;
+  uint64_t y10, y11, y12, y13, y14, y15, y16, y17, y18, y19;
+  uint64_t y20, y21;
+  uint64_t z0, z1, z2, z3, z4, z5, z6, z7, z8, z9;
+  uint64_t z10, z11, z12, z13, z14, z15, z16, z17;
+  uint64_t t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
+  uint64_t t10, t11, t12, t13, t14, t15, t16, t17, t18, t19;
+  uint64_t t20, t21, t22, t23, t24, t25, t26, t27, t28, t29;
+  uint64_t t30, t31, t32, t33, t34, t35, t36, t37, t38, t39;
+  uint64_t t40, t41, t42, t43, t44, t45, t46, t47, t48, t49;
+  uint64_t t50, t51, t52, t53, t54, t55, t56, t57, t58, t59;
+  uint64_t t60, t61, t62, t63, t64, t65, t66, t67;
+  uint64_t s0, s1, s2, s3, s4, s5, s6, s7;
 
-    x0 = q[7];
-    x1 = q[6];
-    x2 = q[5];
-    x3 = q[4];
-    x4 = q[3];
-    x5 = q[2];
-    x6 = q[1];
-    x7 = q[0];
+  x0 = q[7];
+  x1 = q[6];
+  x2 = q[5];
+  x3 = q[4];
+  x4 = q[3];
+  x5 = q[2];
+  x6 = q[1];
+  x7 = q[0];
 
-    /*
-     * Top linear transformation.
-     */
-    y14 = x3 ^ x5;
-    y13 = x0 ^ x6;
-    y9 = x0 ^ x3;
-    y8 = x0 ^ x5;
-    t0 = x1 ^ x2;
-    y1 = t0 ^ x7;
-    y4 = y1 ^ x3;
-    y12 = y13 ^ y14;
-    y2 = y1 ^ x0;
-    y5 = y1 ^ x6;
-    y3 = y5 ^ y8;
-    t1 = x4 ^ y12;
-    y15 = t1 ^ x5;
-    y20 = t1 ^ x1;
-    y6 = y15 ^ x7;
-    y10 = y15 ^ t0;
-    y11 = y20 ^ y9;
-    y7 = x7 ^ y11;
-    y17 = y10 ^ y11;
-    y19 = y10 ^ y8;
-    y16 = t0 ^ y11;
-    y21 = y13 ^ y16;
-    y18 = x0 ^ y16;
-    XorCC = XorCC + 23;
+  /*
+    * Top linear transformation.
+    */
+  y14 = x3 ^ x5;
+  y13 = x0 ^ x6;
+  y9 = x0 ^ x3;
+  y8 = x0 ^ x5;
+  t0 = x1 ^ x2;
+  y1 = t0 ^ x7;
+  y4 = y1 ^ x3;
+  y12 = y13 ^ y14;
+  y2 = y1 ^ x0;
+  y5 = y1 ^ x6;
+  y3 = y5 ^ y8;
+  t1 = x4 ^ y12;
+  y15 = t1 ^ x5;
+  y20 = t1 ^ x1;
+  y6 = y15 ^ x7;
+  y10 = y15 ^ t0;
+  y11 = y20 ^ y9;
+  y7 = x7 ^ y11;
+  y17 = y10 ^ y11;
+  y19 = y10 ^ y8;
+  y16 = t0 ^ y11;
+  y21 = y13 ^ y16;
+  y18 = x0 ^ y16;
+  XorCC_counter(23);
+  // XorCC = XorCC + 23;
 
-    /*
-     * Non-linear section.
-     */
-    t2 = y12 & y15;
-    t3 = y3 & y6;
-    t4 = t3 ^ t2;
-    t5 = y4 & x7;
-    t6 = t5 ^ t2;
-    t7 = y13 & y16;
-    t8 = y5 & y1;
-    t9 = t8 ^ t7;
-    t10 = y2 & y7;
-    t11 = t10 ^ t7;
-    t12 = y9 & y11;
-    t13 = y14 & y17;
-    t14 = t13 ^ t12;
-    t15 = y8 & y10;
-    t16 = t15 ^ t12;
-    t17 = t4 ^ t14;
-    t18 = t6 ^ t16;
-    t19 = t9 ^ t14;
-    t20 = t11 ^ t16;
-    t21 = t17 ^ y20;
-    t22 = t18 ^ y19;
-    t23 = t19 ^ y21;
-    t24 = t20 ^ y18;
-    AndCC = AndCC + 14;
-    XorCC = XorCC + 9;
+  /*
+    * Non-linear section.
+    */
+  t2 = y12 & y15;
+  t3 = y3 & y6;
+  t4 = t3 ^ t2;
+  t5 = y4 & x7;
+  t6 = t5 ^ t2;
+  t7 = y13 & y16;
+  t8 = y5 & y1;
+  t9 = t8 ^ t7;
+  t10 = y2 & y7;
+  t11 = t10 ^ t7;
+  t12 = y9 & y11;
+  t13 = y14 & y17;
+  t14 = t13 ^ t12;
+  t15 = y8 & y10;
+  t16 = t15 ^ t12;
+  t17 = t4 ^ t14;
+  t18 = t6 ^ t16;
+  t19 = t9 ^ t14;
+  t20 = t11 ^ t16;
+  t21 = t17 ^ y20;
+  t22 = t18 ^ y19;
+  t23 = t19 ^ y21;
+  t24 = t20 ^ y18;
+  AndCC_counter(14);
+  XorCC_counter(9);
+  // AndCC = AndCC + 14;
+  // XorCC = XorCC + 9;
 
-    t25 = t21 ^ t22;
-    t26 = t21 & t23;
-    t27 = t24 ^ t26;
-    t28 = t25 & t27;
-    t29 = t28 ^ t22;
-    t30 = t23 ^ t24;
-    t31 = t22 ^ t26;
-    t32 = t31 & t30;
-    t33 = t32 ^ t24;
-    t34 = t23 ^ t33;
-    t35 = t27 ^ t33;
-    t36 = t24 & t35;
-    t37 = t36 ^ t34;
-    t38 = t27 ^ t36;
-    t39 = t29 & t38;
-    t40 = t25 ^ t39;
-    AndCC = AndCC + 5;
-    XorCC = XorCC + 11;
+  t25 = t21 ^ t22;
+  t26 = t21 & t23;
+  t27 = t24 ^ t26;
+  t28 = t25 & t27;
+  t29 = t28 ^ t22;
+  t30 = t23 ^ t24;
+  t31 = t22 ^ t26;
+  t32 = t31 & t30;
+  t33 = t32 ^ t24;
+  t34 = t23 ^ t33;
+  t35 = t27 ^ t33;
+  t36 = t24 & t35;
+  t37 = t36 ^ t34;
+  t38 = t27 ^ t36;
+  t39 = t29 & t38;
+  t40 = t25 ^ t39;
+  AndCC_counter(5);
+  XorCC_counter(11);
 
-    t41 = t40 ^ t37;
-    t42 = t29 ^ t33;
-    t43 = t29 ^ t40;
-    t44 = t33 ^ t37;
-    t45 = t42 ^ t41;
-    z0 = t44 & y15;
-    z1 = t37 & y6;
-    z2 = t33 & x7;
-    z3 = t43 & y16;
-    z4 = t40 & y1;
-    z5 = t29 & y7;
-    z6 = t42 & y11;
-    z7 = t45 & y17;
-    z8 = t41 & y10;
-    z9 = t44 & y12;
-    z10 = t37 & y3;
-    z11 = t33 & y4;
-    z12 = t43 & y13;
-    z13 = t40 & y5;
-    z14 = t29 & y2;
-    z15 = t42 & y9;
-    z16 = t45 & y14;
-    z17 = t41 & y8;
-    AndCC = AndCC + 18;
-    XorCC = XorCC + 5;
+  t41 = t40 ^ t37;
+  t42 = t29 ^ t33;
+  t43 = t29 ^ t40;
+  t44 = t33 ^ t37;
+  t45 = t42 ^ t41;
+  z0 = t44 & y15;
+  z1 = t37 & y6;
+  z2 = t33 & x7;
+  z3 = t43 & y16;
+  z4 = t40 & y1;
+  z5 = t29 & y7;
+  z6 = t42 & y11;
+  z7 = t45 & y17;
+  z8 = t41 & y10;
+  z9 = t44 & y12;
+  z10 = t37 & y3;
+  z11 = t33 & y4;
+  z12 = t43 & y13;
+  z13 = t40 & y5;
+  z14 = t29 & y2;
+  z15 = t42 & y9;
+  z16 = t45 & y14;
+  z17 = t41 & y8;
+  AndCC_counter(18);
+  XorCC_counter(5);
 
-    /*
-     * Bottom linear transformation.
-     */
-    t46 = z15 ^ z16;
-    t47 = z10 ^ z11;
-    t48 = z5 ^ z13;
-    t49 = z9 ^ z10;
-    t50 = z2 ^ z12;
-    t51 = z2 ^ z5;
-    t52 = z7 ^ z8;
-    t53 = z0 ^ z3;
-    t54 = z6 ^ z7;
-    t55 = z16 ^ z17;
-    t56 = z12 ^ t48;
-    t57 = t50 ^ t53;
-    t58 = z4 ^ t46;
-    t59 = z3 ^ t54;
-    t60 = t46 ^ t57;
-    t61 = z14 ^ t57;
-    t62 = t52 ^ t58;
-    t63 = t49 ^ t58;
-    t64 = z4 ^ t59;
-    t65 = t61 ^ t62;
-    t66 = z1 ^ t63;
-    s0 = t59 ^ t63;
-    s6 = t56 ^ ~t62;
-    s7 = t48 ^ ~t60;
-    t67 = t64 ^ t65;
-    s3 = t53 ^ t66;
-    s4 = t51 ^ t66;
-    s5 = t47 ^ t65;
-    s1 = t64 ^ ~s3;
-    s2 = t55 ^ ~t67;
-    XorCC = XorCC + 30;
-    NotCC = NotCC + 4;
+  /*
+    * Bottom linear transformation.
+    */
+  t46 = z15 ^ z16;
+  t47 = z10 ^ z11;
+  t48 = z5 ^ z13;
+  t49 = z9 ^ z10;
+  t50 = z2 ^ z12;
+  t51 = z2 ^ z5;
+  t52 = z7 ^ z8;
+  t53 = z0 ^ z3;
+  t54 = z6 ^ z7;
+  t55 = z16 ^ z17;
+  t56 = z12 ^ t48;
+  t57 = t50 ^ t53;
+  t58 = z4 ^ t46;
+  t59 = z3 ^ t54;
+  t60 = t46 ^ t57;
+  t61 = z14 ^ t57;
+  t62 = t52 ^ t58;
+  t63 = t49 ^ t58;
+  t64 = z4 ^ t59;
+  t65 = t61 ^ t62;
+  t66 = z1 ^ t63;
+  s0 = t59 ^ t63;
+  s6 = t56 ^ ~t62;
+  s7 = t48 ^ ~t60;
+  t67 = t64 ^ t65;
+  s3 = t53 ^ t66;
+  s4 = t51 ^ t66;
+  s5 = t47 ^ t65;
+  s1 = t64 ^ ~s3;
+  s2 = t55 ^ ~t67;
+  XorCC_counter(30);
+  NotCC_counter(4);
 
-	q[7] = s0;
-	q[6] = s1;
-	q[5] = s2;
-	q[4] = s3;
-	q[3] = s4;
-	q[2] = s5;
-	q[1] = s6;
-	q[0] = s7;
+  q[7] = s0;
+  q[6] = s1;
+  q[5] = s2;
+  q[4] = s3;
+  q[3] = s4;
+  q[2] = s5;
+  q[1] = s6;
+  q[0] = s7;
 }
 
 static void br_aes_ct64_ortho(uint64_t *q)
@@ -292,34 +293,28 @@ static void br_aes_ct64_ortho(uint64_t *q)
 	SWAP2(q[2], q[3]);
 	SWAP2(q[4], q[5]);
 	SWAP2(q[6], q[7]);
-	AndCC = AndCC + 4 * 4;
-    LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 1 * 4;
-    OrCC = OrCC + 2 * 4;
-    RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 1 * 4;
+	AndCC_counter(4*4);
+  LeftShift_counter(4, 1);
+  OrCC_counter(2*4);
+  RightShift_counter(4, 1);
 
 	SWAP4(q[0], q[2]);
 	SWAP4(q[1], q[3]);
 	SWAP4(q[4], q[6]);
 	SWAP4(q[5], q[7]);
-	AndCC = AndCC + 4 * 4;
-    LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 2 * 4;
-    OrCC = OrCC + 2 * 4;
-    RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 2 * 4;
+	AndCC_counter(4*4);
+  LeftShift_counter(4, 2);
+  OrCC_counter(2*4);
+  RightShift_counter(4, 2);
 
 	SWAP8(q[0], q[4]);
 	SWAP8(q[1], q[5]);
 	SWAP8(q[2], q[6]);
 	SWAP8(q[3], q[7]);
-	AndCC = AndCC + 4 * 4;
-    LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 4 * 4;
-    OrCC = OrCC + 2 * 4;
-    RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 4 * 4;
+	AndCC_counter(4*4);
+  LeftShift_counter(4, 4);
+  OrCC_counter(2*4);
+  RightShift_counter(4, 4);
 }
 
 static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t *w)
@@ -335,35 +330,32 @@ static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t
     x1 |= (x1 << 16);
     x2 |= (x2 << 16);
     x3 |= (x3 << 16);
-    LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 16 * 4;
-    OrCC = OrCC + 4;
+    LeftShift_counter(4, 16);
+    OrCC_counter(4);
 
     x0 &= (uint64_t)0x0000FFFF0000FFFF;
     x1 &= (uint64_t)0x0000FFFF0000FFFF;
     x2 &= (uint64_t)0x0000FFFF0000FFFF;
     x3 &= (uint64_t)0x0000FFFF0000FFFF;
-    AndCC = AndCC + 4;
+    AndCC_counter(4);
 
     x0 |= (x0 << 8);
     x1 |= (x1 << 8);
     x2 |= (x2 << 8);
     x3 |= (x3 << 8);
-    LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 8 * 4;
-    OrCC = OrCC + 4;
+    LeftShift_counter(4, 8);
+    OrCC_counter(4);
 
     x0 &= (uint64_t)0x00FF00FF00FF00FF;
     x1 &= (uint64_t)0x00FF00FF00FF00FF;
     x2 &= (uint64_t)0x00FF00FF00FF00FF;
     x3 &= (uint64_t)0x00FF00FF00FF00FF;
-    AndCC = AndCC + 4;
+    AndCC_counter(4);
 
     *q0 = x0 | (x2 << 8);
     *q1 = x1 | (x3 << 8);
-    LeftShiftInst = LeftShiftInst + 2;
-    LeftShift = LeftShift + 8 * 2;
-    OrCC = OrCC + 2;
+    LeftShift_counter(2, 8);
+    OrCC_counter(2);
 }
 
 static void br_aes_ct64_interleave_out(uint32_t *w, uint64_t q0, uint64_t q1)
@@ -372,35 +364,32 @@ static void br_aes_ct64_interleave_out(uint32_t *w, uint64_t q0, uint64_t q1)
 
     x0 = q0 & (uint64_t)0x00FF00FF00FF00FF;
     x1 = q1 & (uint64_t)0x00FF00FF00FF00FF;
-    AndCC = AndCC + 2;
+    AndCC_counter(2);
 
     x2 = (q0 >> 8) & (uint64_t)0x00FF00FF00FF00FF;
     x3 = (q1 >> 8) & (uint64_t)0x00FF00FF00FF00FF;
-    RightShiftInst = RightShiftInst + 2;
-    RightShift = RightShift + 8 * 2;
-    AndCC = AndCC + 2;
+    RightShift_counter(2, 8);
+    AndCC_counter(2);
 
     x0 |= (x0 >> 8);
     x1 |= (x1 >> 8);
     x2 |= (x2 >> 8);
     x3 |= (x3 >> 8);
-    RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 8 * 4;
-    OrCC = OrCC + 4;
+    RightShift_counter(4, 8);
+    OrCC_counter(4);
 
     x0 &= (uint64_t)0x0000FFFF0000FFFF;
     x1 &= (uint64_t)0x0000FFFF0000FFFF;
     x2 &= (uint64_t)0x0000FFFF0000FFFF;
     x3 &= (uint64_t)0x0000FFFF0000FFFF;
-    AndCC = AndCC + 4;
+    AndCC_counter(4);
 
     w[0] = (uint32_t)x0 | (uint32_t)(x0 >> 16);
     w[1] = (uint32_t)x1 | (uint32_t)(x1 >> 16);
     w[2] = (uint32_t)x2 | (uint32_t)(x2 >> 16);
     w[3] = (uint32_t)x3 | (uint32_t)(x3 >> 16);
-    RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 16 * 4;
-    OrCC = OrCC + 4;
+    RightShift_counter(4, 16);
+    OrCC_counter(4);
 }
 
 static const uint8_t Rcon[] = {
@@ -503,7 +492,7 @@ static inline void add_round_key(uint64_t *q, const uint64_t *sk)
 	q[5] ^= sk[5];
 	q[6] ^= sk[6];
 	q[7] ^= sk[7];
-	XorCC = XorCC + 8;
+  XorCC_counter(8);
 }
 
 static inline void shift_rows(uint64_t *q)
@@ -521,12 +510,14 @@ static inline void shift_rows(uint64_t *q)
 			| ((x & (uint64_t)0x000000FF00000000) << 8)
 			| ((x & (uint64_t)0xF000000000000000) >> 12)
 			| ((x & (uint64_t)0x0FFF000000000000) << 4);
-		AndCC = AndCC + 7;
-        OrCC = OrCC + 6;
-        RightShiftInst = RightShiftInst + 3;
-        RightShift = RightShift + 4 + 8 + 12;
-        LeftShiftInst = LeftShiftInst + 3;
-        LeftShift = LeftShift + 12 + 8 + 4;
+    AndCC_counter(7);
+    OrCC_counter(6);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 8);
+    RightShift_counter(1, 12);
+    LeftShift_counter(1, 12);
+    LeftShift_counter(1, 8);
+    LeftShift_counter(1, 4);
 	}
 }
 
@@ -556,11 +547,9 @@ static inline void mix_columns(uint64_t *q)
 	r5 = (q5 >> 16) | (q5 << 48);
 	r6 = (q6 >> 16) | (q6 << 48);
 	r7 = (q7 >> 16) | (q7 << 48);
-	RightShiftInst = RightShiftInst + 8;
-    RightShift = RightShift + 16 * 8;
-    LeftShiftInst = LeftShiftInst + 8;
-    LeftShift = LeftShift + 48 * 8;
-    OrCC = OrCC + 8;
+  RightShift_counter(8, 16);
+  LeftShift_counter(8, 16);
+  OrCC_counter(8);
 
 	q[0] = q7 ^ r7 ^ r0 ^ rotr32(q0 ^ r0);
 	q[1] = q0 ^ r0 ^ q7 ^ r7 ^ r1 ^ rotr32(q1 ^ r1);
@@ -570,12 +559,10 @@ static inline void mix_columns(uint64_t *q)
 	q[5] = q4 ^ r4 ^ r5 ^ rotr32(q5 ^ r5);
 	q[6] = q5 ^ r5 ^ r6 ^ rotr32(q6 ^ r6);
 	q[7] = q6 ^ r6 ^ r7 ^ rotr32(q7 ^ r7);
-	LeftShiftInst = LeftShiftInst + 8;
-    LeftShift = LeftShift + 32 * 8;
-    RightShiftInst = RightShiftInst + 8;
-    RightShift = RightShift + 32 * 8;
-    OrCC = OrCC + 8;
-    XorCC = XorCC + 38;
+  LeftShift_counter(8, 32);
+  RightShift_counter(8, 32);
+  OrCC_counter(8);
+  XorCC_counter(38);
 }
 
 static void inc4_be(uint32_t *x)

@@ -8,12 +8,24 @@ extern int LeftShiftInst;
 extern int RightShiftInst;
 extern int LeftShift;
 extern int RightShift;
+extern int ActCC;
 extern int OrCC;
 extern int AndCC;
 extern int XorCC;
 extern int NotCC;
 extern int CoreCycle;
 extern int EBCC;
+extern int CoreCycle;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
+extern void EBCC_counter(int);
 
 #define BitW 32
 
@@ -49,42 +61,13 @@ int32_t reduce32(int32_t a) {
   int32_t t;
 
   t = (a + (1 << 22)) >> 23;
-  // +
-  // AndCC += 10; 
-  // XorCC += 10;
-  // LeftShiftInst += (10 - 1);
-  // LeftShift += (10 - 1);
-  // // >> 23
-  // RightShiftInst += 1;
-  // RightShift += 23;
-
   t = a - t*Q;
-  // t * Q = (23 x "0" + t[8:0]) * (9 x "0" + 10 x "1" + 12 x "0" + 1 x "1")
-  // LeftShiftInst += 1;
-  // LeftShift += 13;
-  // XorCC += 1;
-  // LeftShiftInst += (9 - 1) * 9;
-  // LeftShift += (9 - 1) * 9;
-  // XorCC += (9 - 1) * 9;
-  // AndCC += (9 - 1) * 9;
-  // // -
-  // NotCC += 1;
-  // AndCC += BitW; 
-  // XorCC += BitW;
-  // LeftShiftInst += (BitW - 1);
-  // LeftShift += (BitW - 1);
-  // // + 
-  // AndCC += BitW; 
-  // XorCC += BitW;
-  // LeftShiftInst += (BitW - 1);
-  // LeftShift += (BitW - 1);
-
+  // montgomery multiplication data from kernels/NTT/Montgomery_Mul_Dilithium_Fixed_R
   ReadCC += 32;
-  WriteCC += 32;
+  WriteCC += 451;
   LeftShiftInst += 32;
-  LeftShift += 32;
   RightShiftInst += 32;
-  RightShift += 32;
+  ActCC += 323;
   OrCC += 33;
   AndCC += 161;
   XorCC += 129;
@@ -92,23 +75,18 @@ int32_t reduce32(int32_t a) {
   EBCC += 32;
 
   // subtract Q/2 from B （B + (- Q/2)）to get b
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  LeftShift_counter(BitW-1, 1);
+  AndCC_counter(BitW-1);
+  XorCC_counter(BitW);
   // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
-  // write to a fixed row
-  ReadCC += 1;
-  WriteCC += 1;
-  // bit extention and write back
-  EBCC += 1;
-  // AND bit with B
-  AndCC += 1;
-  // subtract Q/2 from B （B + (- Q/2)）to get b
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  ReadCC_counter(1);
+  WriteCC_counter(1);
+  EBCC_counter(1);
+  AndCC_counter(1);
+  // add B with q (-Q/2 or 0)
+  LeftShift_counter(BitW-1, 1);
+  AndCC_counter(BitW-1);
+  XorCC_counter(BitW);
 
   return t;
 }
@@ -124,18 +102,14 @@ int32_t reduce32(int32_t a) {
 **************************************************/
 int32_t caddq(int32_t a) {
   a += (a >> 31) & Q;
-  // write to a fixed row
-  ReadCC += 1;
-  WriteCC += 1;
-  // bit extention and write back
-  EBCC += 1;
-  // AND bit with B
-  AndCC += 1;
+  ReadCC_counter(1);
+  WriteCC_counter(1);
+  EBCC_counter(1);
+  AndCC_counter(1);
   // add B with q (Q or 0)
-  AndCC += BitW; 
-  XorCC += BitW;
-  LeftShiftInst += BitW - 1;
-  LeftShift += BitW - 1;
+  LeftShift_counter(BitW-1, 1);
+  AndCC_counter(BitW-1);
+  XorCC_counter(BitW);
   
   return a;
 }

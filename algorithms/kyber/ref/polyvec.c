@@ -9,12 +9,23 @@ extern int LeftShiftInst;
 extern int RightShiftInst;
 extern int LeftShift;
 extern int RightShift;
+extern int ActCC;
 extern int OrCC;
 extern int AndCC;
 extern int XorCC;
 extern int NotCC;
 extern int CoreCycle;
 extern int EBCC;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
+extern void EBCC_counter(int);
 
 #define BitW 16
 
@@ -39,18 +50,14 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a)
         t[k]  = a->vec[i].coeffs[8*j+k];
         t[k] += ((int16_t)t[k] >> 15) & KYBER_Q;
         t[k]  = ((((uint32_t)t[k] << 11) + KYBER_Q/2)/KYBER_Q) & 0x7ff;
-        // write to a fixed row
-        ReadCC += 1;
-        WriteCC += 1;
-        // bit extention and write back
-        EBCC += 1;
-        // AND bit with B
-        AndCC += 1;
+        ReadCC_counter(1);
+        WriteCC_counter(1);
+        EBCC_counter(1);
+        AndCC_counter(1);
         // add B with q (Q or 0)
-        AndCC += BitW; 
-        XorCC += BitW;
-        LeftShiftInst += BitW - 1;
-        LeftShift += BitW - 1;
+        LeftShift_counter(BitW-1, 1);
+        AndCC_counter(BitW-1);
+        XorCC_counter(BitW);
       }
 
       r[ 0] = (t[0] >>  0);
@@ -64,11 +71,25 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a)
       r[ 8] = (t[5] >>  9) | (t[6] << 2);
       r[ 9] = (t[6] >>  6) | (t[7] << 5);
       r[10] = (t[7] >>  3);
-      RightShiftInst += 10;
-      RightShift += 8 + 5 + 2 + 10 + 3 + 6 + 9 + 1 + 4 + 7;
-      LeftShiftInst += 7;
-      LeftShift += 3 + 6 + 1 + 4 + 7 + 2 + 5;
-      OrCC += 7;
+      RightShift_counter(1, 8);
+      RightShift_counter(1, 5);
+      RightShift_counter(1, 2);
+      RightShift_counter(1, 10);
+      RightShift_counter(1, 3);
+      RightShift_counter(1, 6);
+      RightShift_counter(1, 9);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 4);
+      RightShift_counter(1, 7);
+      LeftShift_counter(1, 3);
+      LeftShift_counter(1, 6);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 4);
+      LeftShift_counter(1, 7);
+      LeftShift_counter(1, 2);
+      LeftShift_counter(1, 5);
+      OrCC_counter(7);
+
       r += 11;
     }
   }
@@ -80,18 +101,14 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a)
         t[k]  = a->vec[i].coeffs[4*j+k];
         t[k] += ((int16_t)t[k] >> 15) & KYBER_Q;
         t[k]  = ((((uint32_t)t[k] << 10) + KYBER_Q/2)/ KYBER_Q) & 0x3ff;
-        // write to a fixed row
-        ReadCC += 1;
-        WriteCC += 1;
-        // bit extention and write back
-        EBCC += 1;
-        // AND bit with B
-        AndCC += 1;
+        ReadCC_counter(1);
+        WriteCC_counter(1);
+        EBCC_counter(1);
+        AndCC_counter(1);
         // add B with q (Q or 0)
-        AndCC += BitW; 
-        XorCC += BitW;
-        LeftShiftInst += BitW - 1;
-        LeftShift += BitW - 1;
+        LeftShift_counter(BitW-1, 1);
+        AndCC_counter(BitW-1);
+        XorCC_counter(BitW);
       }
 
       r[0] = (t[0] >> 0);
@@ -99,11 +116,14 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a)
       r[2] = (t[1] >> 6) | (t[2] << 4);
       r[3] = (t[2] >> 4) | (t[3] << 6);
       r[4] = (t[3] >> 2);
-      RightShiftInst += 4;
-      RightShift += 6 + 4 + 2 + 8;
-      LeftShiftInst += 3;
-      LeftShift += 2 + 4 + 6;
-      OrCC += 3;
+      RightShift_counter(1, 8);
+      RightShift_counter(1, 6);
+      RightShift_counter(1, 4);
+      RightShift_counter(1, 2);
+      LeftShift_counter(1, 2);
+      LeftShift_counter(1, 4);
+      LeftShift_counter(1, 6);
+      OrCC_counter(3);
       r += 5;
     }
   }
@@ -138,27 +158,38 @@ void polyvec_decompress(polyvec *r, const uint8_t a[KYBER_POLYVECCOMPRESSEDBYTES
       t[5] = (a[6] >> 7) | ((uint16_t)a[ 7] << 1) | ((uint16_t)a[8] << 9);
       t[6] = (a[8] >> 2) | ((uint16_t)a[ 9] << 6);
       t[7] = (a[9] >> 5) | ((uint16_t)a[10] << 3);
-      RightShiftInst += 9;
-      RightShift += 3 + 6 + 1 + 4 + 7 + 2 + 5;
-      LeftShiftInst += 10;
-      LeftShift += 2 + 5 + 8 + 1 + 4 + 7 + 10 + 3 + 6 + 9;
-      OrCC += 10;
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 3);
+      RightShift_counter(1, 6);
+      RightShift_counter(1, 4);
+      RightShift_counter(1, 7);
+      RightShift_counter(1, 2);
+      RightShift_counter(1, 5);
+      LeftShift_counter(1, 2);
+      LeftShift_counter(1, 5);
+      LeftShift_counter(1, 8);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 4);
+      LeftShift_counter(1, 7);
+      LeftShift_counter(1, 10);
+      LeftShift_counter(1, 3);
+      LeftShift_counter(1, 6);
+      LeftShift_counter(1, 9);
+      OrCC_counter(10);
+
       a += 11;
 
       for(k=0;k<8;k++){
         r->vec[i].coeffs[8*j+k] = ((uint32_t)(t[k] & 0x7FF)*KYBER_Q + 1024) >> 11;
-        LeftShiftInst += 1 * 11;
-        LeftShift += 1 * 11;
-        AndCC += 32 * 11;
-        XorCC += 32 * 11;
-        LeftShiftInst += (32 - 1) * 11;
-        LeftShift += (32 - 1) * 11;
-        AndCC += 32;
-        XorCC += 32;
-        LeftShiftInst += (32 - 1);
-        LeftShift += (32 - 1);
-        RightShiftInst += 1;
-        RightShift += 11;
+        LeftShift_counter(11, 1);
+        AndCC_counter(32*11);
+        XorCC_counter(32*11);
+        LeftShift_counter((32-1)*11, 1);
+
+        AndCC_counter(32);
+        XorCC_counter(32);
+        LeftShift_counter(32-1, 1);
+        RightShift_counter(1, 11);
       }
         
     }
@@ -171,27 +202,28 @@ void polyvec_decompress(polyvec *r, const uint8_t a[KYBER_POLYVECCOMPRESSEDBYTES
       t[1] = (a[1] >> 2) | ((uint16_t)a[2] << 6);
       t[2] = (a[2] >> 4) | ((uint16_t)a[3] << 4);
       t[3] = (a[3] >> 6) | ((uint16_t)a[4] << 2);
-      RightShiftInst += 3;
-      RightShift += 2 + 4 + 6;
-      LeftShiftInst += 4;
-      LeftShift += 2 + 4 + 6 + 8;
-      OrCC += 4;
+      RightShift_counter(1, 2);
+      RightShift_counter(1, 4);
+      RightShift_counter(1, 6);
+      LeftShift_counter(1, 2);
+      LeftShift_counter(1, 4);
+      LeftShift_counter(1, 6);
+      LeftShift_counter(1, 8);
+      OrCC_counter(4);
+
       a += 5;
 
       for(k=0;k<4;k++)
         r->vec[i].coeffs[4*j+k] = ((uint32_t)(t[k] & 0x3FF)*KYBER_Q + 512) >> 10;
-        LeftShiftInst += 1 * 10;
-        LeftShift += 1 * 10;
-        AndCC += 32 * 10;
-        XorCC += 32 * 10;
-        LeftShiftInst += (32 - 1) * 10;
-        LeftShift += (32 - 1) * 10;
-        AndCC += 32;
-        XorCC += 32;
-        LeftShiftInst += (32 - 1);
-        LeftShift += (32 - 1);
-        RightShiftInst += 1;
-        RightShift += 10;
+        LeftShift_counter(10, 1);
+        AndCC_counter(32*10);
+        XorCC_counter(32*10);
+        LeftShift_counter((32-1)*10, 1);
+
+        AndCC_counter(32);
+        XorCC_counter(32);
+        LeftShift_counter(32-1, 1);
+        RightShift_counter(1, 10);
     }
   }
 #else

@@ -12,12 +12,23 @@ extern int LeftShiftInst;
 extern int RightShiftInst;
 extern int LeftShift;
 extern int RightShift;
+extern int ActCC;
 extern int OrCC;
 extern int AndCC;
 extern int XorCC;
 extern int NotCC;
 extern int CoreCycle;
 extern int EBCC;
+
+extern void ReadCC_counter(int);
+extern void WriteCC_counter(int);
+extern void LeftShift_counter(int, int);
+extern void RightShift_counter(int, int);
+extern void OrCC_counter(int);
+extern void AndCC_counter(int);
+extern void XorCC_counter(int);
+extern void NotCC_counter(int);
+extern void EBCC_counter(int);
 
 #define BitW 16
 
@@ -43,27 +54,23 @@ void poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], const poly *a)
       u  = a->coeffs[8*i+j];
       u += (u >> 15) & KYBER_Q;
       t[j] = ((((uint16_t)u << 4) + KYBER_Q/2)/KYBER_Q) & 15;
-      // write to a fixed row
-      ReadCC += 1;
-      WriteCC += 1;
       // bit extention and write back
-      EBCC += 1;
-      // AND bit with B
-      AndCC += 1;
+      ReadCC_counter(1);
+      WriteCC_counter(1);
+      EBCC_counter(1);
+      AndCC_counter(1);
       // add B with q (Q or 0)
-      AndCC += BitW; 
-      XorCC += BitW;
-      LeftShiftInst += BitW - 1;
-      LeftShift += BitW - 1;
+      LeftShift_counter(BitW-1, 1);
+      AndCC_counter(BitW-1);
+      XorCC_counter(BitW);
     }
 
     r[0] = t[0] | (t[1] << 4);
     r[1] = t[2] | (t[3] << 4);
     r[2] = t[4] | (t[5] << 4);
     r[3] = t[6] | (t[7] << 4);
-    LeftShiftInst += 4;
-    LeftShift += 4 * 4;
-    OrCC += 4;
+    LeftShift_counter(4, 4);
+    OrCC_counter(4);
 
     r += 4;
   }
@@ -74,18 +81,15 @@ void poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], const poly *a)
       u  = a->coeffs[8*i+j];
       u += (u >> 15) & KYBER_Q;
       t[j] = ((((uint32_t)u << 5) + KYBER_Q/2)/KYBER_Q) & 31;
-      // write to a fixed row
-      ReadCC += 1;
-      WriteCC += 1;
       // bit extention and write back
-      EBCC += 1;
-      // AND bit with B
-      AndCC += 1;
+      ReadCC_counter(1);
+      WriteCC_counter(1);
+      EBCC_counter(1);
+      AndCC_counter(1);
       // add B with q (Q or 0)
-      AndCC += BitW; 
-      XorCC += BitW;
-      LeftShiftInst += BitW - 1;
-      LeftShift += BitW - 1;
+      LeftShift_counter(BitW-1, 1);
+      AndCC_counter(BitW-1);
+      XorCC_counter(BitW);
     }
 
     r[0] = (t[0] >> 0) | (t[1] << 5);
@@ -93,11 +97,18 @@ void poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], const poly *a)
     r[2] = (t[3] >> 1) | (t[4] << 4);
     r[3] = (t[4] >> 4) | (t[5] << 1) | (t[6] << 6);
     r[4] = (t[6] >> 2) | (t[7] << 3);
-    LeftShiftInst += 7;
-    LeftShift += 5 + 2 + 4 + 1 + 3 + 7 + 6;
-    RightShiftInst += 4;
-    RightShift += 3 + 1 + 4 + 2;
-    OrCC += 5;
+    LeftShift_counter(1, 5);
+    LeftShift_counter(1, 2);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 1);
+    LeftShift_counter(1, 3);
+    LeftShift_counter(1, 7);
+    LeftShift_counter(1, 6);
+    RightShift_counter(1, 3);
+    RightShift_counter(1, 1);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 2);
+    OrCC_counter(5);
 
     r += 5;
   }
@@ -124,30 +135,25 @@ void poly_decompress(poly *r, const uint8_t a[KYBER_POLYCOMPRESSEDBYTES])
   for(i=0;i<KYBER_N/2;i++) {
     r->coeffs[2*i+0] = (((uint16_t)(a[0] & 15)*KYBER_Q) + 8) >> 4;
     r->coeffs[2*i+1] = (((uint16_t)(a[0] >> 4)*KYBER_Q) + 8) >> 4;
-    LeftShiftInst += 1 * 4;
-    LeftShift += 1 * 4;
-    AndCC += BitW * 4;
-    XorCC += BitW * 4;
-    LeftShiftInst += (BitW - 1) * 4;
-    LeftShift += (BitW - 1) * 4;
-    AndCC += BitW;
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
-    RightShiftInst += 1;
-    RightShift += 4;
-    RightShiftInst += 1;
-    RightShift += 4;
-    LeftShiftInst += 1 * 4;
-    LeftShift += 1 * 4;
-    AndCC += BitW * 4;
-    XorCC += BitW * 4;
-    LeftShiftInst += (BitW - 1) * 4;
-    LeftShift += (BitW - 1) * 4;
-    AndCC += BitW;
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    LeftShift_counter(4, 1);
+    AndCC_counter(BitW*4);
+    XorCC_counter(BitW*4);
+    LeftShift_counter((BitW-1)*4, 1);
+
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
+
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 4);
+    LeftShift_counter(4, 1);
+    AndCC_counter(BitW*4);
+    XorCC_counter(BitW*4);
+    LeftShift_counter((BitW-1)*4, 1);
+    
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     a += 1;
   }
 #elif (KYBER_POLYCOMPRESSEDBYTES == 160)
@@ -162,27 +168,32 @@ void poly_decompress(poly *r, const uint8_t a[KYBER_POLYCOMPRESSEDBYTES])
     t[5] = (a[3] >> 1);
     t[6] = (a[3] >> 6) | (a[4] << 2);
     t[7] = (a[4] >> 3);
-    LeftShiftInst += 4;
-    LeftShift += 3 + 1 + 4 + 2;
-    RightShiftInst += 7;
-    RightShift += 5 + 2 + 7 + 4 + 1 + 6 + 3;
-    OrCC += 4;
+    LeftShift_counter(1, 3);
+    LeftShift_counter(1, 1);
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 2);
+    RightShift_counter(1, 5);
+    RightShift_counter(1, 2);
+    RightShift_counter(1, 7);
+    RightShift_counter(1, 4);
+    RightShift_counter(1, 1);
+    RightShift_counter(1, 6);
+    RightShift_counter(1, 3);
+    OrCC_counter(4);
+
     a += 5;
 
     for(j=0;j<8;j++){
       r->coeffs[8*i+j] = ((uint32_t)(t[j] & 31)*KYBER_Q + 16) >> 5;
-      LeftShiftInst += 1 * 8;
-      LeftShift += 1 * 8;
-      AndCC += 32 * 8;
-      XorCC += 32 * 8;
-      LeftShiftInst += (32 - 1) * 8;
-      LeftShift += (32 - 1) * 8;
-      AndCC += 32;
-      XorCC += 32;
-      LeftShiftInst += (32 - 1);
-      LeftShift += (32 - 1);
-      RightShiftInst += 1;
-      RightShift += 5;
+      LeftShift_counter(8, 1);
+      AndCC_counter(32*8);
+      XorCC_counter(32*8);
+      LeftShift_counter((32-1)*8, 1);
+
+      AndCC_counter(32);
+      XorCC_counter(32);
+      LeftShift_counter(32-1, 1);
+      RightShift_counter(5, 1);
     }
   }
 #else
@@ -208,43 +219,36 @@ void poly_tobytes(uint8_t r[KYBER_POLYBYTES], const poly *a)
     // map to positive standard representatives
     t0  = a->coeffs[2*i];
     t0 += ((int16_t)t0 >> 15) & KYBER_Q;
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
     // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (Q or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
 
     t1 = a->coeffs[2*i+1];
     t1 += ((int16_t)t1 >> 15) & KYBER_Q;
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
     // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (Q or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     
 
 
     r[3*i+0] = (t0 >> 0);
     r[3*i+1] = (t0 >> 8) | (t1 << 4);
     r[3*i+2] = (t1 >> 4);
-    LeftShiftInst += 1;
-    LeftShift += 4;
-    RightShiftInst += 2;
-    RightShift += 8 + 4;
+    LeftShift_counter(1, 4);
+    RightShift_counter(1, 8);
+    RightShift_counter(1, 4);
   }
 }
 
@@ -264,12 +268,11 @@ void poly_frombytes(poly *r, const uint8_t a[KYBER_POLYBYTES])
   for(i=0;i<KYBER_N/2;i++) {
     r->coeffs[2*i]   = ((a[3*i+0] >> 0) | ((uint16_t)a[3*i+1] << 8)) & 0xFFF;
     r->coeffs[2*i+1] = ((a[3*i+1] >> 4) | ((uint16_t)a[3*i+2] << 4)) & 0xFFF;
-    LeftShiftInst += 2;
-    LeftShift += 8 + 4;
-    RightShiftInst += 1;
-    RightShift += 4;
-    OrCC += 2;
-    AndCC += 2;
+    LeftShift_counter(1, 4);
+    LeftShift_counter(1, 8);
+    RightShift_counter(1, 4);
+    OrCC_counter(2);
+    AndCC_counter(2);
   }
 }
 
@@ -294,10 +297,14 @@ void poly_frommsg(poly *r, const uint8_t msg[KYBER_INDCPA_MSGBYTES])
     for(j=0;j<8;j++) {
       mask = -(int16_t)((msg[i] >> j)&1);
       r->coeffs[8*i+j] = mask & ((KYBER_Q+1)/2);
-      // check bit
-      AndCC += 1;
-      // AND with ((KYBER_Q+1)/2)
-      AndCC += 1;
+      ReadCC_counter(1);
+      WriteCC_counter(1);
+      EBCC_counter(1);
+      AndCC_counter(1);
+      // add B with q (Q or 0)
+      LeftShift_counter(BitW-1, 1);
+      AndCC_counter(BitW-1);
+      XorCC_counter(BitW);
     }
   }
 }
@@ -322,18 +329,14 @@ void poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], const poly *a)
       t += ((int16_t)t >> 15) & KYBER_Q;
       t  = (((t << 1) + KYBER_Q/2)/KYBER_Q) & 1;
       msg[i] |= t << j;
-      // write to a fixed row
-      ReadCC += 1;
-      WriteCC += 1;
-      // bit extention and write back
-      EBCC += 1;
-      // AND bit with B
-      AndCC += 1;
+      ReadCC_counter(1);
+      WriteCC_counter(1);
+      EBCC_counter(1);
+      AndCC_counter(1);
       // add B with q (Q or 0)
-      AndCC += BitW; 
-      XorCC += BitW;
-      LeftShiftInst += BitW - 1;
-      LeftShift += BitW - 1;
+      LeftShift_counter(BitW-1, 1);
+      AndCC_counter(BitW-1);
+      XorCC_counter(BitW);
     }
   }
 }
@@ -437,51 +440,40 @@ void poly_tomont(poly *r)
   unsigned int i;
   const int16_t f = (1ULL << 32) % KYBER_Q;
   for(i=0;i<KYBER_N;i++){
-    // check MSB, and then AND Q with all 1s or 0s to get q
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (Q or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     r->coeffs[i] = montgomery_reduce((int32_t)r->coeffs[i]*f);
-    // montgomery multiplication data from bit-parallel_mont_mult/kyber_mont_mult.cpp
+    // montgomery multiplication data from kernels/NTT/Montgomery_Mul_Kyber_General
     ReadCC += 32;
-    WriteCC += 32;
+    WriteCC += 365;
     LeftShiftInst += 31;
-    LeftShift += 31;
     RightShiftInst += 16;
-    RightShift += 16;
+    ActCC += 254;
     OrCC += 32;
     AndCC += 127;
     XorCC += 95;
     NotCC += 0;
     EBCC += 32;
+
     // subtract Q/2 from B （B + (- Q/2)）to get b
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
-    // extend MSB of b
-    // write to a fixed row
-    ReadCC += 1;
-    WriteCC += 1;
-    // bit extention and write back
-    EBCC += 1;
-    // AND bit with B
-    AndCC += 1;
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    EBCC_counter(1);
+    AndCC_counter(1);
     // add B with q (-Q/2 or 0)
-    AndCC += BitW; 
-    XorCC += BitW;
-    LeftShiftInst += BitW - 1;
-    LeftShift += BitW - 1;
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
   }
     
 }
@@ -515,10 +507,9 @@ void poly_add(poly *r, const poly *a, const poly *b)
   unsigned int i;
   for(i=0;i<KYBER_N;i++)
     r->coeffs[i] = a->coeffs[i] + b->coeffs[i];
-    AndCC += BitW;
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
 }
 
 /*************************************************
@@ -535,14 +526,12 @@ void poly_sub(poly *r, const poly *a, const poly *b)
   unsigned int i;
   for(i=0;i<KYBER_N;i++)
     r->coeffs[i] = a->coeffs[i] - b->coeffs[i];
-    NotCC += 1;
-    AndCC += BitW;
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    NotCC_counter(1);
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
     // a + (-b)
-    AndCC += BitW;
-    XorCC += BitW;
-    LeftShiftInst += (BitW - 1);
-    LeftShift += (BitW - 1);
+    LeftShift_counter(BitW-1, 1);
+    AndCC_counter(BitW-1);
+    XorCC_counter(BitW);
 }

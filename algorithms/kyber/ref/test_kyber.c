@@ -6,18 +6,104 @@
 
 #define NTESTS 1
 
-int ReadCC = 0;
-int WriteCC = 0;
-int LeftShiftInst = 0;
-int RightShiftInst = 0;
-int LeftShift = 0;
-int RightShift = 0;
-int OrCC = 0;
-int AndCC = 0;
-int XorCC = 0;
-int NotCC = 0;
-int CoreCycle = 0;
-int EBCC = 0;
+long int ReadCC = 0;
+long int WriteCC = 0;
+long int LeftShiftInst = 0;
+long int RightShiftInst = 0;
+long int LeftShift = 0;
+long int RightShift = 0;
+long int ActCC = 0;
+long int OrCC = 0;
+long int AndCC = 0;
+long int XorCC = 0;
+long int NotCC = 0;
+long int EBCC = 0;
+long int CoreCycle = 0;
+
+void ReadCC_counter(int num){
+  ReadCC += num;
+  for (int i = 0; i < num; i++)
+    printf("rd; ");
+}
+
+void WriteCC_counter(int num){
+  WriteCC += num;
+  for (int i = 0; i < num; i++)
+    printf("wr; ");
+}
+
+void LeftShift_counter(int num, int bitnum){
+  LeftShiftInst += num;
+  LeftShift += num * bitnum;
+  WriteCC += num;
+  for (int i = 0; i < num; i++){
+    printf("lsh %d; ", bitnum);
+    printf("wr; ");
+  }
+}
+
+void RightShift_counter(int num, int bitnum){
+  RightShiftInst += num;
+  RightShift += num * bitnum;
+  WriteCC += num;
+  for (int i = 0; i < num; i++){
+    printf("rsh %d; ", bitnum);
+    printf("wr; ");
+  }
+}
+
+void OrCC_counter(int num){
+  ActCC += num;
+  OrCC += num;
+  WriteCC += num;
+  for (int i = 0; i < num; i++){
+    printf("act; ");
+    printf("or; ");
+    printf("wr; ");
+  }
+}
+
+void AndCC_counter(int num){
+  ActCC += num;
+  AndCC += num;
+  WriteCC += num;
+  for (int i = 0; i < num; i++){
+    printf("act; ");
+    printf("and; ");
+    printf("wr; ");
+  }
+}
+
+void XorCC_counter(int num){
+  ActCC += num;
+  XorCC += num;
+  WriteCC += num;
+  for (int i = 0; i < num; i++){
+    printf("act; ");
+    printf("xor; ");
+    printf("wr; ");
+  }
+}
+
+void NotCC_counter(int num){
+  ActCC += num;
+  NotCC += num;
+  WriteCC += num;
+  for (int i = 0; i < num; i++){
+    printf("act; ");
+    printf("not; ");
+    printf("wr; ");
+  }
+}
+
+void EBCC_counter(int num){
+    EBCC += num;
+    WriteCC += num;
+    for (int i = 0; i < num; i++){
+        printf("eb; ");
+        printf("wr; ");
+    }
+}
 
 static int test_keys()
 {
@@ -109,6 +195,20 @@ static int test_invalid_ciphertext()
 
 int main(void)
 {
+  // Open the file for writing
+  FILE *file = fopen("output.txt", "w");
+  if (file == NULL) {
+      printf("Error opening the file.\n");
+      return 1;
+  }
+
+  // Redirect stdout to the file
+  FILE *original_stdout = stdout;
+  stdout = file;
+
+  // Your code that prints to the terminal (now redirected to the file)
+  // printf("This line will be written to the output.txt file.\n");
+  
   unsigned int i;
   int r;
 
@@ -120,80 +220,31 @@ int main(void)
       return 1;
   }
 
-  printf("CRYPTO_SECRETKEYBYTES:  %d\n",CRYPTO_SECRETKEYBYTES);
-  printf("CRYPTO_PUBLICKEYBYTES:  %d\n",CRYPTO_PUBLICKEYBYTES);
-  printf("CRYPTO_CIPHERTEXTBYTES: %d\n",CRYPTO_CIPHERTEXTBYTES);
+  // Restore stdout to its original value
+  stdout = original_stdout;
 
-  printf("ReadCC += %d;\n", ReadCC);
-  printf("WriteCC += %d;\n", WriteCC);
-  printf("LeftShiftInst += %d;\n", LeftShiftInst);
-  printf("LeftShift += %d;\n", LeftShift);
-  printf("RightShiftInst += %d;\n", RightShiftInst);
-  printf("RightShift += %d;\n", RightShift);
-  printf("OrCC += %d;\n", OrCC);
-  printf("AndCC += %d;\n", AndCC);
-  printf("XorCC += %d;\n", XorCC);
-  printf("NotCC += %d;\n", NotCC);
-  printf("EBCC += %d;\n", EBCC);
-  printf("Total instruction = %d;\n", ReadCC + WriteCC + EBCC + (LeftShiftInst + RightShiftInst) * 2 + (OrCC + AndCC + XorCC + NotCC) * 3);
 
-  printf("\nReadCC Cycle: %d\n", ReadCC);
-  printf("WriteCC Cycle: %d\n", WriteCC);
-  printf("LeftShift Cycle: %d\n", LeftShift + LeftShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
-  printf("RightShift Cycle: %d\n", RightShift + RightShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
-  printf("OrCC Cycle: %d\n", OrCC * (2 + 1)); // 1 for activate, 1 for or, 1 for write
-  printf("AndCC Cycle: %d\n", AndCC * (2 + 1)); // 1 for activate, 1 for and, 1 for write
-  printf("XorCC Cycle: %d\n", XorCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write
-  printf("NotCC Cycle: %d\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. NOT is implemented by Xoring a constant full of 1s.
-  printf("EBCC Cycle: %d\n", EBCC); // 1 for bit extention and write back
-  printf("Total Cycle: %d\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC); 
+  printf("\n\nReadCC: %ld\n", ReadCC);
+  printf("WriteCC: %ld\n", WriteCC);
+  printf("LeftShiftInst: %ld\n", LeftShiftInst);
+  printf("RightShiftInst: %ld\n", RightShiftInst);
+  printf("ActCC: %ld\n", ActCC);
+  printf("OrCC: %ld\n", OrCC);
+  printf("AndCC: %ld\n", AndCC);
+  printf("XorCC: %ld\n", XorCC);
+  printf("NotCC: %ld\n", NotCC);
+  printf("EBCC: %ld\n", EBCC);
+  printf("CoreCycle: %ld\n", CoreCycle);
+  printf("Total instruction: %ld\n", ReadCC + WriteCC + LeftShiftInst + RightShiftInst + ActCC + OrCC + AndCC + XorCC + NotCC + EBCC);
+  printf("Total cycle: %ld\n", ReadCC + WriteCC + LeftShift + RightShift + ActCC + OrCC + AndCC + XorCC + NotCC + EBCC + CoreCycle);
 
-  printf("\nTest End\n");
   
-  char filename[256];
-    strcpy(filename, __FILE__);
-    // Find the position of the last '.' in the filename
-    char *pos = strrchr(filename, '.');
-    if (pos != NULL) {
-        // Replace everything after the '.' with ".txt"
-        strcpy(pos, ".txt");
-    } else {
-        // If there's no '.', just append ".txt" to the end
-        strcat(filename, ".txt");
-    }
+  // Close the file
+  fclose(file);
 
-    FILE *outfile = fopen(filename, "w");
-    if (outfile == NULL) {
-        fprintf(stderr, "Failed to open file %s for writing.\n", filename);
-        return 1;
-    }
+  printf("Terminal output successfully written.\n");
 
-    // Write output to the file
-    fprintf(outfile, "ReadCC += %d;\n", ReadCC);
-    fprintf(outfile, "WriteCC += %d;\n", WriteCC);
-    fprintf(outfile, "LeftShiftInst += %d;\n", LeftShiftInst);
-    fprintf(outfile, "LeftShift += %d;\n", LeftShift);
-    fprintf(outfile, "RightShiftInst += %d;\n", RightShiftInst);
-    fprintf(outfile, "RightShift += %d;\n", RightShift);
-    fprintf(outfile, "OrCC += %d;\n", OrCC);
-    fprintf(outfile, "AndCC += %d;\n", AndCC);
-    fprintf(outfile, "XorCC += %d;\n", XorCC);
-    fprintf(outfile, "NotCC += %d;\n", NotCC);
-    fprintf(outfile, "EBCC += %d;\n", EBCC);
-    fprintf(outfile, "Total instruction = %d;\n", ReadCC + WriteCC + EBCC + (LeftShiftInst + RightShiftInst) * 2 + (OrCC + AndCC + XorCC + NotCC) * 3);
-
-    fprintf(outfile, "\nReadCC Cycle: %d\n", ReadCC);
-    fprintf(outfile, "WriteCC Cycle: %d\n", WriteCC);
-    fprintf(outfile, "LeftShift Cycle: %d\n", LeftShift + LeftShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
-    fprintf(outfile, "RightShift Cycle: %d\n", RightShift + RightShiftInst); // 1 for shift, 1 for write, no write back in the middle of the shifting
-    fprintf(outfile, "OrCC Cycle: %d\n", OrCC * (2 + 1)); // 1 for activate, 1 for or, 1 for write
-    fprintf(outfile, "AndCC Cycle: %d\n", AndCC * (2 + 1)); // 1 for activate, 1 for and, 1 for write
-    fprintf(outfile, "XorCC Cycle: %d\n", XorCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write
-    fprintf(outfile, "NotCC Cycle: %d\n", NotCC * (2 + 1)); // 1 for activate, 1 for xor, 1 for write. NOT is implemented by Xoring a constant full of 1s.
-    fprintf(outfile, "EBCC Cycle: %d\n", EBCC); // 1 for bit extention and write back
-    fprintf(outfile, "Total Cycle: %d\n", ReadCC + WriteCC + LeftShift + RightShift + LeftShiftInst + RightShiftInst + OrCC * (2 + 1) + AndCC * (2 + 1) + XorCC * (2 + 1) + NotCC * (2 + 1) + EBCC);
-
-    fclose(outfile);
+  printf("\nTest end\n");
 
   return 0;
 }
