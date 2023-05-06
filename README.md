@@ -47,11 +47,17 @@ cd hybrid-cache
 ```
 
 2. Navigate to the folder you want to run. Algorithms and kernels have two different flow of execution. 
-    1. To run the algorithms (e.g., Kyber), navigate to the `algorithms/kyber/ref` folder:
+    1. To run the algorithms (e.g., Kyber, Dilithium), navigate to the `algorithms/kyber/ref` or `algorithms/dilithium/ref` folder:
     ```
+    # For other configurations, replace "kyber512" with "kyber768" or "kyber1024"
     cd algorithms/kyber/ref
     make test_kyber512
     ./test_kyber512
+
+    # For other configurations, replace "dilithium2" with "dilithium3" or "dilithium5" or "dilithium2aes" or "dilithium3aes" or "dilithium5aes"
+    cd algorithms/dilithium/ref
+    make test/test_dilithium2
+    ./test/test_dilithium2
     ```
     * The terminal shows the number of instructions and cycles with instructions stored in `output.txt`.
     <!-- ```
@@ -89,6 +95,7 @@ cd hybrid-cache
     Total instruction: 23628
     Total cycle: 38910
     ``` -->
+
 3. Sample outputs of Kyber and Dilithium can be found in `algorithms/kyber/outputs` and `algorithms/dilithium/outputs`, respectively. We provide the sample instruction output of Kyber512 in `algorithms/kyber/outputs/test_kyber512_instructions.txt`. The sample outputs of kernels can be found in their respective folders.
 
 ## 4. License
