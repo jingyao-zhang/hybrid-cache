@@ -18,9 +18,9 @@ The repository is organized as follows:
     - `kyber/`: Contains the Kyber algorithm implementation
     - `dilithium/`: Contains the Dilithium algorithm implementation
 - `kernels/`: Contains the kernel implementations for AES, Keccak, and NTT-related operations
-    - `aes/`: Contains the AES kernel implementation
-    - `keccak/`: Contains the Keccak kernel implementation
-    - `ntt_related/`: Contains the NTT-related kernel implementations, such as Montgomery multiplication and NTT
+    - `AES/`: Contains the AES kernel implementations with different configurations
+    - `keccak/`: Contains the Keccak kernel implementations
+    - `NTT/`: Contains the NTT-related kernel implementations, such as Montgomery multiplication and NTT
 
 ## 2. Setup
 
@@ -53,58 +53,43 @@ cd hybrid-cache
     make test_kyber512
     ./test_kyber512
     ```
-    * The output shows the number of instructions and cycles:
+    * The terminal shows the number of instructions and cycles with instructions stored in `output.txt`.
+    <!-- ```
+    ReadCC: 1053952
+    WriteCC: 22606279
+    LeftShiftInst: 3952219
+    RightShiftInst: 826880
+    ActCC: 15719276
+    OrCC: 1114976
+    AndCC: 7628091
+    XorCC: 6910608
+    NotCC: 65601
+    EBCC: 1053952
+    CoreCycle: 0
+    Total instruction: 60931834
+    Total cycle: 61901210
+    ``` -->
+    2. To run the kernels (e.g., AES), navigate to the `kernels/AES` folder:
     ```
-    ReadCC += 1024768;
-    WriteCC += 1024768;
-    LeftShiftInst += 3507803;
-    LeftShift += 4927515;
-    RightShiftInst += 826880;
-    RightShift += 3295872;
-    OrCC += 1081440;
-    AndCC += 7271504;
-    XorCC += 6404208;
-    NotCC += 56385;
-    EBCC += 1024768;
-    Total instruction = 56184281;
-
-    ReadCC Cycle: 1024768
-    WriteCC Cycle: 1024768
-    LeftShift Cycle: 8435318
-    RightShift Cycle: 4122752
-    OrCC Cycle: 3244320
-    AndCC Cycle: 21814512
-    XorCC Cycle: 19212624
-    NotCC Cycle: 169155
-    EBCC Cycle: 1024768
-    Total Cycle: 60072985
+    cd kernels/AES/AES128_ECB
+    cc aes.c aes_test.c -o aes
+    ./aes
     ```
-    2. To run the kernels (e.g., AES), navigate to the `kernels/aes` folder:
-    ```
-    cd kernels/ase
-    cc aes.c aes_test.c -o aes_test
-    ./aes_test
-    ```
-    * The output shows the number of instructions and cycles:
-    ```
-    WriteCC: 16
+    * The terminal shows the number of instructions and cycles with instructions stored in `output.txt`.
+    <!-- ```
+    ReadCC: 0
+    WriteCC: 8470
     LeftShiftInst: 930
     RightShiftInst: 820
+    ActCC: 6704
     OrCC: 1598
     AndCC: 3036
     XorCC: 1990
     NotCC: 80
     Total instruction: 23628
-
-    WriteCC Cycle: 16
-    LeftShift Cycle: 11214
-    RightShift Cycle: 7568
-    OrCC Cycle: 4794
-    AndCC Cycle: 9108
-    XorCC Cycle: 5970
-    NotCC Cycle: 240
-    Total Cycle: 38910
-    ```
+    Total cycle: 38910
+    ``` -->
+3. Sample outputs of Kyber and Dilithium can be found in `algorithms/kyber/ref/outputs` and `algorithms/dilithium/ref/outputs`, respectively.
 
 ## 4. License
 This repository is licensed under the Apache License 2.0. Please see the [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) file for more details.
