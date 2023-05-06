@@ -89,7 +89,7 @@ cd hybrid-cache
     Total instruction: 23628
     Total cycle: 38910
     ``` -->
-3. Sample outputs of Kyber and Dilithium can be found in `algorithms/kyber/ref/outputs` and `algorithms/dilithium/ref/outputs`, respectively.
+3. Sample outputs of Kyber and Dilithium can be found in `algorithms/kyber/outputs` and `algorithms/dilithium/outputs`, respectively. We provide the sample instruction output of Kyber512 in `algorithms/kyber/outputs/test_kyber512_instructions.txt`. The sample outputs of kernels can be found in their respective folders.
 
 ## 4. License
 This repository is licensed under the Apache License 2.0. Please see the [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) file for more details.

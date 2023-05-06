@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8cec73fb83d66cfba5a4e0700a50411d7bc7559962e0a02fb8aa35137cda8135
-size 3046
+act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; lsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; rd; wr; eb; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; rsh 1; wr; act; or; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; lsh 1; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; and; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; act; xor; wr; 
+
+ReadCC: 16;
+WriteCC: 227;
+LeftShiftInst: 16;
+RightShiftInst: 16;
+ActCC: 163;
+OrCC: 17;
+AndCC: 81;
+XorCC: 65;
+NotCC: 0;
+EBCC: 16;
+Total instruction: 617;
+Total cycle: 617;

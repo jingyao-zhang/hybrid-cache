@@ -1,5 +1,5 @@
 .vscode/
 .DS_Store
-algorithms/dilithium/ref/outputs/*instructions.txt
+algorithms/dilithium/outputs/*instructions.txt
 *test_kyber768_instructions.txt
 *test_kyber1024_instructions.txt
