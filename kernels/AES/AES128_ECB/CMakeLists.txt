@@ -12,10 +12,11 @@ set(LT_LLVM_INSTALL_DIR "" CACHE PATH "LLVM installation directory")
 list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/")
 
 # FIXME: This is a warkaround for #25. Remove once resolved and use
-find_package(LLVM REQUIRED CONFIG)
+find_package(LLVM 16 REQUIRED CONFIG)
 
 # HelloWorld includes headers from LLVM - update the include paths accordingly
 include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
+message("LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
 
 #===============================================================================
 # 2. LLVM-TUTOR BUILD CONFIGURATION
