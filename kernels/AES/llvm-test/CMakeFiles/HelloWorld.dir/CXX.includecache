@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jzhan502/yao/hybrid-cache/kernels/AES/llvm-test/HelloWorld.cpp
+llvm/IR/LegacyPassManager.h
+/home/jzhan502/yao/hybrid-cache/kernels/AES/llvm-test/llvm/IR/LegacyPassManager.h
+llvm/Passes/PassBuilder.h
+/home/jzhan502/yao/hybrid-cache/kernels/AES/llvm-test/llvm/Passes/PassBuilder.h
+llvm/Passes/PassPlugin.h
+/home/jzhan502/yao/hybrid-cache/kernels/AES/llvm-test/llvm/Passes/PassPlugin.h
+llvm/Support/raw_ostream.h
+/home/jzhan502/yao/hybrid-cache/kernels/AES/llvm-test/llvm/Support/raw_ostream.h
+

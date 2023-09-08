@@ -1,1 +1,1 @@
-/Library/Developer/CommandLineTools/usr/bin/c++  -fno-rtti -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -dynamiclib -Wl,-headerpad_max_install_names -o libHelloWorld.dylib -install_name @rpath/libHelloWorld.dylib CMakeFiles/HelloWorld.dir/HelloWorld.cpp.o  -undefined dynamic_lookup 
+/usr/bin/c++ -fPIC  -fno-rtti  -shared -Wl,-soname,libHelloWorld.so -o libHelloWorld.so CMakeFiles/HelloWorld.dir/HelloWorld.cpp.o 
