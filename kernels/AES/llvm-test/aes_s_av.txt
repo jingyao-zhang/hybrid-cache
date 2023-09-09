@@ -1,0 +1,1405 @@
+Iterations:        100
+Instructions:      68200
+Total Cycles:      28945
+Total uOps:        80500
+
+Dispatch Width:    6
+uOps Per Cycle:    2.78
+IPC:               2.36
+Block RThroughput: 134.2
+
+
+Instruction Info:
+[1]: #uOps
+[2]: Latency
+[3]: RThroughput
+[4]: MayLoad
+[5]: MayStore
+[6]: HasSideEffects (U)
+
+[1]    [2]    [3]    [4]    [5]    [6]    Instructions:
+ 1      5     0.50    *                   movd	(%rdi), %xmm0
+ 1      1     0.33                        movdqa	%xmm0, %xmm1
+ 1      1     0.50                        psrld	$8, %xmm1
+ 1      1     0.50                        pslld	$24, %xmm0
+ 1      1     0.33                        por	%xmm1, %xmm0
+ 2      1     1.00           *            movd	%xmm0, (%rdi)
+ 3      7     1.00                  U     retq
+ 1      5     0.50    *                   movzbl	(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, (%rdi)
+ 1      5     0.50    *                   movzbl	1(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 1(%rdi)
+ 1      5     0.50    *                   movzbl	2(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 2(%rdi)
+ 1      5     0.50    *                   movzbl	3(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 3(%rdi)
+ 3      7     1.00                  U     retq
+ 1      5     0.50    *                   movzbl	(%rdi), %eax
+ 1      1     1.00           *            movb	%al, (%rsi)
+ 1      5     0.50    *                   movzbl	1(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 1(%rsi)
+ 1      5     0.50    *                   movzbl	2(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 2(%rsi)
+ 1      5     0.50    *                   movzbl	3(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 3(%rsi)
+ 1      5     0.50    *                   movzbl	4(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 4(%rsi)
+ 1      5     0.50    *                   movzbl	5(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 5(%rsi)
+ 1      5     0.50    *                   movzbl	6(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 6(%rsi)
+ 1      5     0.50    *                   movzbl	7(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 7(%rsi)
+ 1      5     0.50    *                   movzbl	8(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 8(%rsi)
+ 1      5     0.50    *                   movzbl	9(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 9(%rsi)
+ 1      5     0.50    *                   movzbl	10(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 10(%rsi)
+ 1      5     0.50    *                   movzbl	11(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 11(%rsi)
+ 1      5     0.50    *                   movzbl	12(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 12(%rsi)
+ 1      5     0.50    *                   movzbl	13(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 13(%rsi)
+ 1      5     0.50    *                   movzbl	14(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 14(%rsi)
+ 1      5     0.50    *                   movzbl	15(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 15(%rsi)
+ 1      5     0.50    *                   movd	12(%rsi), %xmm0
+ 1      1     0.25                        movl	$16, %eax
+ 1      1     0.50                        jmp	.LBB2_1
+ 1      5     0.50    *                   movd	-16(%rsi,%rax), %xmm1
+ 1      1     0.33                        pxor	%xmm1, %xmm0
+ 2      1     1.00           *            movd	%xmm0, (%rsi,%rax)
+ 1      1     0.50                        leaq	4(%rax), %rcx
+ 1      1     0.25                        addq	$3, %rax
+ 1      1     0.25                        cmpq	$175, %rax
+ 1      1     0.25                        movq	%rcx, %rax
+ 1      1     0.50                        jae	.LBB2_4
+ 1      1     0.25                        testb	$12, %al
+ 1      1     0.50                        jne	.LBB2_3
+ 2      1     1.00           *            movdqa	%xmm0, -24(%rsp)
+ 1      5     0.50    *                   movzbl	-23(%rsp), %ecx
+ 1      5     0.50    *                   movzbl	-22(%rsp), %edx
+ 1      5     0.50    *                   movzbl	-21(%rsp), %edi
+ 1      5     0.50    *                   movzbl	s_box(%rdi), %edi
+ 1      5     0.50    *                   movzbl	-24(%rsp), %r8d
+ 1      1     0.25                        movl	%eax, %r9d
+ 1      1     0.50                        shrl	$4, %r9d
+ 1      5     0.50    *                   movzbl	rcon(%r9), %r9d
+ 2      6     0.50    *                   xorb	s_box(%rcx), %r9b
+ 1      5     0.50    *                   movzbl	s_box(%r8), %ecx
+ 1      1     0.50                        shll	$8, %ecx
+ 1      1     0.25                        orl	%edi, %ecx
+ 1      1     0.25                        movzbl	%r9b, %edi
+ 1      5     0.50    *                   movzbl	s_box(%rdx), %edx
+ 1      1     0.50                        shll	$8, %edx
+ 1      1     0.25                        orl	%edi, %edx
+ 1      1     1.00                        movd	%edx, %xmm0
+ 2      2     2.00                        pinsrw	$1, %ecx, %xmm0
+ 1      1     0.50                        jmp	.LBB2_3
+ 3      7     1.00                  U     retq
+ 1      5     0.50    *                   movzbl	(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, (%rdi)
+ 1      5     0.50    *                   movzbl	1(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 1(%rdi)
+ 1      5     0.50    *                   movzbl	2(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 2(%rdi)
+ 1      5     0.50    *                   movzbl	3(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 3(%rdi)
+ 1      5     0.50    *                   movzbl	4(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 4(%rdi)
+ 1      5     0.50    *                   movzbl	5(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 5(%rdi)
+ 1      5     0.50    *                   movzbl	6(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 6(%rdi)
+ 1      5     0.50    *                   movzbl	7(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 7(%rdi)
+ 1      5     0.50    *                   movzbl	8(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 8(%rdi)
+ 1      5     0.50    *                   movzbl	9(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 9(%rdi)
+ 1      5     0.50    *                   movzbl	10(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 10(%rdi)
+ 1      5     0.50    *                   movzbl	11(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 11(%rdi)
+ 1      5     0.50    *                   movzbl	12(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 12(%rdi)
+ 1      5     0.50    *                   movzbl	13(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 13(%rdi)
+ 1      5     0.50    *                   movzbl	14(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 14(%rdi)
+ 1      5     0.50    *                   movzbl	15(%rsi), %eax
+ 3      7     1.00    *      *            xorb	%al, 15(%rdi)
+ 3      7     1.00                  U     retq
+ 1      5     0.50    *                   movzbl	(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, (%rdi)
+ 1      5     0.50    *                   movzbl	1(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 1(%rdi)
+ 1      5     0.50    *                   movzbl	2(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 2(%rdi)
+ 1      5     0.50    *                   movzbl	3(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 3(%rdi)
+ 1      5     0.50    *                   movzbl	4(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 4(%rdi)
+ 1      5     0.50    *                   movzbl	5(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 5(%rdi)
+ 1      5     0.50    *                   movzbl	6(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 6(%rdi)
+ 1      5     0.50    *                   movzbl	7(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 7(%rdi)
+ 1      5     0.50    *                   movzbl	8(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 8(%rdi)
+ 1      5     0.50    *                   movzbl	9(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 9(%rdi)
+ 1      5     0.50    *                   movzbl	10(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 10(%rdi)
+ 1      5     0.50    *                   movzbl	11(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 11(%rdi)
+ 1      5     0.50    *                   movzbl	12(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 12(%rdi)
+ 1      5     0.50    *                   movzbl	13(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 13(%rdi)
+ 1      5     0.50    *                   movzbl	14(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 14(%rdi)
+ 1      5     0.50    *                   movzbl	15(%rdi), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, 15(%rdi)
+ 3      7     1.00                  U     retq
+ 1      5     0.50    *                   movzbl	5(%rdi), %eax
+ 1      5     0.50    *                   movzbl	1(%rdi), %ecx
+ 1      5     0.50    *                   movzbl	2(%rdi), %edx
+ 1      1     1.00           *            movb	%al, 1(%rdi)
+ 1      5     0.50    *                   movzbl	9(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 5(%rdi)
+ 1      5     0.50    *                   movzbl	13(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 9(%rdi)
+ 1      1     1.00           *            movb	%cl, 13(%rdi)
+ 1      5     0.50    *                   movzbl	10(%rdi), %eax
+ 1      1     1.00           *            movb	%al, 2(%rdi)
+ 1      1     1.00           *            movb	%dl, 10(%rdi)
+ 1      5     0.50    *                   movzbl	6(%rdi), %eax
+ 1      5     0.50    *                   movzbl	14(%rdi), %ecx
+ 1      1     1.00           *            movb	%cl, 6(%rdi)
+ 1      1     1.00           *            movb	%al, 14(%rdi)
+ 1      5     0.50    *                   movzbl	3(%rdi), %eax
+ 1      5     0.50    *                   movzbl	15(%rdi), %ecx
+ 1      1     1.00           *            movb	%cl, 3(%rdi)
+ 1      5     0.50    *                   movzbl	11(%rdi), %ecx
+ 1      1     1.00           *            movb	%cl, 15(%rdi)
+ 1      5     0.50    *                   movzbl	7(%rdi), %ecx
+ 1      1     1.00           *            movb	%cl, 11(%rdi)
+ 1      1     1.00           *            movb	%al, 7(%rdi)
+ 3      7     1.00                  U     retq
+ 1      1     0.25                        movl	%esi, %eax
+ 1      1     0.25                        andb	$1, %al
+ 1      1     0.25                        negb	%al
+ 1      1     0.25                        andb	%dil, %al
+ 1      1     0.50                        leal	(%rdi,%rdi), %ecx
+ 1      1     0.25                        movzbl	%cl, %edx
+ 1      1     0.25                        xorb	$27, %cl
+ 1      1     0.25                        testb	%dil, %dil
+ 1      1     0.25                        movzbl	%cl, %ecx
+ 1      1     0.50                        cmovnsl	%edx, %ecx
+ 1      1     0.25                        movl	%esi, %edx
+ 1      1     0.50                        shlb	$6, %dl
+ 1      1     0.50                        sarb	$7, %dl
+ 1      1     0.25                        andb	%cl, %dl
+ 1      1     0.25                        xorb	%al, %dl
+ 1      1     0.50                        leal	(%rcx,%rcx), %eax
+ 1      1     0.25                        movzbl	%al, %edi
+ 1      1     0.25                        xorb	$27, %al
+ 1      1     0.25                        testb	%cl, %cl
+ 1      1     0.25                        movzbl	%al, %eax
+ 1      1     0.50                        cmovnsl	%edi, %eax
+ 1      1     0.25                        movl	%esi, %ecx
+ 1      1     0.50                        shlb	$5, %cl
+ 1      1     0.50                        sarb	$7, %cl
+ 1      1     0.25                        andb	%al, %cl
+ 1      1     0.25                        xorb	%dl, %cl
+ 1      1     0.50                        leal	(%rax,%rax), %edx
+ 1      1     0.25                        movzbl	%dl, %edi
+ 1      1     0.25                        xorb	$27, %dl
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%dl, %eax
+ 1      1     0.50                        cmovnsl	%edi, %eax
+ 1      1     0.25                        movl	%esi, %edx
+ 1      1     0.50                        shlb	$4, %dl
+ 1      1     0.50                        sarb	$7, %dl
+ 1      1     0.25                        andb	%al, %dl
+ 1      1     0.25                        xorb	%cl, %dl
+ 1      1     0.50                        leal	(%rax,%rax), %ecx
+ 1      1     0.25                        movzbl	%cl, %edi
+ 1      1     0.25                        xorb	$27, %cl
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%cl, %eax
+ 1      1     0.50                        cmovnsl	%edi, %eax
+ 1      1     0.50                        leal	(,%rsi,8), %ecx
+ 1      1     0.50                        sarb	$7, %cl
+ 1      1     0.25                        andb	%al, %cl
+ 1      1     0.25                        xorb	%dl, %cl
+ 1      1     0.50                        leal	(%rax,%rax), %edx
+ 1      1     0.25                        movzbl	%dl, %edi
+ 1      1     0.25                        xorb	$27, %dl
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%dl, %eax
+ 1      1     0.50                        cmovnsl	%edi, %eax
+ 1      1     0.50                        leal	(,%rsi,4), %edx
+ 1      1     0.50                        sarb	$7, %dl
+ 1      1     0.25                        andb	%al, %dl
+ 1      1     0.25                        xorb	%cl, %dl
+ 1      1     0.50                        leal	(%rax,%rax), %ecx
+ 1      1     0.25                        movzbl	%cl, %edi
+ 1      1     0.25                        xorb	$27, %cl
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%cl, %eax
+ 1      1     0.50                        cmovnsl	%edi, %eax
+ 1      1     0.50                        leal	(%rsi,%rsi), %ecx
+ 1      1     0.50                        sarb	$7, %cl
+ 1      1     0.25                        andb	%al, %cl
+ 1      1     0.25                        xorb	%dl, %cl
+ 1      1     0.50                        leal	(%rax,%rax), %edx
+ 1      1     0.25                        movzbl	%dl, %edi
+ 1      1     0.25                        xorb	$27, %dl
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%dl, %eax
+ 1      1     0.50                        cmovnsl	%edi, %eax
+ 1      1     0.50                        sarb	$7, %sil
+ 1      1     0.25                        andb	%sil, %al
+ 1      1     0.25                        xorb	%cl, %al
+ 3      7     1.00                  U     retq
+ 3      2     1.00           *            pushq	%rbp
+ 3      2     1.00           *            pushq	%rbx
+ 1      5     0.50    *                   movzbl	(%rdi), %ecx
+ 1      1     0.50                        leal	(%rcx,%rcx), %eax
+ 1      1     0.25                        movzbl	%al, %esi
+ 1      1     0.25                        xorb	$27, %al
+ 1      1     0.25                        testb	%cl, %cl
+ 1      1     0.25                        movzbl	%al, %edx
+ 1      1     0.50                        cmovnsl	%esi, %edx
+ 1      5     0.50    *                   movzbl	3(%rdi), %eax
+ 1      1     0.50                        leal	(%rax,%rax), %esi
+ 1      1     0.25                        movzbl	%sil, %r8d
+ 1      1     0.25                        xorb	$27, %sil
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%sil, %esi
+ 1      1     0.50                        cmovnsl	%r8d, %esi
+ 1      5     0.50    *                   movzbl	2(%rdi), %r8d
+ 1      1     0.50                        leal	(%r8,%r8), %r9d
+ 1      1     0.25                        movzbl	%r9b, %r11d
+ 1      1     0.25                        xorb	$27, %r9b
+ 1      1     0.25                        testb	%r8b, %r8b
+ 1      1     0.25                        movzbl	%r9b, %r10d
+ 1      1     0.50                        cmovnsl	%r11d, %r10d
+ 1      5     0.50    *                   movzbl	1(%rdi), %r9d
+ 1      1     0.50                        leal	(%r9,%r9), %r11d
+ 1      1     0.25                        movzbl	%r11b, %ebx
+ 1      1     0.25                        xorb	$27, %r11b
+ 1      1     0.25                        testb	%r9b, %r9b
+ 1      1     0.25                        movzbl	%r11b, %r11d
+ 1      1     0.50                        cmovnsl	%ebx, %r11d
+ 1      1     0.25                        movl	%eax, %ebx
+ 1      1     0.25                        xorb	%r8b, %bl
+ 1      1     0.25                        movl	%ebx, %ebp
+ 1      1     0.25                        xorb	%r9b, %bpl
+ 1      1     0.25                        xorb	%dl, %bpl
+ 1      1     0.25                        xorb	%r11b, %bpl
+ 1      1     0.25                        xorb	%cl, %bl
+ 1      1     0.25                        xorb	%r11b, %bl
+ 1      1     0.25                        xorb	%r10b, %bl
+ 1      1     0.25                        xorb	%cl, %r9b
+ 1      1     0.25                        xorb	%r9b, %al
+ 1      1     0.25                        xorb	%r10b, %al
+ 1      1     0.25                        xorb	%sil, %al
+ 1      1     0.25                        xorb	%r8b, %r9b
+ 1      1     0.25                        xorb	%dl, %r9b
+ 1      1     0.25                        xorb	%sil, %r9b
+ 1      1     1.00           *            movb	%bpl, (%rdi)
+ 1      1     1.00           *            movb	%bl, 1(%rdi)
+ 1      1     1.00           *            movb	%al, 2(%rdi)
+ 1      1     1.00           *            movb	%r9b, 3(%rdi)
+ 1      5     0.50    *                   movzbl	4(%rdi), %ecx
+ 1      1     0.50                        leal	(%rcx,%rcx), %eax
+ 1      1     0.25                        movzbl	%al, %esi
+ 1      1     0.25                        xorb	$27, %al
+ 1      1     0.25                        testb	%cl, %cl
+ 1      1     0.25                        movzbl	%al, %edx
+ 1      1     0.50                        cmovnsl	%esi, %edx
+ 1      5     0.50    *                   movzbl	7(%rdi), %eax
+ 1      1     0.50                        leal	(%rax,%rax), %esi
+ 1      1     0.25                        movzbl	%sil, %r8d
+ 1      1     0.25                        xorb	$27, %sil
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%sil, %esi
+ 1      1     0.50                        cmovnsl	%r8d, %esi
+ 1      5     0.50    *                   movzbl	6(%rdi), %r8d
+ 1      1     0.50                        leal	(%r8,%r8), %r9d
+ 1      1     0.25                        movzbl	%r9b, %r11d
+ 1      1     0.25                        xorb	$27, %r9b
+ 1      1     0.25                        testb	%r8b, %r8b
+ 1      1     0.25                        movzbl	%r9b, %r10d
+ 1      1     0.50                        cmovnsl	%r11d, %r10d
+ 1      5     0.50    *                   movzbl	5(%rdi), %r9d
+ 1      1     0.50                        leal	(%r9,%r9), %r11d
+ 1      1     0.25                        movzbl	%r11b, %ebx
+ 1      1     0.25                        xorb	$27, %r11b
+ 1      1     0.25                        testb	%r9b, %r9b
+ 1      1     0.25                        movzbl	%r11b, %r11d
+ 1      1     0.50                        cmovnsl	%ebx, %r11d
+ 1      1     0.25                        movl	%eax, %ebx
+ 1      1     0.25                        xorb	%r8b, %bl
+ 1      1     0.25                        movl	%ebx, %ebp
+ 1      1     0.25                        xorb	%r9b, %bpl
+ 1      1     0.25                        xorb	%dl, %bpl
+ 1      1     0.25                        xorb	%r11b, %bpl
+ 1      1     0.25                        xorb	%cl, %bl
+ 1      1     0.25                        xorb	%r11b, %bl
+ 1      1     0.25                        xorb	%r10b, %bl
+ 1      1     0.25                        xorb	%cl, %r9b
+ 1      1     0.25                        xorb	%r9b, %al
+ 1      1     0.25                        xorb	%r10b, %al
+ 1      1     0.25                        xorb	%sil, %al
+ 1      1     0.25                        xorb	%r8b, %r9b
+ 1      1     0.25                        xorb	%dl, %r9b
+ 1      1     0.25                        xorb	%sil, %r9b
+ 1      1     1.00           *            movb	%bpl, 4(%rdi)
+ 1      1     1.00           *            movb	%bl, 5(%rdi)
+ 1      1     1.00           *            movb	%al, 6(%rdi)
+ 1      1     1.00           *            movb	%r9b, 7(%rdi)
+ 1      5     0.50    *                   movzbl	8(%rdi), %ecx
+ 1      1     0.50                        leal	(%rcx,%rcx), %eax
+ 1      1     0.25                        movzbl	%al, %esi
+ 1      1     0.25                        xorb	$27, %al
+ 1      1     0.25                        testb	%cl, %cl
+ 1      1     0.25                        movzbl	%al, %edx
+ 1      1     0.50                        cmovnsl	%esi, %edx
+ 1      5     0.50    *                   movzbl	11(%rdi), %eax
+ 1      1     0.50                        leal	(%rax,%rax), %esi
+ 1      1     0.25                        movzbl	%sil, %r8d
+ 1      1     0.25                        xorb	$27, %sil
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%sil, %esi
+ 1      1     0.50                        cmovnsl	%r8d, %esi
+ 1      5     0.50    *                   movzbl	10(%rdi), %r8d
+ 1      1     0.50                        leal	(%r8,%r8), %r9d
+ 1      1     0.25                        movzbl	%r9b, %r11d
+ 1      1     0.25                        xorb	$27, %r9b
+ 1      1     0.25                        testb	%r8b, %r8b
+ 1      1     0.25                        movzbl	%r9b, %r10d
+ 1      1     0.50                        cmovnsl	%r11d, %r10d
+ 1      5     0.50    *                   movzbl	9(%rdi), %r9d
+ 1      1     0.50                        leal	(%r9,%r9), %r11d
+ 1      1     0.25                        movzbl	%r11b, %ebx
+ 1      1     0.25                        xorb	$27, %r11b
+ 1      1     0.25                        testb	%r9b, %r9b
+ 1      1     0.25                        movzbl	%r11b, %r11d
+ 1      1     0.50                        cmovnsl	%ebx, %r11d
+ 1      1     0.25                        movl	%eax, %ebx
+ 1      1     0.25                        xorb	%r8b, %bl
+ 1      1     0.25                        movl	%ebx, %ebp
+ 1      1     0.25                        xorb	%r9b, %bpl
+ 1      1     0.25                        xorb	%dl, %bpl
+ 1      1     0.25                        xorb	%r11b, %bpl
+ 1      1     0.25                        xorb	%cl, %bl
+ 1      1     0.25                        xorb	%r11b, %bl
+ 1      1     0.25                        xorb	%r10b, %bl
+ 1      1     0.25                        xorb	%cl, %r9b
+ 1      1     0.25                        xorb	%r9b, %al
+ 1      1     0.25                        xorb	%r10b, %al
+ 1      1     0.25                        xorb	%sil, %al
+ 1      1     0.25                        xorb	%r8b, %r9b
+ 1      1     0.25                        xorb	%dl, %r9b
+ 1      1     0.25                        xorb	%sil, %r9b
+ 1      1     1.00           *            movb	%bpl, 8(%rdi)
+ 1      1     1.00           *            movb	%bl, 9(%rdi)
+ 1      1     1.00           *            movb	%al, 10(%rdi)
+ 1      1     1.00           *            movb	%r9b, 11(%rdi)
+ 1      5     0.50    *                   movzbl	12(%rdi), %ecx
+ 1      1     0.50                        leal	(%rcx,%rcx), %eax
+ 1      1     0.25                        movzbl	%al, %esi
+ 1      1     0.25                        xorb	$27, %al
+ 1      1     0.25                        testb	%cl, %cl
+ 1      1     0.25                        movzbl	%al, %edx
+ 1      1     0.50                        cmovnsl	%esi, %edx
+ 1      5     0.50    *                   movzbl	15(%rdi), %eax
+ 1      1     0.50                        leal	(%rax,%rax), %esi
+ 1      1     0.25                        movzbl	%sil, %r8d
+ 1      1     0.25                        xorb	$27, %sil
+ 1      1     0.25                        testb	%al, %al
+ 1      1     0.25                        movzbl	%sil, %esi
+ 1      1     0.50                        cmovnsl	%r8d, %esi
+ 1      5     0.50    *                   movzbl	14(%rdi), %r8d
+ 1      1     0.50                        leal	(%r8,%r8), %r9d
+ 1      1     0.25                        movzbl	%r9b, %r11d
+ 1      1     0.25                        xorb	$27, %r9b
+ 1      1     0.25                        testb	%r8b, %r8b
+ 1      1     0.25                        movzbl	%r9b, %r10d
+ 1      1     0.50                        cmovnsl	%r11d, %r10d
+ 1      5     0.50    *                   movzbl	13(%rdi), %r9d
+ 1      1     0.50                        leal	(%r9,%r9), %r11d
+ 1      1     0.25                        movzbl	%r11b, %ebx
+ 1      1     0.25                        xorb	$27, %r11b
+ 1      1     0.25                        testb	%r9b, %r9b
+ 1      1     0.25                        movzbl	%r11b, %r11d
+ 1      1     0.50                        cmovnsl	%ebx, %r11d
+ 1      1     0.25                        movl	%eax, %ebx
+ 1      1     0.25                        xorb	%r8b, %bl
+ 1      1     0.25                        movl	%ebx, %ebp
+ 1      1     0.25                        xorb	%r9b, %bpl
+ 1      1     0.25                        xorb	%dl, %bpl
+ 1      1     0.25                        xorb	%r11b, %bpl
+ 1      1     0.25                        xorb	%cl, %bl
+ 1      1     0.25                        xorb	%r11b, %bl
+ 1      1     0.25                        xorb	%r10b, %bl
+ 1      1     0.25                        xorb	%cl, %r9b
+ 1      1     0.25                        xorb	%r9b, %al
+ 1      1     0.25                        xorb	%r10b, %al
+ 1      1     0.25                        xorb	%sil, %al
+ 1      1     0.25                        xorb	%r8b, %r9b
+ 1      1     0.25                        xorb	%dl, %r9b
+ 1      1     0.25                        xorb	%sil, %r9b
+ 1      1     1.00           *            movb	%bpl, 12(%rdi)
+ 1      1     1.00           *            movb	%bl, 13(%rdi)
+ 1      1     1.00           *            movb	%al, 14(%rdi)
+ 1      1     1.00           *            movb	%r9b, 15(%rdi)
+ 2      6     0.50    *                   popq	%rbx
+ 2      6     0.50    *                   popq	%rbp
+ 3      7     1.00                  U     retq
+ 3      2     1.00           *            pushq	%rbp
+ 3      2     1.00           *            pushq	%r15
+ 3      2     1.00           *            pushq	%r14
+ 3      2     1.00           *            pushq	%r13
+ 3      2     1.00           *            pushq	%r12
+ 3      2     1.00           *            pushq	%rbx
+ 1      1     0.25                        subq	$248, %rsp
+ 1      1     0.25                        movq	%rsi, %rbx
+ 1      6     0.50    *                   movups	(%rdi), %xmm0
+ 2      1     1.00           *            movaps	%xmm0, (%rsp)
+ 1      6     0.50    *                   movups	(%rdx), %xmm0
+ 2      1     1.00           *            movaps	%xmm0, 64(%rsp)
+ 1      1     0.25                        movl	$16, %eax
+ 1      5     0.50    *                   movd	76(%rsp), %xmm0
+ 1      1     0.50                        jmp	.LBB8_1
+ 1      5     0.50    *                   movd	48(%rsp,%rax), %xmm1
+ 1      1     0.33                        pxor	%xmm1, %xmm0
+ 2      1     1.00           *            movd	%xmm0, 64(%rsp,%rax)
+ 1      1     0.50                        leaq	4(%rax), %rcx
+ 1      1     0.25                        addq	$3, %rax
+ 1      1     0.25                        cmpq	$175, %rax
+ 1      1     0.25                        movq	%rcx, %rax
+ 1      1     0.50                        jae	.LBB8_4
+ 1      1     0.25                        testb	$12, %al
+ 1      1     0.50                        jne	.LBB8_3
+ 2      1     1.00           *            movdqa	%xmm0, 48(%rsp)
+ 1      5     0.50    *                   movzbl	49(%rsp), %ecx
+ 1      5     0.50    *                   movzbl	50(%rsp), %edx
+ 1      5     0.50    *                   movzbl	51(%rsp), %esi
+ 1      5     0.50    *                   movzbl	s_box(%rsi), %esi
+ 1      5     0.50    *                   movzbl	48(%rsp), %edi
+ 1      1     0.25                        movl	%eax, %r8d
+ 1      1     0.50                        shrl	$4, %r8d
+ 1      5     0.50    *                   movzbl	rcon(%r8), %r8d
+ 2      6     0.50    *                   xorb	s_box(%rcx), %r8b
+ 1      5     0.50    *                   movzbl	s_box(%rdi), %ecx
+ 1      1     0.50                        shll	$8, %ecx
+ 1      1     0.25                        orl	%esi, %ecx
+ 1      1     0.25                        movzbl	%r8b, %esi
+ 1      5     0.50    *                   movzbl	s_box(%rdx), %edx
+ 1      1     0.50                        shll	$8, %edx
+ 1      1     0.25                        orl	%esi, %edx
+ 1      1     1.00                        movd	%edx, %xmm0
+ 2      2     2.00                        pinsrw	$1, %ecx, %xmm0
+ 1      1     0.50                        jmp	.LBB8_3
+ 1      6     0.50    *                   movaps	(%rsp), %xmm0
+ 2      7     0.50    *                   xorps	64(%rsp), %xmm0
+ 1      1     0.25                        movl	$16, %r15d
+ 1      1     0.25                        movq	%rsp, %r14
+ 2      1     1.00           *            movaps	%xmm0, 32(%rsp)
+ 1      5     0.50    *                   movzbl	32(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00           *            movb	%al, (%rsp)
+ 1      5     0.50    *                   movzbl	33(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %ecx
+ 1      5     0.50    *                   movzbl	34(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %edx
+ 1      5     0.50    *                   movzbl	35(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      5     0.50    *                   movzbl	36(%rsp), %esi
+ 1      5     0.50    *                   movzbl	s_box(%rsi), %esi
+ 1      1     1.00           *            movb	%sil, 4(%rsp)
+ 1      5     0.50    *                   movzbl	37(%rsp), %esi
+ 1      5     0.50    *                   movzbl	s_box(%rsi), %r8d
+ 1      5     0.50    *                   movzbl	38(%rsp), %esi
+ 1      5     0.50    *                   movzbl	s_box(%rsi), %esi
+ 1      5     0.50    *                   movzbl	39(%rsp), %edi
+ 1      5     0.50    *                   movzbl	s_box(%rdi), %edi
+ 1      5     0.50    *                   movzbl	40(%rsp), %r9d
+ 1      5     0.50    *                   movzbl	s_box(%r9), %r9d
+ 1      1     1.00           *            movb	%r9b, 8(%rsp)
+ 1      5     0.50    *                   movzbl	41(%rsp), %r9d
+ 1      5     0.50    *                   movzbl	s_box(%r9), %r9d
+ 1      5     0.50    *                   movzbl	42(%rsp), %r10d
+ 1      5     0.50    *                   movzbl	s_box(%r10), %r10d
+ 1      5     0.50    *                   movzbl	43(%rsp), %r11d
+ 1      5     0.50    *                   movzbl	s_box(%r11), %r11d
+ 1      5     0.50    *                   movzbl	44(%rsp), %r12d
+ 1      5     0.50    *                   movzbl	s_box(%r12), %ebp
+ 1      1     1.00           *            movb	%bpl, 12(%rsp)
+ 1      5     0.50    *                   movzbl	45(%rsp), %r12d
+ 1      5     0.50    *                   movzbl	s_box(%r12), %ebp
+ 1      5     0.50    *                   movzbl	46(%rsp), %r12d
+ 1      5     0.50    *                   movzbl	s_box(%r12), %r12d
+ 1      5     0.50    *                   movzbl	47(%rsp), %r13d
+ 1      5     0.50    *                   movzbl	s_box(%r13), %r13d
+ 1      1     1.00           *            movb	%r8b, 1(%rsp)
+ 1      1     1.00           *            movb	%r9b, 5(%rsp)
+ 1      1     1.00           *            movb	%bpl, 9(%rsp)
+ 1      1     1.00           *            movb	%cl, 13(%rsp)
+ 1      1     1.00           *            movb	%r10b, 2(%rsp)
+ 1      1     1.00           *            movb	%dl, 10(%rsp)
+ 1      1     1.00           *            movb	%r12b, 6(%rsp)
+ 1      1     1.00           *            movb	%sil, 14(%rsp)
+ 1      1     1.00           *            movb	%r13b, 3(%rsp)
+ 1      1     1.00           *            movb	%r11b, 15(%rsp)
+ 1      1     1.00           *            movb	%dil, 11(%rsp)
+ 1      1     1.00           *            movb	%al, 7(%rsp)
+ 1      1     0.25                        movq	%r14, %rdi
+ 4      3     1.00                        callq	MixColumns
+ 1      6     0.50    *                   movaps	(%rsp), %xmm0
+ 2      7     0.50    *                   xorps	64(%rsp,%r15), %xmm0
+ 2      1     1.00           *            movaps	%xmm0, (%rsp)
+ 1      1     0.25                        addq	$16, %r15
+ 1      1     0.25                        cmpq	$160, %r15
+ 1      1     0.50                        jne	.LBB8_5
+ 2      1     1.00           *            movaps	%xmm0, 16(%rsp)
+ 1      5     0.50    *                   movzbl	27(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm0
+ 1      5     0.50    *                   movzbl	22(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm1
+ 1      5     0.50    *                   movzbl	17(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm3
+ 1      5     0.50    *                   movzbl	28(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm2
+ 1      5     0.50    *                   movzbl	23(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm4
+ 1      5     0.50    *                   movzbl	18(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm6
+ 1      5     0.50    *                   movzbl	29(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm7
+ 1      5     0.50    *                   movzbl	24(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm5
+ 1      5     0.50    *                   movzbl	19(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm8
+ 1      5     0.50    *                   movzbl	30(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm9
+ 1      5     0.50    *                   movzbl	25(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm10
+ 1      5     0.50    *                   movzbl	20(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm11
+ 1      5     0.50    *                   movzbl	31(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm12
+ 1      5     0.50    *                   movzbl	26(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm13
+ 1      5     0.50    *                   movzbl	21(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm14
+ 1      5     0.50    *                   movzbl	16(%rsp), %eax
+ 1      5     0.50    *                   movzbl	s_box(%rax), %eax
+ 1      1     1.00                        movd	%eax, %xmm15
+ 1      1     1.00                        punpcklbw	%xmm0, %xmm1
+ 1      1     1.00                        punpcklbw	%xmm3, %xmm2
+ 1      1     1.00                        punpcklwd	%xmm1, %xmm2
+ 1      1     1.00                        punpcklbw	%xmm4, %xmm6
+ 1      1     1.00                        punpcklbw	%xmm7, %xmm5
+ 1      1     1.00                        punpcklwd	%xmm6, %xmm5
+ 1      1     1.00                        punpckldq	%xmm2, %xmm5
+ 1      1     1.00                        punpcklbw	%xmm8, %xmm9
+ 1      1     1.00                        punpcklbw	%xmm10, %xmm11
+ 1      1     1.00                        punpcklwd	%xmm9, %xmm11
+ 1      1     1.00                        punpcklbw	%xmm12, %xmm13
+ 1      1     1.00                        punpcklbw	%xmm14, %xmm15
+ 1      1     1.00                        punpcklwd	%xmm13, %xmm15
+ 1      1     1.00                        punpckldq	%xmm11, %xmm15
+ 1      1     1.00                        punpcklqdq	%xmm5, %xmm15
+ 2      7     0.50    *                   pxor	224(%rsp), %xmm15
+ 2      1     1.00           *            movdqa	%xmm15, (%rsp)
+ 2      1     1.00           *            movdqu	%xmm15, (%rbx)
+ 1      1     0.25                        addq	$248, %rsp
+ 2      6     0.50    *                   popq	%rbx
+ 2      6     0.50    *                   popq	%r12
+ 2      6     0.50    *                   popq	%r13
+ 2      6     0.50    *                   popq	%r14
+ 2      6     0.50    *                   popq	%r15
+ 2      6     0.50    *                   popq	%rbp
+ 3      7     1.00                  U     retq
+ 3      2     1.00           *            pushq	%r15
+ 3      2     1.00           *            pushq	%r14
+ 3      2     1.00           *            pushq	%rbx
+ 1      1     0.25                        subq	$128, %rsp
+ 1      0     0.17                        xorps	%xmm0, %xmm0
+ 2      1     1.00           *            movaps	%xmm0, 48(%rsp)
+ 2      1     1.00           *            movaps	%xmm0, 32(%rsp)
+ 2      1     1.00           *            movaps	%xmm0, 16(%rsp)
+ 2      1     1.00           *            movaps	%xmm0, (%rsp)
+ 1      1     0.50                        leaq	48(%rsp), %rbx
+ 1      1     0.50                        leaq	32(%rsp), %r14
+ 1      1     0.50                        leaq	16(%rsp), %r15
+ 1      1     0.25                        movq	%rsp, %rdi
+ 1      1     0.50                        leaq	64(%rsp), %rsi
+ 1      1     0.25                        movl	$.L__const.main.key, %edx
+ 4      3     1.00                        callq	AES128Encrypt
+ 1      1     0.50                        leaq	80(%rsp), %rsi
+ 1      1     0.25                        movl	$.L__const.main.key, %edx
+ 1      1     0.25                        movq	%r15, %rdi
+ 4      3     1.00                        callq	AES128Encrypt
+ 1      1     0.50                        leaq	96(%rsp), %rsi
+ 1      1     0.25                        movl	$.L__const.main.key, %edx
+ 1      1     0.25                        movq	%r14, %rdi
+ 4      3     1.00                        callq	AES128Encrypt
+ 1      1     0.50                        leaq	112(%rsp), %rsi
+ 1      1     0.25                        movl	$.L__const.main.key, %edx
+ 1      1     0.25                        movq	%rbx, %rdi
+ 4      3     1.00                        callq	AES128Encrypt
+ 1      0     0.17                        xorl	%eax, %eax
+ 1      1     0.25                        addq	$128, %rsp
+ 2      6     0.50    *                   popq	%rbx
+ 2      6     0.50    *                   popq	%r14
+ 2      6     0.50    *                   popq	%r15
+ 3      7     1.00                  U     retq
+
+
+Resources:
+[0]   - SKXDivider
+[1]   - SKXFPDivider
+[2]   - SKXPort0
+[3]   - SKXPort1
+[4]   - SKXPort2
+[5]   - SKXPort3
+[6]   - SKXPort4
+[7]   - SKXPort5
+[8]   - SKXPort6
+[9]   - SKXPort7
+
+
+Resource pressure per iteration:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    
+ -      -     97.00  94.01  132.95 135.94 128.00 123.99 97.00  90.11  
+
+Resource pressure by instruction:
+[0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    Instructions:
+ -      -      -      -     0.99   0.01    -      -      -      -     movd	(%rdi), %xmm0
+ -      -     0.01    -      -      -      -     0.99    -      -     movdqa	%xmm0, %xmm1
+ -      -     0.01   0.99    -      -      -      -      -      -     psrld	$8, %xmm1
+ -      -     0.99   0.01    -      -      -      -      -      -     pslld	$24, %xmm0
+ -      -      -      -      -      -      -     1.00    -      -     por	%xmm1, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   movd	%xmm0, (%rdi)
+ -      -      -     0.99   0.01   0.99    -     0.01   1.00    -     retq
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	(%rdi), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, (%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	1(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 1(%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	2(%rdi), %eax
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 2(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	3(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 3(%rdi)
+ -      -     0.99   0.01   0.99   0.01    -      -     1.00    -     retq
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	(%rdi), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, (%rsi)
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	1(%rdi), %eax
+ -      -      -      -     0.99    -     1.00    -      -     0.01   movb	%al, 1(%rsi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	2(%rdi), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 2(%rsi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	3(%rdi), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, 3(%rsi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	4(%rdi), %eax
+ -      -      -      -     0.99    -     1.00    -      -     0.01   movb	%al, 4(%rsi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	5(%rdi), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 5(%rsi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	6(%rdi), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, 6(%rsi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	7(%rdi), %eax
+ -      -      -      -     0.99    -     1.00    -      -     0.01   movb	%al, 7(%rsi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	8(%rdi), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 8(%rsi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	9(%rdi), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, 9(%rsi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	10(%rdi), %eax
+ -      -      -      -     0.99    -     1.00    -      -     0.01   movb	%al, 10(%rsi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	11(%rdi), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 11(%rsi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	12(%rdi), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, 12(%rsi)
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	13(%rdi), %eax
+ -      -      -      -     1.00    -     1.00    -      -      -     movb	%al, 13(%rsi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	14(%rdi), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 14(%rsi)
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	15(%rdi), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 15(%rsi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movd	12(%rsi), %xmm0
+ -      -      -      -      -      -      -      -     1.00    -     movl	$16, %eax
+ -      -     1.00    -      -      -      -      -      -      -     jmp	.LBB2_1
+ -      -      -      -     0.99   0.01    -      -      -      -     movd	-16(%rsi,%rax), %xmm1
+ -      -      -     1.00    -      -      -      -      -      -     pxor	%xmm1, %xmm0
+ -      -      -      -     0.01    -     1.00    -      -     0.99   movd	%xmm0, (%rsi,%rax)
+ -      -      -     0.99    -      -      -     0.01    -      -     leaq	4(%rax), %rcx
+ -      -     0.99   0.01    -      -      -      -      -      -     addq	$3, %rax
+ -      -      -      -      -      -      -      -     1.00    -     cmpq	$175, %rax
+ -      -      -      -      -      -      -     1.00    -      -     movq	%rcx, %rax
+ -      -     1.00    -      -      -      -      -      -      -     jae	.LBB2_4
+ -      -      -     0.01    -      -      -      -     0.99    -     testb	$12, %al
+ -      -     1.00    -      -      -      -      -      -      -     jne	.LBB2_3
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movdqa	%xmm0, -24(%rsp)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	-23(%rsp), %ecx
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	-22(%rsp), %edx
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	-21(%rsp), %edi
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rdi), %edi
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	-24(%rsp), %r8d
+ -      -      -      -      -      -      -     0.99   0.01    -     movl	%eax, %r9d
+ -      -      -      -      -      -      -      -     1.00    -     shrl	$4, %r9d
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	rcon(%r9), %r9d
+ -      -      -      -      -     1.00    -     1.00    -      -     xorb	s_box(%rcx), %r9b
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%r8), %ecx
+ -      -      -      -      -      -      -      -     1.00    -     shll	$8, %ecx
+ -      -      -     0.01    -      -      -     0.99    -      -     orl	%edi, %ecx
+ -      -      -     1.00    -      -      -      -      -      -     movzbl	%r9b, %edi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rdx), %edx
+ -      -     1.00    -      -      -      -      -      -      -     shll	$8, %edx
+ -      -      -     0.99    -      -      -     0.01    -      -     orl	%edi, %edx
+ -      -      -      -      -      -      -     1.00    -      -     movd	%edx, %xmm0
+ -      -      -      -      -      -      -     2.00    -      -     pinsrw	$1, %ecx, %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     jmp	.LBB2_3
+ -      -      -     0.99    -     1.00    -     0.01   1.00    -     retq
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	(%rsi), %eax
+ -      -     0.99   0.01   0.99   0.01   1.00    -      -     1.00   xorb	%al, (%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	1(%rsi), %eax
+ -      -     0.01    -     0.99   0.01   1.00    -     0.99   1.00   xorb	%al, 1(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	2(%rsi), %eax
+ -      -      -     0.99   0.99   0.01   1.00    -     0.01   1.00   xorb	%al, 2(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	3(%rsi), %eax
+ -      -     0.99    -     0.99   0.01   1.00   0.01    -     1.00   xorb	%al, 3(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	4(%rsi), %eax
+ -      -      -     0.01   0.99   0.01   1.00    -     0.99   1.00   xorb	%al, 4(%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	5(%rsi), %eax
+ -      -     0.01   0.99   0.99   0.01   1.00    -      -     1.00   xorb	%al, 5(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	6(%rsi), %eax
+ -      -     0.99    -     0.99   0.01   1.00    -     0.01   1.00   xorb	%al, 6(%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	7(%rsi), %eax
+ -      -      -      -     0.99   0.01   1.00   0.01   0.99   1.00   xorb	%al, 7(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	8(%rsi), %eax
+ -      -      -     0.01   0.99   0.01   1.00   0.99    -     1.00   xorb	%al, 8(%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	9(%rsi), %eax
+ -      -     1.00    -     0.99   0.01   1.00    -      -     1.00   xorb	%al, 9(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	10(%rsi), %eax
+ -      -      -      -     0.99   0.01   1.00   0.99   0.01   1.00   xorb	%al, 10(%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	11(%rsi), %eax
+ -      -      -     0.99   0.99   0.01   1.00   0.01    -     1.00   xorb	%al, 11(%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	12(%rsi), %eax
+ -      -     0.99   0.01   0.99   0.01   1.00    -      -     1.00   xorb	%al, 12(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	13(%rsi), %eax
+ -      -     0.01    -     0.99   0.01   1.00    -     0.99   1.00   xorb	%al, 13(%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	14(%rsi), %eax
+ -      -      -      -     0.99   0.01   1.00   0.99   0.01   1.00   xorb	%al, 14(%rdi)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	15(%rsi), %eax
+ -      -      -     0.99   0.99   0.01   1.00   0.01    -     1.00   xorb	%al, 15(%rdi)
+ -      -     0.01   0.99   0.01   0.99    -      -     1.00    -     retq
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	(%rdi), %eax
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, (%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	1(%rdi), %eax
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 1(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	2(%rdi), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, 2(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	3(%rdi), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 3(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	4(%rdi), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, 4(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	5(%rdi), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 5(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	6(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, 6(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	7(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 7(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	8(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 8(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	9(%rdi), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 9(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	10(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 10(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	11(%rdi), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 11(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	12(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 12(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	13(%rdi), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 13(%rdi)
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	14(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 14(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	15(%rdi), %eax
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%al, 15(%rdi)
+ -      -     0.99    -     1.00    -      -     0.01   1.00    -     retq
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	5(%rdi), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	1(%rdi), %ecx
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	2(%rdi), %edx
+ -      -      -      -     0.99   0.01   1.00    -      -      -     movb	%al, 1(%rdi)
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	9(%rdi), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 5(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	13(%rdi), %eax
+ -      -      -      -      -     1.00   1.00    -      -      -     movb	%al, 9(%rdi)
+ -      -      -      -     1.00    -     1.00    -      -      -     movb	%cl, 13(%rdi)
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	10(%rdi), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 2(%rdi)
+ -      -      -      -      -     1.00   1.00    -      -      -     movb	%dl, 10(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	6(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	14(%rdi), %ecx
+ -      -      -      -     1.00    -     1.00    -      -      -     movb	%cl, 6(%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 14(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	3(%rdi), %eax
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	15(%rdi), %ecx
+ -      -      -      -      -     1.00   1.00    -      -      -     movb	%cl, 3(%rdi)
+ -      -      -      -     0.01   0.99    -      -      -      -     movzbl	11(%rdi), %ecx
+ -      -      -      -     0.01    -     1.00    -      -     0.99   movb	%cl, 15(%rdi)
+ -      -      -      -     0.99   0.01    -      -      -      -     movzbl	7(%rdi), %ecx
+ -      -      -      -      -     0.99   1.00    -      -     0.01   movb	%cl, 11(%rdi)
+ -      -      -      -     0.99   0.01   1.00    -      -      -     movb	%al, 7(%rdi)
+ -      -      -      -     0.01   0.99    -     1.00   1.00    -     retq
+ -      -      -     0.01    -      -      -     0.99    -      -     movl	%esi, %eax
+ -      -     1.00    -      -      -      -      -      -      -     andb	$1, %al
+ -      -     0.99    -      -      -      -      -     0.01    -     negb	%al
+ -      -     0.01   0.99    -      -      -      -      -      -     andb	%dil, %al
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rdi,%rdi), %ecx
+ -      -      -      -      -      -      -     0.01   0.99    -     movzbl	%cl, %edx
+ -      -     0.01    -      -      -      -     0.99    -      -     xorb	$27, %cl
+ -      -      -     1.00    -      -      -      -      -      -     testb	%dil, %dil
+ -      -      -      -      -      -      -      -     1.00    -     movzbl	%cl, %ecx
+ -      -     0.99    -      -      -      -      -     0.01    -     cmovnsl	%edx, %ecx
+ -      -      -      -      -      -      -     1.00    -      -     movl	%esi, %edx
+ -      -     0.01    -      -      -      -      -     0.99    -     shlb	$6, %dl
+ -      -     1.00    -      -      -      -      -      -      -     sarb	$7, %dl
+ -      -      -     0.99    -      -      -     0.01    -      -     andb	%cl, %dl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%al, %dl
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rcx,%rcx), %eax
+ -      -     0.99   0.01    -      -      -      -      -      -     movzbl	%al, %edi
+ -      -     0.01   0.99    -      -      -      -      -      -     xorb	$27, %al
+ -      -      -      -      -      -      -      -     1.00    -     testb	%cl, %cl
+ -      -      -     0.01    -      -      -     0.99    -      -     movzbl	%al, %eax
+ -      -     0.99    -      -      -      -      -     0.01    -     cmovnsl	%edi, %eax
+ -      -      -     0.01    -      -      -     0.99    -      -     movl	%esi, %ecx
+ -      -     0.99    -      -      -      -      -     0.01    -     shlb	$5, %cl
+ -      -     1.00    -      -      -      -      -      -      -     sarb	$7, %cl
+ -      -      -     1.00    -      -      -      -      -      -     andb	%al, %cl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%dl, %cl
+ -      -      -      -      -      -      -     1.00    -      -     leal	(%rax,%rax), %edx
+ -      -      -     1.00    -      -      -      -      -      -     movzbl	%dl, %edi
+ -      -     1.00    -      -      -      -      -      -      -     xorb	$27, %dl
+ -      -     1.00    -      -      -      -      -      -      -     testb	%al, %al
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%dl, %eax
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%edi, %eax
+ -      -     0.01    -      -      -      -      -     0.99    -     movl	%esi, %edx
+ -      -      -      -      -      -      -      -     1.00    -     shlb	$4, %dl
+ -      -      -      -      -      -      -      -     1.00    -     sarb	$7, %dl
+ -      -      -      -      -      -      -     1.00    -      -     andb	%al, %dl
+ -      -     0.01    -      -      -      -     0.99    -      -     xorb	%cl, %dl
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rax,%rax), %ecx
+ -      -      -     1.00    -      -      -      -      -      -     movzbl	%cl, %edi
+ -      -     1.00    -      -      -      -      -      -      -     xorb	$27, %cl
+ -      -     1.00    -      -      -      -      -      -      -     testb	%al, %al
+ -      -      -      -      -      -      -     0.01   0.99    -     movzbl	%cl, %eax
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%edi, %eax
+ -      -      -     0.99    -      -      -     0.01    -      -     leal	(,%rsi,8), %ecx
+ -      -      -      -      -      -      -      -     1.00    -     sarb	$7, %cl
+ -      -      -     0.99    -      -      -     0.01    -      -     andb	%al, %cl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%dl, %cl
+ -      -      -     0.01    -      -      -     0.99    -      -     leal	(%rax,%rax), %edx
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%dl, %edi
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %dl
+ -      -     1.00    -      -      -      -      -      -      -     testb	%al, %al
+ -      -     1.00    -      -      -      -      -      -      -     movzbl	%dl, %eax
+ -      -      -      -      -      -      -      -     1.00    -     cmovnsl	%edi, %eax
+ -      -      -     0.01    -      -      -     0.99    -      -     leal	(,%rsi,4), %edx
+ -      -      -      -      -      -      -      -     1.00    -     sarb	$7, %dl
+ -      -      -      -      -      -      -     1.00    -      -     andb	%al, %dl
+ -      -      -      -      -      -      -     0.99   0.01    -     xorb	%cl, %dl
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rax,%rax), %ecx
+ -      -      -     0.99    -      -      -     0.01    -      -     movzbl	%cl, %edi
+ -      -     0.99   0.01    -      -      -      -      -      -     xorb	$27, %cl
+ -      -     1.00    -      -      -      -      -      -      -     testb	%al, %al
+ -      -     0.01    -      -      -      -      -     0.99    -     movzbl	%cl, %eax
+ -      -     0.99    -      -      -      -      -     0.01    -     cmovnsl	%edi, %eax
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rsi,%rsi), %ecx
+ -      -      -      -      -      -      -      -     1.00    -     sarb	$7, %cl
+ -      -      -     0.99    -      -      -     0.01    -      -     andb	%al, %cl
+ -      -     0.99    -      -      -      -     0.01    -      -     xorb	%dl, %cl
+ -      -      -     0.01    -      -      -     0.99    -      -     leal	(%rax,%rax), %edx
+ -      -      -     0.99    -      -      -      -     0.01    -     movzbl	%dl, %edi
+ -      -      -     0.01    -      -      -      -     0.99    -     xorb	$27, %dl
+ -      -     0.01    -      -      -      -      -     0.99    -     testb	%al, %al
+ -      -     0.01    -      -      -      -     0.99    -      -     movzbl	%dl, %eax
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%edi, %eax
+ -      -      -      -      -      -      -      -     1.00    -     sarb	$7, %sil
+ -      -      -     0.99    -      -      -     0.01    -      -     andb	%sil, %al
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %al
+ -      -      -     0.01   1.00    -      -     0.99   1.00    -     retq
+ -      -      -      -      -      -     1.00    -     1.00   1.00   pushq	%rbp
+ -      -      -     0.01    -     0.99   1.00   0.99    -     0.01   pushq	%rbx
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	(%rdi), %ecx
+ -      -      -      -      -      -      -     1.00    -      -     leal	(%rcx,%rcx), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%al, %esi
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %al
+ -      -      -     1.00    -      -      -      -      -      -     testb	%cl, %cl
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%al, %edx
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%esi, %edx
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	3(%rdi), %eax
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rax,%rax), %esi
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%sil, %r8d
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %sil
+ -      -     1.00    -      -      -      -      -      -      -     testb	%al, %al
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%sil, %esi
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%r8d, %esi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	2(%rdi), %r8d
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%r8,%r8), %r9d
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r9b, %r11d
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     testb	%r8b, %r8b
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r9b, %r10d
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%r11d, %r10d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	1(%rdi), %r9d
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%r9,%r9), %r11d
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r11b, %ebx
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %r11b
+ -      -      -      -      -      -      -      -     1.00    -     testb	%r9b, %r9b
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r11b, %r11d
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%ebx, %r11d
+ -      -      -      -      -      -      -      -     1.00    -     movl	%eax, %ebx
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r8b, %bl
+ -      -      -      -      -      -      -      -     1.00    -     movl	%ebx, %ebp
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r9b, %bpl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%dl, %bpl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r11b, %bpl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %bl
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%r11b, %bl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r10b, %bl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r9b, %al
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%r10b, %al
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%sil, %al
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%r8b, %r9b
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%dl, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%sil, %r9b
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%bpl, (%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%bl, 1(%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 2(%rdi)
+ -      -      -      -      -     1.00   1.00    -      -      -     movb	%r9b, 3(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	4(%rdi), %ecx
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rcx,%rcx), %eax
+ -      -     1.00    -      -      -      -      -      -      -     movzbl	%al, %esi
+ -      -      -      -      -      -      -      -     1.00    -     xorb	$27, %al
+ -      -      -      -      -      -      -      -     1.00    -     testb	%cl, %cl
+ -      -      -     1.00    -      -      -      -      -      -     movzbl	%al, %edx
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%esi, %edx
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	7(%rdi), %eax
+ -      -      -      -      -      -      -     1.00    -      -     leal	(%rax,%rax), %esi
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%sil, %r8d
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %sil
+ -      -      -      -      -      -      -      -     1.00    -     testb	%al, %al
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%sil, %esi
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%r8d, %esi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	6(%rdi), %r8d
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%r8,%r8), %r9d
+ -      -     1.00    -      -      -      -      -      -      -     movzbl	%r9b, %r11d
+ -      -      -      -      -      -      -      -     1.00    -     xorb	$27, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     testb	%r8b, %r8b
+ -      -      -     1.00    -      -      -      -      -      -     movzbl	%r9b, %r10d
+ -      -      -      -      -      -      -      -     1.00    -     cmovnsl	%r11d, %r10d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	5(%rdi), %r9d
+ -      -      -      -      -      -      -     1.00    -      -     leal	(%r9,%r9), %r11d
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r11b, %ebx
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %r11b
+ -      -      -      -      -      -      -      -     1.00    -     testb	%r9b, %r9b
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r11b, %r11d
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%ebx, %r11d
+ -      -      -      -      -      -      -      -     1.00    -     movl	%eax, %ebx
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r8b, %bl
+ -      -      -     1.00    -      -      -      -      -      -     movl	%ebx, %ebp
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r9b, %bpl
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%dl, %bpl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r11b, %bpl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %bl
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%r11b, %bl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r10b, %bl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r9b, %al
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r10b, %al
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%sil, %al
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%r8b, %r9b
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%dl, %r9b
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%sil, %r9b
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%bpl, 4(%rdi)
+ -      -      -      -      -     1.00   1.00    -      -      -     movb	%bl, 5(%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 6(%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r9b, 7(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	8(%rdi), %ecx
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rcx,%rcx), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%al, %esi
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %al
+ -      -      -      -      -      -      -      -     1.00    -     testb	%cl, %cl
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%al, %edx
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%esi, %edx
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	11(%rdi), %eax
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rax,%rax), %esi
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%sil, %r8d
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %sil
+ -      -     1.00    -      -      -      -      -      -      -     testb	%al, %al
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%sil, %esi
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%r8d, %esi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	10(%rdi), %r8d
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%r8,%r8), %r9d
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r9b, %r11d
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %r9b
+ -      -      -      -      -      -      -      -     1.00    -     testb	%r8b, %r8b
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r9b, %r10d
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%r11d, %r10d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	9(%rdi), %r9d
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%r9,%r9), %r11d
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r11b, %ebx
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %r11b
+ -      -     1.00    -      -      -      -      -      -      -     testb	%r9b, %r9b
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r11b, %r11d
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%ebx, %r11d
+ -      -      -      -      -      -      -      -     1.00    -     movl	%eax, %ebx
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r8b, %bl
+ -      -      -      -      -      -      -      -     1.00    -     movl	%ebx, %ebp
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r9b, %bpl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%dl, %bpl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r11b, %bpl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %bl
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%r11b, %bl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r10b, %bl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r9b, %al
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%r10b, %al
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%sil, %al
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%r8b, %r9b
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%dl, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%sil, %r9b
+ -      -      -      -      -     1.00   1.00    -      -      -     movb	%bpl, 8(%rdi)
+ -      -      -      -     1.00    -     1.00    -      -      -     movb	%bl, 9(%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 10(%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r9b, 11(%rdi)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	12(%rdi), %ecx
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%rcx,%rcx), %eax
+ -      -     1.00    -      -      -      -      -      -      -     movzbl	%al, %esi
+ -      -      -      -      -      -      -      -     1.00    -     xorb	$27, %al
+ -      -      -      -      -      -      -      -     1.00    -     testb	%cl, %cl
+ -      -      -     1.00    -      -      -      -      -      -     movzbl	%al, %edx
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%esi, %edx
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	15(%rdi), %eax
+ -      -      -      -      -      -      -     1.00    -      -     leal	(%rax,%rax), %esi
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%sil, %r8d
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %sil
+ -      -      -      -      -      -      -      -     1.00    -     testb	%al, %al
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%sil, %esi
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%r8d, %esi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	14(%rdi), %r8d
+ -      -      -     1.00    -      -      -      -      -      -     leal	(%r8,%r8), %r9d
+ -      -     1.00    -      -      -      -      -      -      -     movzbl	%r9b, %r11d
+ -      -      -      -      -      -      -      -     1.00    -     xorb	$27, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     testb	%r8b, %r8b
+ -      -      -     1.00    -      -      -      -      -      -     movzbl	%r9b, %r10d
+ -      -      -      -      -      -      -      -     1.00    -     cmovnsl	%r11d, %r10d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	13(%rdi), %r9d
+ -      -      -      -      -      -      -     1.00    -      -     leal	(%r9,%r9), %r11d
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r11b, %ebx
+ -      -      -     1.00    -      -      -      -      -      -     xorb	$27, %r11b
+ -      -      -      -      -      -      -      -     1.00    -     testb	%r9b, %r9b
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r11b, %r11d
+ -      -     1.00    -      -      -      -      -      -      -     cmovnsl	%ebx, %r11d
+ -      -      -      -      -      -      -      -     1.00    -     movl	%eax, %ebx
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r8b, %bl
+ -      -      -     1.00    -      -      -      -      -      -     movl	%ebx, %ebp
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r9b, %bpl
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%dl, %bpl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r11b, %bpl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %bl
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%r11b, %bl
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r10b, %bl
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%cl, %r9b
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%r9b, %al
+ -      -      -      -      -      -      -     1.00    -      -     xorb	%r10b, %al
+ -      -     1.00    -      -      -      -      -      -      -     xorb	%sil, %al
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%r8b, %r9b
+ -      -      -     1.00    -      -      -      -      -      -     xorb	%dl, %r9b
+ -      -      -      -      -      -      -      -     1.00    -     xorb	%sil, %r9b
+ -      -      -      -     1.00    -     1.00    -      -      -     movb	%bpl, 12(%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%bl, 13(%rdi)
+ -      -      -      -     1.00    -     1.00    -      -      -     movb	%al, 14(%rdi)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r9b, 15(%rdi)
+ -      -      -      -      -     1.00    -      -     1.00    -     popq	%rbx
+ -      -      -      -      -     1.00    -     1.00    -      -     popq	%rbp
+ -      -      -     1.00    -     1.00    -      -     1.00    -     retq
+ -      -      -      -      -      -     1.00   1.00    -     1.00   pushq	%rbp
+ -      -      -     1.00    -     1.00   1.00    -      -      -     pushq	%r15
+ -      -      -      -     1.00    -     1.00   1.00    -      -     pushq	%r14
+ -      -      -     1.00    -      -     1.00    -      -     1.00   pushq	%r13
+ -      -     1.00    -      -     1.00   1.00    -      -      -     pushq	%r12
+ -      -      -      -     1.00    -     1.00    -     1.00    -     pushq	%rbx
+ -      -      -      -      -      -      -     1.00    -      -     subq	$248, %rsp
+ -      -     1.00    -      -      -      -      -      -      -     movq	%rsi, %rbx
+ -      -      -      -      -     1.00    -      -      -      -     movups	(%rdi), %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   movaps	%xmm0, (%rsp)
+ -      -      -      -     1.00    -      -      -      -      -     movups	(%rdx), %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   movaps	%xmm0, 64(%rsp)
+ -      -      -      -      -      -      -     1.00    -      -     movl	$16, %eax
+ -      -      -      -      -     1.00    -      -      -      -     movd	76(%rsp), %xmm0
+ -      -     1.00    -      -      -      -      -      -      -     jmp	.LBB8_1
+ -      -      -      -     1.00    -      -      -      -      -     movd	48(%rsp,%rax), %xmm1
+ -      -      -     0.99    -      -      -     0.01    -      -     pxor	%xmm1, %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   movd	%xmm0, 64(%rsp,%rax)
+ -      -      -      -      -      -      -     1.00    -      -     leaq	4(%rax), %rcx
+ -      -      -     1.00    -      -      -      -      -      -     addq	$3, %rax
+ -      -     1.00    -      -      -      -      -      -      -     cmpq	$175, %rax
+ -      -      -      -      -      -      -      -     1.00    -     movq	%rcx, %rax
+ -      -     1.00    -      -      -      -      -      -      -     jae	.LBB8_4
+ -      -      -     1.00    -      -      -      -      -      -     testb	$12, %al
+ -      -     1.00    -      -      -      -      -      -      -     jne	.LBB8_3
+ -      -      -      -      -      -     1.00    -      -     1.00   movdqa	%xmm0, 48(%rsp)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	49(%rsp), %ecx
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	50(%rsp), %edx
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	51(%rsp), %esi
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rsi), %esi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	48(%rsp), %edi
+ -      -      -      -      -      -      -      -     1.00    -     movl	%eax, %r8d
+ -      -      -      -      -      -      -      -     1.00    -     shrl	$4, %r8d
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	rcon(%r8), %r8d
+ -      -      -      -      -     1.00    -      -     1.00    -     xorb	s_box(%rcx), %r8b
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rdi), %ecx
+ -      -     1.00    -      -      -      -      -      -      -     shll	$8, %ecx
+ -      -      -     1.00    -      -      -      -      -      -     orl	%esi, %ecx
+ -      -      -      -      -      -      -     1.00    -      -     movzbl	%r8b, %esi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rdx), %edx
+ -      -      -      -      -      -      -      -     1.00    -     shll	$8, %edx
+ -      -      -      -      -      -      -      -     1.00    -     orl	%esi, %edx
+ -      -      -      -      -      -      -     1.00    -      -     movd	%edx, %xmm0
+ -      -      -      -      -      -      -     2.00    -      -     pinsrw	$1, %ecx, %xmm0
+ -      -      -      -      -      -      -      -     1.00    -     jmp	.LBB8_3
+ -      -      -      -      -     1.00    -      -      -      -     movaps	(%rsp), %xmm0
+ -      -     1.00    -     1.00    -      -      -      -      -     xorps	64(%rsp), %xmm0
+ -      -      -     1.00    -      -      -      -      -      -     movl	$16, %r15d
+ -      -      -     1.00    -      -      -      -      -      -     movq	%rsp, %r14
+ -      -      -      -      -      -     1.00    -      -     1.00   movaps	%xmm0, 32(%rsp)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	32(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, (%rsp)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	33(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %ecx
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	34(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %edx
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	35(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	36(%rsp), %esi
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rsi), %esi
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%sil, 4(%rsp)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	37(%rsp), %esi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rsi), %r8d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	38(%rsp), %esi
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rsi), %esi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	39(%rsp), %edi
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rdi), %edi
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	40(%rsp), %r9d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%r9), %r9d
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r9b, 8(%rsp)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	41(%rsp), %r9d
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%r9), %r9d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	42(%rsp), %r10d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%r10), %r10d
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	43(%rsp), %r11d
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%r11), %r11d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	44(%rsp), %r12d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%r12), %ebp
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%bpl, 12(%rsp)
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	45(%rsp), %r12d
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%r12), %ebp
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	46(%rsp), %r12d
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%r12), %r12d
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	47(%rsp), %r13d
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%r13), %r13d
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r8b, 1(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r9b, 5(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%bpl, 9(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%cl, 13(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r10b, 2(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%dl, 10(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r12b, 6(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%sil, 14(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r13b, 3(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%r11b, 15(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%dil, 11(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, 7(%rsp)
+ -      -      -     0.01    -      -      -     0.99    -      -     movq	%r14, %rdi
+ -      -      -      -      -      -     1.00   1.00   1.00   1.00   callq	MixColumns
+ -      -      -      -      -     1.00    -      -      -      -     movaps	(%rsp), %xmm0
+ -      -     0.01   0.99   1.00    -      -      -      -      -     xorps	64(%rsp,%r15), %xmm0
+ -      -      -      -      -      -     1.00    -      -     1.00   movaps	%xmm0, (%rsp)
+ -      -     1.00    -      -      -      -      -      -      -     addq	$16, %r15
+ -      -      -     1.00    -      -      -      -      -      -     cmpq	$160, %r15
+ -      -     1.00    -      -      -      -      -      -      -     jne	.LBB8_5
+ -      -      -      -      -      -     1.00    -      -     1.00   movaps	%xmm0, 16(%rsp)
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	27(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm0
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	22(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm1
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	17(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm3
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	28(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm2
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	23(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm4
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	18(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm6
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	29(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm7
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	24(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm5
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	19(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm8
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	30(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm9
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	25(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm10
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	20(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm11
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	31(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm12
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	26(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm13
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	21(%rsp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm14
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	16(%rsp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	s_box(%rax), %eax
+ -      -      -      -      -      -      -     1.00    -      -     movd	%eax, %xmm15
+ -      -      -      -      -      -      -     1.00    -      -     punpcklbw	%xmm0, %xmm1
+ -      -      -      -      -      -      -     1.00    -      -     punpcklbw	%xmm3, %xmm2
+ -      -      -      -      -      -      -     1.00    -      -     punpcklwd	%xmm1, %xmm2
+ -      -      -      -      -      -      -     1.00    -      -     punpcklbw	%xmm4, %xmm6
+ -      -      -      -      -      -      -     1.00    -      -     punpcklbw	%xmm7, %xmm5
+ -      -      -      -      -      -      -     1.00    -      -     punpcklwd	%xmm6, %xmm5
+ -      -      -      -      -      -      -     1.00    -      -     punpckldq	%xmm2, %xmm5
+ -      -      -      -      -      -      -     1.00    -      -     punpcklbw	%xmm8, %xmm9
+ -      -      -      -      -      -      -     1.00    -      -     punpcklbw	%xmm10, %xmm11
+ -      -      -      -      -      -      -     1.00    -      -     punpcklwd	%xmm9, %xmm11
+ -      -      -      -      -      -      -     1.00    -      -     punpcklbw	%xmm12, %xmm13
+ -      -      -      -      -      -      -     1.00    -      -     punpcklbw	%xmm14, %xmm15
+ -      -      -      -      -      -      -     1.00    -      -     punpcklwd	%xmm13, %xmm15
+ -      -      -      -      -      -      -     1.00    -      -     punpckldq	%xmm11, %xmm15
+ -      -      -      -      -      -      -     1.00    -      -     punpcklqdq	%xmm5, %xmm15
+ -      -     0.99   0.01   1.00    -      -      -      -      -     pxor	224(%rsp), %xmm15
+ -      -      -      -      -      -     1.00    -      -     1.00   movdqa	%xmm15, (%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movdqu	%xmm15, (%rbx)
+ -      -     0.99   0.01    -      -      -      -      -      -     addq	$248, %rsp
+ -      -      -      -      -     1.00    -      -     1.00    -     popq	%rbx
+ -      -      -      -      -     1.00    -      -     1.00    -     popq	%r12
+ -      -     0.99   0.01   0.99   0.01    -      -      -      -     popq	%r13
+ -      -     0.01   0.99   0.01   0.99    -      -      -      -     popq	%r14
+ -      -      -     0.99    -     1.00    -      -     0.01    -     popq	%r15
+ -      -     0.01    -      -     1.00    -      -     0.99    -     popq	%rbp
+ -      -      -     1.00   1.00    -      -      -     1.00    -     retq
+ -      -      -     0.99    -     1.00   1.00    -     0.01    -     pushq	%r15
+ -      -     0.99   0.01   1.00    -     1.00    -      -      -     pushq	%r14
+ -      -     0.01    -      -      -     1.00    -     0.99   1.00   pushq	%rbx
+ -      -      -      -      -      -      -     0.99   0.01    -     subq	$128, %rsp
+ -      -      -      -      -      -      -      -      -      -     xorps	%xmm0, %xmm0
+ -      -      -      -      -     1.00   1.00    -      -      -     movaps	%xmm0, 48(%rsp)
+ -      -      -      -     1.00    -     1.00    -      -      -     movaps	%xmm0, 32(%rsp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movaps	%xmm0, 16(%rsp)
+ -      -      -      -      -     0.01   1.00    -      -     0.99   movaps	%xmm0, (%rsp)
+ -      -      -     0.99    -      -      -     0.01    -      -     leaq	48(%rsp), %rbx
+ -      -      -     0.01    -      -      -     0.99    -      -     leaq	32(%rsp), %r14
+ -      -      -      -      -      -      -     1.00    -      -     leaq	16(%rsp), %r15
+ -      -     1.00    -      -      -      -      -      -      -     movq	%rsp, %rdi
+ -      -      -     0.01    -      -      -     0.99    -      -     leaq	64(%rsp), %rsi
+ -      -     1.00    -      -      -      -      -      -      -     movl	$.L__const.main.key, %edx
+ -      -     0.01    -      -      -     1.00   0.99   1.00   1.00   callq	AES128Encrypt
+ -      -      -     0.99    -      -      -     0.01    -      -     leaq	80(%rsp), %rsi
+ -      -      -     1.00    -      -      -      -      -      -     movl	$.L__const.main.key, %edx
+ -      -     0.99   0.01    -      -      -      -      -      -     movq	%r15, %rdi
+ -      -     0.99   0.99    -     0.01   1.00   0.01   0.01   0.99   callq	AES128Encrypt
+ -      -      -      -      -      -      -     1.00    -      -     leaq	96(%rsp), %rsi
+ -      -     1.00    -      -      -      -      -      -      -     movl	$.L__const.main.key, %edx
+ -      -     1.00    -      -      -      -      -      -      -     movq	%r14, %rdi
+ -      -     0.01   0.01   0.01    -     1.00   0.99   0.99   0.99   callq	AES128Encrypt
+ -      -      -     1.00    -      -      -      -      -      -     leaq	112(%rsp), %rsi
+ -      -      -     1.00    -      -      -      -      -      -     movl	$.L__const.main.key, %edx
+ -      -      -     0.99    -      -      -      -     0.01    -     movq	%rbx, %rdi
+ -      -     0.99   0.99    -      -     1.00   0.01   0.01   1.00   callq	AES128Encrypt
+ -      -      -      -      -      -      -      -      -      -     xorl	%eax, %eax
+ -      -      -      -      -      -      -      -     1.00    -     addq	$128, %rsp
+ -      -     0.01    -     0.01   0.99    -      -     0.99    -     popq	%rbx
+ -      -      -     0.01   1.00    -      -      -     0.99    -     popq	%r14
+ -      -     0.01    -     0.99   0.01    -      -     0.99    -     popq	%r15
+ -      -     1.00    -     1.00    -      -      -     1.00    -     retq

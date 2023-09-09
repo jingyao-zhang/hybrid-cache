@@ -746,51 +746,46 @@ main:                                   # @main
 	.cfi_offset %rbp, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register %rbp
-	subq	$80, %rsp
+	subq	$176, %rsp
 	movl	$0, -4(%rbp)
-	leaq	-32(%rbp), %rdi
+	leaq	-80(%rbp), %rdi
 	xorl	%esi, %esi
-	movl	$16, %edx
+	movl	$64, %edx
 	callq	memset@PLT
 	movq	.L__const.main.key(%rip), %rax
-	movq	%rax, -48(%rbp)
+	movq	%rax, -96(%rbp)
 	movq	.L__const.main.key+8(%rip), %rax
-	movq	%rax, -40(%rbp)
-	leaq	-64(%rbp), %rdi
+	movq	%rax, -88(%rbp)
+	leaq	-160(%rbp), %rdi
 	xorl	%esi, %esi
-	movl	$16, %edx
+	movl	$64, %edx
 	callq	memset@PLT
-	leaq	-32(%rbp), %rdi
-	leaq	-64(%rbp), %rsi
-	leaq	-48(%rbp), %rdx
-	callq	AES128Encrypt
-	leaq	.L.str(%rip), %rdi
-	movb	$0, %al
-	callq	printf@PLT
-	movl	$0, -68(%rbp)
+	movl	$0, -164(%rbp)
 .LBB9_1:                                # %for.cond
                                         # =>This Inner Loop Header: Depth=1
-	cmpl	$16, -68(%rbp)
+	cmpl	$4, -164(%rbp)
 	jge	.LBB9_4
 # %bb.2:                                # %for.body
                                         #   in Loop: Header=BB9_1 Depth=1
-	movslq	-68(%rbp), %rax
-	movzbl	-64(%rbp,%rax), %esi
-	leaq	.L.str.1(%rip), %rdi
-	movb	$0, %al
-	callq	printf@PLT
+	movslq	-164(%rbp), %rax
+	leaq	-80(%rbp), %rdi
+	shlq	$4, %rax
+	addq	%rax, %rdi
+	movslq	-164(%rbp), %rax
+	leaq	-160(%rbp), %rsi
+	shlq	$4, %rax
+	addq	%rax, %rsi
+	leaq	-96(%rbp), %rdx
+	callq	AES128Encrypt
 # %bb.3:                                # %for.inc
                                         #   in Loop: Header=BB9_1 Depth=1
-	movl	-68(%rbp), %eax
+	movl	-164(%rbp), %eax
 	addl	$1, %eax
-	movl	%eax, -68(%rbp)
+	movl	%eax, -164(%rbp)
 	jmp	.LBB9_1
 .LBB9_4:                                # %for.end
-	leaq	.L.str.2(%rip), %rdi
-	movb	$0, %al
-	callq	printf@PLT
 	xorl	%eax, %eax
-	addq	$80, %rsp
+	addq	$176, %rsp
 	popq	%rbp
 	.cfi_def_cfa %rsp, 8
 	retq
@@ -817,22 +812,6 @@ rcon:
 	.ascii	"\000\001\002\003\004\005\006\007\b\t\n\013\f\r\016\017"
 	.size	.L__const.main.key, 16
 
-	.type	.L.str,@object                  # @.str
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str:
-	.asciz	"Ciphertext: "
-	.size	.L.str, 13
-
-	.type	.L.str.1,@object                # @.str.1
-.L.str.1:
-	.asciz	"%02x "
-	.size	.L.str.1, 6
-
-	.type	.L.str.2,@object                # @.str.2
-.L.str.2:
-	.asciz	"\n"
-	.size	.L.str.2, 2
-
 	.ident	"clang version 16.0.6 (https://github.com/llvm/llvm-project.git 7cbf1a2591520c2491aa35339f227775f4d3adf6)"
 	.section	".note.GNU-stack","",@progbits
 	.addrsig
@@ -845,6 +824,5 @@ rcon:
 	.addrsig_sym gmul
 	.addrsig_sym MixColumns
 	.addrsig_sym AES128Encrypt
-	.addrsig_sym printf
 	.addrsig_sym s_box
 	.addrsig_sym rcon

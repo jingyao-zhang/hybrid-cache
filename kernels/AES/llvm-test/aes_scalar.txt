@@ -1,12 +1,12 @@
 Iterations:        100
-Instructions:      55400
-Total Cycles:      45677
-Total uOps:        84300
+Instructions:      54900
+Total Cycles:      45773
+Total uOps:        82900
 
 Dispatch Width:    6
-uOps Per Cycle:    1.85
-IPC:               1.21
-Block RThroughput: 146.0
+uOps Per Cycle:    1.81
+IPC:               1.20
+Block RThroughput: 143.0
 
 
 Instruction Info:
@@ -532,44 +532,39 @@ Instruction Info:
  3      7     1.00                  U     retq
  3      2     1.00           *            pushq	%rbp
  1      1     0.25                        movq	%rsp, %rbp
- 1      1     0.25                        subq	$80, %rsp
+ 1      1     0.25                        subq	$176, %rsp
  1      1     1.00           *            movl	$0, -4(%rbp)
- 1      1     0.50                        leaq	-32(%rbp), %rdi
+ 1      1     0.50                        leaq	-80(%rbp), %rdi
  1      0     0.17                        xorl	%esi, %esi
- 1      1     0.25                        movl	$16, %edx
+ 1      1     0.25                        movl	$64, %edx
  4      3     1.00                        callq	memset@PLT
  1      5     0.50    *                   movq	.L__const.main.key(%rip), %rax
- 1      1     1.00           *            movq	%rax, -48(%rbp)
+ 1      1     1.00           *            movq	%rax, -96(%rbp)
  1      5     0.50    *                   movq	.L__const.main.key+8(%rip), %rax
- 1      1     1.00           *            movq	%rax, -40(%rbp)
- 1      1     0.50                        leaq	-64(%rbp), %rdi
+ 1      1     1.00           *            movq	%rax, -88(%rbp)
+ 1      1     0.50                        leaq	-160(%rbp), %rdi
  1      0     0.17                        xorl	%esi, %esi
- 1      1     0.25                        movl	$16, %edx
+ 1      1     0.25                        movl	$64, %edx
  4      3     1.00                        callq	memset@PLT
- 1      1     0.50                        leaq	-32(%rbp), %rdi
- 1      1     0.50                        leaq	-64(%rbp), %rsi
- 1      1     0.50                        leaq	-48(%rbp), %rdx
- 4      3     1.00                        callq	AES128Encrypt
- 1      1     0.50                        leaq	.L.str(%rip), %rdi
- 1      1     0.25                        movb	$0, %al
- 4      3     1.00                        callq	printf@PLT
- 1      1     1.00           *            movl	$0, -68(%rbp)
- 2      6     0.50    *                   cmpl	$16, -68(%rbp)
+ 1      1     1.00           *            movl	$0, -164(%rbp)
+ 2      6     0.50    *                   cmpl	$4, -164(%rbp)
  1      1     0.50                        jge	.LBB9_4
- 1      5     0.50    *                   movslq	-68(%rbp), %rax
- 1      5     0.50    *                   movzbl	-64(%rbp,%rax), %esi
- 1      1     0.50                        leaq	.L.str.1(%rip), %rdi
- 1      1     0.25                        movb	$0, %al
- 4      3     1.00                        callq	printf@PLT
- 1      5     0.50    *                   movl	-68(%rbp), %eax
+ 1      5     0.50    *                   movslq	-164(%rbp), %rax
+ 1      1     0.50                        leaq	-80(%rbp), %rdi
+ 1      1     0.50                        shlq	$4, %rax
+ 1      1     0.25                        addq	%rax, %rdi
+ 1      5     0.50    *                   movslq	-164(%rbp), %rax
+ 1      1     0.50                        leaq	-160(%rbp), %rsi
+ 1      1     0.50                        shlq	$4, %rax
+ 1      1     0.25                        addq	%rax, %rsi
+ 1      1     0.50                        leaq	-96(%rbp), %rdx
+ 4      3     1.00                        callq	AES128Encrypt
+ 1      5     0.50    *                   movl	-164(%rbp), %eax
  1      1     0.25                        addl	$1, %eax
- 1      1     1.00           *            movl	%eax, -68(%rbp)
+ 1      1     1.00           *            movl	%eax, -164(%rbp)
  1      1     0.50                        jmp	.LBB9_1
- 1      1     0.50                        leaq	.L.str.2(%rip), %rdi
- 1      1     0.25                        movb	$0, %al
- 4      3     1.00                        callq	printf@PLT
  1      0     0.17                        xorl	%eax, %eax
- 1      1     0.25                        addq	$80, %rsp
+ 1      1     0.25                        addq	$176, %rsp
  2      6     0.50    *                   popq	%rbp
  3      7     1.00                  U     retq
 
@@ -589,63 +584,63 @@ Resources:
 
 Resource pressure per iteration:
 [0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    
- -      -     86.99  79.99  126.98 128.00 146.00 86.01  94.01  99.02  
+ -      -     85.98  77.00  124.99 127.00 143.00 83.02  93.00  99.01  
 
 Resource pressure by instruction:
 [0]    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    Instructions:
- -      -      -      -      -      -     1.00   0.99   0.01   1.00   pushq	%rbp
- -      -      -      -      -      -      -     0.01   0.99    -     movq	%rsp, %rbp
- -      -      -      -     0.99   0.01   1.00    -      -      -     movq	%rdi, -8(%rbp)
+ -      -     0.99    -      -      -     1.00    -     0.01   1.00   pushq	%rbp
+ -      -      -     0.99    -      -      -     0.01    -      -     movq	%rsp, %rbp
+ -      -      -      -      -     0.01   1.00    -      -     0.99   movq	%rdi, -8(%rbp)
  -      -      -      -     0.01   0.99    -      -      -      -     movq	-8(%rbp), %rax
  -      -      -      -     0.99   0.01    -      -      -      -     movb	(%rax), %al
  -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, -9(%rbp)
  -      -      -      -     0.99   0.01    -      -      -      -     movq	-8(%rbp), %rax
- -      -      -      -     0.99   0.01    -      -      -      -     movb	1(%rax), %cl
+ -      -      -      -      -     1.00    -      -      -      -     movb	1(%rax), %cl
  -      -      -      -     0.01   0.99    -      -      -      -     movq	-8(%rbp), %rax
  -      -      -      -      -      -     1.00    -      -     1.00   movb	%cl, (%rax)
  -      -      -      -     0.99   0.01    -      -      -      -     movq	-8(%rbp), %rax
- -      -      -      -      -     1.00    -      -      -      -     movb	2(%rax), %cl
+ -      -      -      -     0.99   0.01    -      -      -      -     movb	2(%rax), %cl
  -      -      -      -     0.01   0.99    -      -      -      -     movq	-8(%rbp), %rax
  -      -      -      -      -     1.00   1.00    -      -      -     movb	%cl, 1(%rax)
  -      -      -      -     0.99   0.01    -      -      -      -     movq	-8(%rbp), %rax
- -      -      -      -     0.99   0.01    -      -      -      -     movb	3(%rax), %cl
+ -      -      -      -      -     1.00    -      -      -      -     movb	3(%rax), %cl
  -      -      -      -     0.01   0.99    -      -      -      -     movq	-8(%rbp), %rax
  -      -      -      -     1.00    -     1.00    -      -      -     movb	%cl, 2(%rax)
  -      -      -      -     0.99   0.01    -      -      -      -     movb	-9(%rbp), %cl
  -      -      -      -     0.01   0.99    -      -      -      -     movq	-8(%rbp), %rax
  -      -      -      -      -      -     1.00    -      -     1.00   movb	%cl, 3(%rax)
- -      -     0.01    -     0.01   0.99    -     0.99    -      -     popq	%rbp
- -      -      -      -     0.01   0.99    -     1.00   1.00    -     retq
+ -      -     1.00    -     0.01   0.99    -      -      -      -     popq	%rbp
+ -      -      -     0.99   1.00    -      -     0.01   1.00    -     retq
  -      -      -     0.01    -     1.00   1.00   0.99    -      -     pushq	%rbp
  -      -      -     0.99    -      -      -      -     0.01    -     movq	%rsp, %rbp
  -      -      -      -      -      -     1.00    -      -     1.00   movq	%rdi, -8(%rbp)
  -      -      -      -      -      -     1.00    -      -     1.00   movl	$0, -12(%rbp)
- -      -      -     0.01   0.01   0.99    -      -     0.99    -     cmpl	$4, -12(%rbp)
+ -      -      -     0.01   1.00    -      -      -     0.99    -     cmpl	$4, -12(%rbp)
  -      -     1.00    -      -      -      -      -      -      -     jge	.LBB1_4
- -      -      -      -     0.99   0.01    -      -      -      -     movq	-8(%rbp), %rax
- -      -      -      -     0.01   0.99    -      -      -      -     movslq	-12(%rbp), %rcx
- -      -      -      -     0.01   0.99    -      -      -      -     movzbl	(%rax,%rcx), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movq	-8(%rbp), %rax
+ -      -      -      -     1.00    -      -      -      -      -     movslq	-12(%rbp), %rcx
+ -      -      -      -     1.00    -      -      -      -      -     movzbl	(%rax,%rcx), %eax
  -      -      -     0.99    -      -      -     0.01    -      -     movl	%eax, %ecx
- -      -      -     1.00    -      -      -      -      -      -     leaq	s_box(%rip), %rax
- -      -      -      -     0.99   0.01    -      -      -      -     movb	(%rax,%rcx), %dl
- -      -      -      -     0.99   0.01    -      -      -      -     movq	-8(%rbp), %rax
- -      -      -      -     0.01   0.99    -      -      -      -     movslq	-12(%rbp), %rcx
+ -      -      -     0.01    -      -      -     0.99    -      -     leaq	s_box(%rip), %rax
+ -      -      -      -      -     1.00    -      -      -      -     movb	(%rax,%rcx), %dl
+ -      -      -      -      -     1.00    -      -      -      -     movq	-8(%rbp), %rax
+ -      -      -      -     1.00    -      -      -      -      -     movslq	-12(%rbp), %rcx
  -      -      -      -      -      -     1.00    -      -     1.00   movb	%dl, (%rax,%rcx)
- -      -      -      -     0.99   0.01    -      -      -      -     movl	-12(%rbp), %eax
+ -      -      -      -      -     1.00    -      -      -      -     movl	-12(%rbp), %eax
  -      -      -      -      -      -      -     0.99   0.01    -     addl	$1, %eax
  -      -      -      -      -      -     1.00    -      -     1.00   movl	%eax, -12(%rbp)
- -      -     0.99    -      -      -      -      -     0.01    -     jmp	.LBB1_1
+ -      -      -      -      -      -      -      -     1.00    -     jmp	.LBB1_1
  -      -     0.99    -     1.00    -      -     0.01    -      -     popq	%rbp
- -      -      -     1.00   0.01   0.99    -      -     1.00    -     retq
- -      -     0.01   0.99    -     1.00   1.00    -      -      -     pushq	%rbp
- -      -     0.99    -      -      -      -      -     0.01    -     movq	%rsp, %rbp
- -      -      -      -      -      -      -     0.01   0.99    -     subq	$48, %rsp
+ -      -      -     0.01   1.00    -      -     0.99   1.00    -     retq
+ -      -     0.01    -      -     1.00   1.00    -     0.99    -     pushq	%rbp
+ -      -      -      -      -      -      -     0.99   0.01    -     movq	%rsp, %rbp
+ -      -      -     0.99    -      -      -     0.01    -      -     subq	$48, %rsp
  -      -      -      -     1.00    -     1.00    -      -      -     movq	%rdi, -8(%rbp)
  -      -      -      -      -      -     1.00    -      -     1.00   movq	%rsi, -16(%rbp)
  -      -      -      -      -      -     1.00    -      -     1.00   movl	$0, -20(%rbp)
  -      -      -      -      -      -     1.00    -      -     1.00   movl	$0, -20(%rbp)
- -      -      -     0.01    -     1.00    -     0.99    -      -     cmpl	$16, -20(%rbp)
- -      -      -      -      -      -      -      -     1.00    -     jge	.LBB2_4
+ -      -     0.99   0.01    -     1.00    -      -      -      -     cmpl	$16, -20(%rbp)
+ -      -     0.99    -      -      -      -      -     0.01    -     jge	.LBB2_4
  -      -      -      -     1.00    -      -      -      -      -     movq	-8(%rbp), %rax
  -      -      -      -      -     1.00    -      -      -      -     movslq	-20(%rbp), %rcx
  -      -      -      -     1.00    -      -      -      -      -     movb	(%rax,%rcx), %dl
@@ -653,76 +648,76 @@ Resource pressure by instruction:
  -      -      -      -      -     1.00    -      -      -      -     movslq	-20(%rbp), %rcx
  -      -      -      -      -      -     1.00    -      -     1.00   movb	%dl, (%rax,%rcx)
  -      -      -      -     1.00    -      -      -      -      -     movl	-20(%rbp), %eax
- -      -      -     0.01    -      -      -     0.99    -      -     addl	$1, %eax
+ -      -      -     1.00    -      -      -      -      -      -     addl	$1, %eax
  -      -      -      -      -      -     1.00    -      -     1.00   movl	%eax, -20(%rbp)
  -      -     1.00    -      -      -      -      -      -      -     jmp	.LBB2_1
  -      -      -      -      -     0.99   1.00    -      -     0.01   movl	$16, -20(%rbp)
- -      -     0.01   0.99    -     1.00    -      -      -      -     cmpl	$176, -20(%rbp)
- -      -     0.99    -      -      -      -      -     0.01    -     jge	.LBB2_17
+ -      -     0.01    -      -     1.00    -      -     0.99    -     cmpl	$176, -20(%rbp)
+ -      -      -      -      -      -      -      -     1.00    -     jge	.LBB2_17
  -      -      -      -     0.99    -     1.00    -      -     0.01   movl	$0, -28(%rbp)
- -      -     0.99    -     1.00    -      -      -     0.01    -     cmpl	$4, -28(%rbp)
- -      -     0.01    -      -      -      -      -     0.99    -     jge	.LBB2_10
+ -      -      -      -     1.00    -      -     0.99   0.01    -     cmpl	$4, -28(%rbp)
+ -      -     1.00    -      -      -      -      -      -      -     jge	.LBB2_10
  -      -      -      -      -     1.00    -      -      -      -     movq	-16(%rbp), %rax
  -      -      -      -     1.00    -      -      -      -      -     movl	-20(%rbp), %ecx
- -      -      -     1.00    -      -      -      -      -      -     subl	$4, %ecx
- -      -      -      -     0.01   0.99    -     1.00    -      -     addl	-28(%rbp), %ecx
- -      -     0.01    -      -      -      -      -     0.99    -     movslq	%ecx, %rcx
+ -      -      -     0.01    -      -      -     0.99    -      -     subl	$4, %ecx
+ -      -      -     0.99   0.01   0.99    -     0.01    -      -     addl	-28(%rbp), %ecx
+ -      -     0.01    -      -      -      -     0.99    -      -     movslq	%ecx, %rcx
  -      -      -      -     1.00    -      -      -      -      -     movb	(%rax,%rcx), %cl
  -      -      -      -      -     1.00    -      -      -      -     movslq	-28(%rbp), %rax
  -      -      -      -      -      -     1.00    -      -     1.00   movb	%cl, -24(%rbp,%rax)
  -      -      -      -      -     1.00    -      -      -      -     movl	-28(%rbp), %eax
- -      -      -     1.00    -      -      -      -      -      -     addl	$1, %eax
+ -      -      -     0.01    -      -      -      -     0.99    -     addl	$1, %eax
  -      -      -      -      -     1.00   1.00    -      -      -     movl	%eax, -28(%rbp)
  -      -     0.01    -      -      -      -      -     0.99    -     jmp	.LBB2_7
  -      -      -      -     1.00    -      -      -      -      -     movl	-20(%rbp), %eax
- -      -      -      -      -      -      -     1.00    -      -     movl	$16, %ecx
+ -      -      -     0.99    -      -      -     0.01    -      -     movl	$16, %ecx
  -      -     0.99    -      -      -      -      -     0.01    -     cltd
  -      -     4.00   2.00    -      -      -     4.00   8.00    -     idivl	%ecx
  -      -     1.00    -      -      -      -      -      -      -     cmpl	$0, %edx
  -      -     0.01    -      -      -      -      -     0.99    -     jne	.LBB2_12
  -      -      -     0.99    -      -      -     0.01    -      -     leaq	-24(%rbp), %rdi
- -      -     1.00    -      -      -     1.00   1.00    -     1.00   callq	RotWord
- -      -      -     1.00    -      -      -      -      -      -     leaq	-24(%rbp), %rdi
- -      -     0.99   0.01    -      -     1.00   0.99   0.01   1.00   callq	SubWord
+ -      -     1.00    -      -      -     1.00   0.01   0.99   1.00   callq	RotWord
+ -      -      -     0.01    -      -      -     0.99    -      -     leaq	-24(%rbp), %rdi
+ -      -      -     1.00    -      -     1.00    -     1.00   1.00   callq	SubWord
  -      -      -      -     0.99   0.01    -      -      -      -     movzbl	-24(%rbp), %eax
  -      -      -      -      -      -     1.00    -      -     1.00   movl	%eax, -36(%rbp)
  -      -      -      -     0.01   0.99    -      -      -      -     movl	-20(%rbp), %eax
- -      -      -     0.01    -      -      -      -     0.99    -     movl	$16, %ecx
+ -      -     0.99   0.01    -      -      -      -      -      -     movl	$16, %ecx
  -      -      -      -      -      -      -      -     1.00    -     cltd
  -      -     4.00   2.00    -      -      -     4.00   8.00    -     idivl	%ecx
  -      -      -      -      -      -      -     1.00    -      -     movl	%eax, %ecx
  -      -      -      -     0.99   0.01    -      -      -      -     movl	-36(%rbp), %eax
  -      -      -     1.00    -      -      -      -      -      -     movslq	%ecx, %rdx
- -      -      -     0.99    -      -      -     0.01    -      -     leaq	rcon(%rip), %rcx
+ -      -      -      -      -      -      -     1.00    -      -     leaq	rcon(%rip), %rcx
  -      -      -      -      -     1.00    -      -      -      -     movzbl	(%rcx,%rdx), %ecx
  -      -     1.00    -      -      -      -      -      -      -     xorl	%ecx, %eax
  -      -      -      -      -      -     1.00    -      -     1.00   movb	%al, -24(%rbp)
  -      -      -      -      -      -     1.00    -      -     1.00   movl	$0, -32(%rbp)
- -      -      -      -     0.01   0.99    -     1.00    -      -     cmpl	$4, -32(%rbp)
- -      -     1.00    -      -      -      -      -      -      -     jge	.LBB2_16
+ -      -      -     0.99   1.00    -      -     0.01    -      -     cmpl	$4, -32(%rbp)
+ -      -     0.01    -      -      -      -      -     0.99    -     jge	.LBB2_16
  -      -      -      -      -     1.00    -      -      -      -     movq	-16(%rbp), %rax
  -      -      -      -     0.99   0.01    -      -      -      -     movl	-20(%rbp), %ecx
  -      -     0.99    -      -      -      -     0.01    -      -     subl	$16, %ecx
- -      -      -      -      -      -      -     1.00    -      -     movslq	%ecx, %rcx
+ -      -      -     0.99    -      -      -     0.01    -      -     movslq	%ecx, %rcx
  -      -      -      -     0.99   0.01    -      -      -      -     movzbl	(%rax,%rcx), %eax
  -      -      -      -     0.01   0.99    -      -      -      -     movslq	-32(%rbp), %rcx
- -      -      -      -     0.99   0.01    -      -      -      -     movzbl	-24(%rbp,%rcx), %ecx
+ -      -      -      -      -     1.00    -      -      -      -     movzbl	-24(%rbp,%rcx), %ecx
  -      -      -      -      -      -      -     1.00    -      -     xorl	%ecx, %eax
  -      -      -     1.00    -      -      -      -      -      -     movb	%al, %dl
  -      -      -      -     0.99   0.01    -      -      -      -     movq	-16(%rbp), %rax
  -      -      -      -     0.01   0.99    -      -      -      -     movslq	-20(%rbp), %rcx
  -      -      -      -      -     1.00   1.00    -      -      -     movb	%dl, (%rax,%rcx)
  -      -      -      -     0.99   0.01    -      -      -      -     movl	-20(%rbp), %eax
- -      -      -     0.01    -      -      -      -     0.99    -     addl	$1, %eax
+ -      -     0.99   0.01    -      -      -      -      -      -     addl	$1, %eax
  -      -      -      -     1.00    -     1.00    -      -      -     movl	%eax, -20(%rbp)
  -      -      -      -     0.01   0.99    -      -      -      -     movl	-32(%rbp), %eax
- -      -      -     1.00    -      -      -      -      -      -     addl	$1, %eax
+ -      -      -     0.01    -      -      -     0.99    -      -     addl	$1, %eax
  -      -      -      -      -      -     1.00    -      -     1.00   movl	%eax, -32(%rbp)
- -      -     1.00    -      -      -      -      -      -      -     jmp	.LBB2_13
- -      -     0.01    -      -      -      -      -     0.99    -     jmp	.LBB2_5
+ -      -     0.01    -      -      -      -      -     0.99    -     jmp	.LBB2_13
+ -      -     1.00    -      -      -      -      -      -      -     jmp	.LBB2_5
  -      -      -      -      -      -      -     1.00    -      -     addq	$48, %rsp
- -      -      -      -     1.00    -      -     0.99   0.01    -     popq	%rbp
- -      -      -     0.99   0.01   0.99    -     0.01   1.00    -     retq
+ -      -      -     0.99   0.01   0.99    -      -     0.01    -     popq	%rbp
+ -      -      -      -     1.00    -      -     1.00   1.00    -     retq
  -      -      -      -      -     1.00   1.00    -     1.00    -     pushq	%rbp
  -      -      -      -      -      -      -     1.00    -      -     movq	%rsp, %rbp
  -      -      -      -      -      -     1.00    -      -     1.00   movq	%rdi, -8(%rbp)
@@ -754,7 +749,7 @@ Resource pressure by instruction:
  -      -      -      -     1.00    -      -      -      -      -     movslq	-12(%rbp), %rcx
  -      -      -      -     1.00    -      -      -      -      -     movzbl	(%rax,%rcx), %eax
  -      -      -      -      -      -      -     1.00    -      -     movl	%eax, %ecx
- -      -      -     1.00    -      -      -      -      -      -     leaq	s_box(%rip), %rax
+ -      -      -     0.01    -      -      -     0.99    -      -     leaq	s_box(%rip), %rax
  -      -      -      -      -     1.00    -      -      -      -     movb	(%rax,%rcx), %dl
  -      -      -      -      -     1.00    -      -      -      -     movq	-8(%rbp), %rax
  -      -      -      -     1.00    -      -      -      -      -     movslq	-12(%rbp), %rcx
@@ -764,7 +759,7 @@ Resource pressure by instruction:
  -      -      -      -      -      -     1.00    -      -     1.00   movl	%eax, -12(%rbp)
  -      -     0.99    -      -      -      -      -     0.01    -     jmp	.LBB4_1
  -      -      -      -     1.00    -      -     1.00    -      -     popq	%rbp
- -      -      -      -     1.00    -      -     1.00   1.00    -     retq
+ -      -      -     0.99   1.00    -      -     0.01   1.00    -     retq
  -      -      -     1.00    -     1.00   1.00    -      -      -     pushq	%rbp
  -      -      -      -      -      -      -     1.00    -      -     movq	%rsp, %rbp
  -      -      -      -      -      -     1.00    -      -     1.00   movq	%rdi, -8(%rbp)
@@ -1106,44 +1101,39 @@ Resource pressure by instruction:
  -      -      -      -     1.00    -      -      -     1.00    -     popq	%rbp
  -      -      -      -      -     1.00    -     1.00   1.00    -     retq
  -      -      -      -     1.00    -     1.00   1.00    -      -     pushq	%rbp
- -      -      -      -      -      -      -      -     1.00    -     movq	%rsp, %rbp
- -      -      -      -      -      -      -     1.00    -      -     subq	$80, %rsp
+ -      -      -     1.00    -      -      -      -      -      -     movq	%rsp, %rbp
+ -      -     1.00    -      -      -      -      -      -      -     subq	$176, %rsp
  -      -      -      -      -      -     1.00    -      -     1.00   movl	$0, -4(%rbp)
- -      -      -     1.00    -      -      -      -      -      -     leaq	-32(%rbp), %rdi
+ -      -      -     1.00    -      -      -      -      -      -     leaq	-80(%rbp), %rdi
  -      -      -      -      -      -      -      -      -      -     xorl	%esi, %esi
- -      -      -     1.00    -      -      -      -      -      -     movl	$16, %edx
- -      -     1.00    -      -      -     1.00    -     1.00   1.00   callq	memset@PLT
+ -      -      -     1.00    -      -      -      -      -      -     movl	$64, %edx
+ -      -      -      -      -      -     1.00   1.00   1.00   1.00   callq	memset@PLT
  -      -      -      -     1.00    -      -      -      -      -     movq	.L__const.main.key(%rip), %rax
- -      -      -      -     1.00    -     1.00    -      -      -     movq	%rax, -48(%rbp)
+ -      -      -      -      -      -     1.00    -      -     1.00   movq	%rax, -96(%rbp)
  -      -      -      -      -     1.00    -      -      -      -     movq	.L__const.main.key+8(%rip), %rax
- -      -      -      -      -      -     1.00    -      -     1.00   movq	%rax, -40(%rbp)
- -      -      -      -      -      -      -     1.00    -      -     leaq	-64(%rbp), %rdi
+ -      -      -      -     1.00    -     1.00    -      -      -     movq	%rax, -88(%rbp)
+ -      -      -      -      -      -      -     1.00    -      -     leaq	-160(%rbp), %rdi
  -      -      -      -      -      -      -      -      -      -     xorl	%esi, %esi
- -      -     1.00    -      -      -      -      -      -      -     movl	$16, %edx
- -      -     1.00   1.00   1.00    -     1.00    -      -      -     callq	memset@PLT
- -      -      -     1.00    -      -      -      -      -      -     leaq	-32(%rbp), %rdi
- -      -      -      -      -      -      -     1.00    -      -     leaq	-64(%rbp), %rsi
- -      -      -     1.00    -      -      -      -      -      -     leaq	-48(%rbp), %rdx
- -      -     1.00    -      -      -     1.00   1.00    -     1.00   callq	AES128Encrypt
- -      -      -     1.00    -      -      -      -      -      -     leaq	.L.str(%rip), %rdi
- -      -     1.00    -      -      -      -      -      -      -     movb	$0, %al
- -      -      -     1.00    -      -     1.00    -     1.00   1.00   callq	printf@PLT
- -      -      -      -      -     1.00   1.00    -      -      -     movl	$0, -68(%rbp)
- -      -     1.00    -      -     1.00    -      -      -      -     cmpl	$16, -68(%rbp)
+ -      -     1.00    -      -      -      -      -      -      -     movl	$64, %edx
+ -      -     1.00    -      -      -     1.00   1.00    -     1.00   callq	memset@PLT
+ -      -      -      -     1.00    -     1.00    -      -      -     movl	$0, -164(%rbp)
+ -      -      -      -      -     1.00    -      -     1.00    -     cmpl	$4, -164(%rbp)
  -      -     1.00    -      -      -      -      -      -      -     jge	.LBB9_4
- -      -      -      -     1.00    -      -      -      -      -     movslq	-68(%rbp), %rax
- -      -      -      -     1.00    -      -      -      -      -     movzbl	-64(%rbp,%rax), %esi
- -      -      -     1.00    -      -      -      -      -      -     leaq	.L.str.1(%rip), %rdi
- -      -      -      -      -      -      -      -     1.00    -     movb	$0, %al
- -      -      -     1.00   1.00    -     1.00    -     1.00    -     callq	printf@PLT
- -      -      -      -      -     1.00    -      -      -      -     movl	-68(%rbp), %eax
+ -      -      -      -     1.00    -      -      -      -      -     movslq	-164(%rbp), %rax
+ -      -      -     1.00    -      -      -      -      -      -     leaq	-80(%rbp), %rdi
+ -      -      -      -      -      -      -      -     1.00    -     shlq	$4, %rax
+ -      -      -     1.00    -      -      -      -      -      -     addq	%rax, %rdi
+ -      -      -      -      -     1.00    -      -      -      -     movslq	-164(%rbp), %rax
+ -      -      -     1.00    -      -      -      -      -      -     leaq	-160(%rbp), %rsi
+ -      -      -      -      -      -      -      -     1.00    -     shlq	$4, %rax
+ -      -      -     1.00    -      -      -      -      -      -     addq	%rax, %rsi
+ -      -      -      -      -      -      -     1.00    -      -     leaq	-96(%rbp), %rdx
+ -      -     1.00    -      -      -     1.00   1.00    -     1.00   callq	AES128Encrypt
+ -      -      -      -     1.00    -      -      -      -      -     movl	-164(%rbp), %eax
  -      -      -      -      -      -      -     1.00    -      -     addl	$1, %eax
- -      -      -      -      -      -     1.00    -      -     1.00   movl	%eax, -68(%rbp)
+ -      -      -      -      -     1.00   1.00    -      -      -     movl	%eax, -164(%rbp)
  -      -     1.00    -      -      -      -      -      -      -     jmp	.LBB9_1
- -      -      -      -      -      -      -     1.00    -      -     leaq	.L.str.2(%rip), %rdi
- -      -      -      -      -      -      -      -     1.00    -     movb	$0, %al
- -      -     1.00   0.99   0.99   0.01   1.00   0.01    -      -     callq	printf@PLT
  -      -      -      -      -      -      -      -      -      -     xorl	%eax, %eax
- -      -     1.00    -      -      -      -      -      -      -     addq	$80, %rsp
+ -      -     1.00    -      -      -      -      -      -      -     addq	$176, %rsp
  -      -      -      -      -     1.00    -      -     1.00    -     popq	%rbp
- -      -      -      -      -     1.00    -     1.00   1.00    -     retq
+ -      -     1.00    -      -     1.00    -      -     1.00    -     retq

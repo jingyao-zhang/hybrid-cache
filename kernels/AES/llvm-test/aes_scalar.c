@@ -174,25 +174,25 @@ void AES128Encrypt(uint8_t *input, uint8_t *output, uint8_t *key) {
 }
 
 int main() {
-    uint8_t input[16] = {0};  // 16-byte plaintext
-    // uint8_t input[4][16] = {0};  // 16-byte plaintext
+    // uint8_t input[16] = {0};  // 16-byte plaintext
+    uint8_t input[4][16] = {0};  // 16-byte plaintext
     // uint8_t key[16] = {0x66, 0xd9, 0xb7, 0x60, 0x0e, 0xda, 0xaa, 0x81, 0x42, 0xa2, 0xd6, 0x3d, 0x8f, 0x51, 0x6c, 0x6f};    // 16-byte key
     uint8_t key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};    // 16-byte key
-    uint8_t output[16] = {0};
-    // uint8_t output[4][16] = {0};
+    // uint8_t output[16] = {0};
+    uint8_t output[4][16] = {0};
     
-    AES128Encrypt(input, output, key);
+    // AES128Encrypt(input, output, key);
 
-    // for (int i = 0; i < 4; ++i) {
-    //     AES128Encrypt(input[i], output[i], key);
-    // }
-
-    // output the ciphertext
-    printf("Ciphertext: ");
-    for (int j = 0; j < 16; ++j) {
-        printf("%02x ", output[j]);
+    for (int i = 0; i < 4; ++i) {
+        AES128Encrypt(input[i], output[i], key);
     }
-    printf("\n");
+
+    // // output the ciphertext
+    // printf("Ciphertext: ");
+    // for (int j = 0; j < 16; ++j) {
+    //     printf("%02x ", output[j]);
+    // }
+    // printf("\n");
 
     // // output the ciphertext
     // for (int i = 0; i < 4; ++i) {
