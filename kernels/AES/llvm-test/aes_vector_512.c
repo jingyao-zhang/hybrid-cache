@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <immintrin.h>
+#include <stdalign.h>
 
 static const uint8_t s_box[256] = {
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -25,12 +27,8 @@ static const uint8_t rcon[11] = {
     0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36
 };
 
-void RotWord(uint8_t *word) {
-    uint8_t temp = word[0];
-    word[0] = word[1];
-    word[1] = word[2];
-    word[2] = word[3];
-    word[3] = temp;
+__m128i RotWord(__m128i word) {
+    return _mm_shuffle_epi8(word, _mm_setr_epi8(1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8, 13, 14, 15, 12));
 }
 
 void SubWord(uint8_t *word) {
@@ -39,22 +37,24 @@ void SubWord(uint8_t *word) {
     }
 }
 
-void KeyExpansion(uint8_t *key, uint8_t *roundKeys) {
+void KeyExpansion(__m128i key, __m128i *roundKeys) {
     int i = 0;
-    uint8_t temp[4];
-
-    // Copy the original key as the first round key
-    for (i = 0; i < 16; ++i) {
-        roundKeys[i] = key[i];
-    }
+    // uint8_t temp[4];
+    __m128i temp;
+    roundKeys[0] = key;
+    // // Copy the original key as the first round key
+    // for (i = 0; i < 16; ++i) {
+    //     roundKeys[i] = key[i];
+    // }
 
     i = 16;
 
     while (i < 176) {
         // Copy the last 4 bytes to temp
-        for (int j = 0; j < 4; ++j) {
-            temp[j] = roundKeys[i - 4 + j];
-        }
+        temp = roundKeys[(i - 1) / 16];
+        // for (int j = 0; j < 4; ++j) {
+        //     temp[j] = roundKeys[i - 4 + j];
+        // }
 
         if (i % 16 == 0) {
             RotWord(temp);
@@ -145,12 +145,15 @@ void MixColumns(uint8_t *state) {
     }
 }
 
-void AES128Encrypt(uint8_t *input, uint8_t *output, uint8_t *key) {
+__m512i AES128Encrypt_vec512(__m512i input, __m128i key) {
+    // __m512i state = input;
     uint8_t state[16];
-    uint8_t roundKeys[176];
+    __m128i roundKeys[11];
+    // uint8_t roundKeys[176];
+    __m512i output_vec;
 
     // Initialize state and round keys
-    memcpy(state, input, 16);
+    // memcpy(state, input, 16);
     KeyExpansion(key, roundKeys);
 
     // Initial round key addition
@@ -170,37 +173,24 @@ void AES128Encrypt(uint8_t *input, uint8_t *output, uint8_t *key) {
     AddRoundKey(state, roundKeys + 160);
 
     // Output the encrypted state
-    memcpy(output, state, 16);
+    // memcpy(output, state, 16);
+    return output_vec;
 }
 
 int main() {
-    // uint8_t input[16] = {0};  // 16-byte plaintext
-    uint8_t input[4][16] = {0};  // 16-byte plaintext
-    // uint8_t key[16] = {0x66, 0xd9, 0xb7, 0x60, 0x0e, 0xda, 0xaa, 0x81, 0x42, 0xa2, 0xd6, 0x3d, 0x8f, 0x51, 0x6c, 0x6f};    // 16-byte key
-    uint8_t key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};    // 16-byte key
-    // uint8_t output[16] = {0};
-    uint8_t output[4][16] = {0};
-    
-    // AES128Encrypt(input, output, key);
+    alignas(64) uint8_t input[4][16] = {0};  // 16-byte plaintext
+    alignas(16) uint8_t key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};    // 16-byte key
+    alignas(64) uint8_t output[4][16] = {0};
 
-    for (int i = 0; i < 4; ++i) {
-        AES128Encrypt(input[i], output[i], key);
-    }
+    __m512i input_vec = _mm512_load_si512(input);
+    __m512i output_vec = _mm512_load_si512(output);
+    __m128i key_vec = _mm_load_si128((__m128i*)key);
 
-    // // output the ciphertext
-    // printf("Ciphertext: ");
-    // for (int j = 0; j < 16; ++j) {
-    //     printf("%02x ", output[j]);
-    // }
-    // printf("\n");
+    output_vec = AES128Encrypt_vec512(input_vec, key_vec);
 
-    // // output the ciphertext
+
     // for (int i = 0; i < 4; ++i) {
-    //     printf("Ciphertext %d: ", i);
-    //     for (int j = 0; j < 16; ++j) {
-    //         printf("%02x ", output[i][j]);
-    //     }
-    //     printf("\n");
+    //     AES128Encrypt(input[i], output[i], key);
     // }
 
     return 0;
