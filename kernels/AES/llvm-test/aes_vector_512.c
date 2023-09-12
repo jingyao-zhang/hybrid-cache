@@ -31,10 +31,16 @@ __m128i RotWord(__m128i word) {
     return _mm_shuffle_epi8(word, _mm_setr_epi8(1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8, 13, 14, 15, 12));
 }
 
-void SubWord(uint8_t *word) {
-    for (int i = 0; i < 4; ++i) {
-        word[i] = s_box[word[i]];
+__m128i SubWord(__m128i word) {
+    // Assuming s_box is the same as in your code
+    __m128i result;
+    uint8_t temp[16];
+    _mm_storeu_si128((__m128i*)temp, word);
+    for (int i = 0; i < 16; ++i) {
+        temp[i] = s_box[temp[i]];
     }
+    result = _mm_loadu_si128((__m128i*)temp);
+    return result;
 }
 
 void KeyExpansion(__m128i key, __m128i *roundKeys) {
@@ -56,16 +62,25 @@ void KeyExpansion(__m128i key, __m128i *roundKeys) {
         //     temp[j] = roundKeys[i - 4 + j];
         // }
 
+        // if (i % 16 == 0) {
+        //     RotWord(temp);
+        //     SubWord(temp);
+        //     temp[0] = temp[0] ^ rcon[i / 16];
+        // }
+
+        // for (int j = 0; j < 4; ++j) {
+        //     roundKeys[i] = roundKeys[i - 16] ^ temp[j];
+        //     ++i;
+        // }
         if (i % 16 == 0) {
-            RotWord(temp);
-            SubWord(temp);
-            temp[0] = temp[0] ^ rcon[i / 16];
+            temp = RotWord(temp);
+            temp = SubWord(temp);
+            temp = _mm_xor_si128(temp, _mm_setr_epi8(rcon[i / 16], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         }
 
-        for (int j = 0; j < 4; ++j) {
-            roundKeys[i] = roundKeys[i - 16] ^ temp[j];
-            ++i;
-        }
+        roundKeys[i / 16] = _mm_xor_si128(roundKeys[(i - 16) / 16], temp);
+
+        i += 16;
     }
 }
 
@@ -155,6 +170,7 @@ __m512i AES128Encrypt_vec512(__m512i input, __m128i key) {
     // Initialize state and round keys
     // memcpy(state, input, 16);
     KeyExpansion(key, roundKeys);
+    exit(1);
 
     // Initial round key addition
     AddRoundKey(state, roundKeys);

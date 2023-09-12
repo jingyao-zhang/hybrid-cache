@@ -67,6 +67,10 @@ void KeyExpansion(uint8_t *key, uint8_t *roundKeys) {
             ++i;
         }
     }
+    // printf("roundKeys: \n");
+    // for(int i = 0; i < 176; ++i) {
+    //     printf("%02x ", roundKeys[i]);
+    // }
 }
 
 void AddRoundKey(uint8_t *state, uint8_t *roundKey) {
