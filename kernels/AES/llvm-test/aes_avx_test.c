@@ -33,9 +33,10 @@ uint32_t RotWord(uint32_t word) {
 
 uint32_t SubWord(uint32_t temp) {
     uint8_t *byteArray = (uint8_t*)&temp;  // 转换为字节指针
-    for(int i = 0; i < 4; ++i) {
-        byteArray[i] = s_box[byteArray[i]];  // 使用 s_box 进行字节替换
-    }
+    byteArray[0] = s_box[byteArray[0]];
+    byteArray[1] = s_box[byteArray[1]];
+    byteArray[2] = s_box[byteArray[2]];
+    byteArray[3] = s_box[byteArray[3]];
     return temp;  // 返回替换后的 uint32_t 值
 }
 
@@ -98,6 +99,268 @@ void KeyExpansion(__m128i key, __m128i *roundKeys) {
     // }
 }
 
+void AddRoundKey512(__m512i *state, __m128i roundKey) {
+    *state = _mm512_xor_si512(*state, _mm512_broadcast_i32x4(roundKey));
+}
+
+void SubBytes512(__m512i *state) {
+    uint8_t* state_bytes = (uint8_t*)state;
+
+    state_bytes[0] = s_box[state_bytes[0]];
+    state_bytes[1] = s_box[state_bytes[1]];
+    state_bytes[2] = s_box[state_bytes[2]];
+    state_bytes[3] = s_box[state_bytes[3]];
+    state_bytes[4] = s_box[state_bytes[4]];
+    state_bytes[5] = s_box[state_bytes[5]];
+    state_bytes[6] = s_box[state_bytes[6]];
+    state_bytes[7] = s_box[state_bytes[7]];
+    state_bytes[8] = s_box[state_bytes[8]];
+    state_bytes[9] = s_box[state_bytes[9]];
+
+    state_bytes[10] = s_box[state_bytes[10]];
+    state_bytes[11] = s_box[state_bytes[11]];
+    state_bytes[12] = s_box[state_bytes[12]];
+    state_bytes[13] = s_box[state_bytes[13]];
+    state_bytes[14] = s_box[state_bytes[14]];
+    state_bytes[15] = s_box[state_bytes[15]];
+    state_bytes[16] = s_box[state_bytes[16]];
+    state_bytes[17] = s_box[state_bytes[17]];
+    state_bytes[18] = s_box[state_bytes[18]];
+    state_bytes[19] = s_box[state_bytes[19]];
+
+    state_bytes[20] = s_box[state_bytes[20]];
+    state_bytes[21] = s_box[state_bytes[21]];
+    state_bytes[22] = s_box[state_bytes[22]];
+    state_bytes[23] = s_box[state_bytes[23]];
+    state_bytes[24] = s_box[state_bytes[24]];
+    state_bytes[25] = s_box[state_bytes[25]];
+    state_bytes[26] = s_box[state_bytes[26]];
+    state_bytes[27] = s_box[state_bytes[27]];
+    state_bytes[28] = s_box[state_bytes[28]];
+    state_bytes[29] = s_box[state_bytes[29]];
+
+    state_bytes[30] = s_box[state_bytes[30]];
+    state_bytes[31] = s_box[state_bytes[31]];
+    state_bytes[32] = s_box[state_bytes[32]];
+    state_bytes[33] = s_box[state_bytes[33]];
+    state_bytes[34] = s_box[state_bytes[34]];
+    state_bytes[35] = s_box[state_bytes[35]];
+    state_bytes[36] = s_box[state_bytes[36]];
+    state_bytes[37] = s_box[state_bytes[37]];
+    state_bytes[38] = s_box[state_bytes[38]];
+    state_bytes[39] = s_box[state_bytes[39]];
+
+    state_bytes[40] = s_box[state_bytes[40]];
+    state_bytes[41] = s_box[state_bytes[41]];
+    state_bytes[42] = s_box[state_bytes[42]];
+    state_bytes[43] = s_box[state_bytes[43]];
+    state_bytes[44] = s_box[state_bytes[44]];
+    state_bytes[45] = s_box[state_bytes[45]];
+    state_bytes[46] = s_box[state_bytes[46]];
+    state_bytes[47] = s_box[state_bytes[47]];
+    state_bytes[48] = s_box[state_bytes[48]];
+    state_bytes[49] = s_box[state_bytes[49]];
+
+    state_bytes[50] = s_box[state_bytes[50]];
+    state_bytes[51] = s_box[state_bytes[51]];
+    state_bytes[52] = s_box[state_bytes[52]];
+    state_bytes[53] = s_box[state_bytes[53]];
+    state_bytes[54] = s_box[state_bytes[54]];
+    state_bytes[55] = s_box[state_bytes[55]];
+    state_bytes[56] = s_box[state_bytes[56]];
+    state_bytes[57] = s_box[state_bytes[57]];
+    state_bytes[58] = s_box[state_bytes[58]];
+    state_bytes[59] = s_box[state_bytes[59]];
+    
+    state_bytes[60] = s_box[state_bytes[60]];
+    state_bytes[61] = s_box[state_bytes[61]];
+    state_bytes[62] = s_box[state_bytes[62]];
+    state_bytes[63] = s_box[state_bytes[63]];
+}
+
+void ShiftRows(__m512i *state) {
+    __m512i tmp1;
+    __m512i tmp2;
+    __m512i mask;
+
+    __m512i shifted_0;
+    __m512i shifted_1;
+    __m512i shifted_2;
+    __m512i shifted_3;
+
+    // printf("state: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)state)[i]);
+    // }
+    // printf("\n");
+
+    mask = _mm512_set_epi32(
+        0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF,
+        0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF,
+        0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF,
+        0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF
+    );
+    shifted_0 = _mm512_and_epi32(*state, mask);
+
+    // printf("shifted_0: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)&shifted_0)[i]);
+    // }
+    // printf("\n");
+
+    // printf("state: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)state)[i]);
+    // }
+    // printf("\n");
+
+    tmp1 = _mm512_alignr_epi32(*state, *state, 1);
+    // tmp1 = _mm512_bsrli_epi128(*state, 8);
+    // printf("tmp1: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)&tmp1)[i]);
+    // }
+    // printf("\n");
+    mask = _mm512_set_epi32(
+        0x00000000, 0x0000FF00, 0x0000FF00, 0x0000FF00, 
+        0x00000000, 0x0000FF00, 0x0000FF00, 0x0000FF00, 
+        0x00000000, 0x0000FF00, 0x0000FF00, 0x0000FF00, 
+        0x00000000, 0x0000FF00, 0x0000FF00, 0x0000FF00
+    );
+    tmp1 = _mm512_and_epi32(tmp1, mask);
+    // printf("tmp1: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)&tmp1)[i]);
+    // }
+    // printf("\n");
+
+    // printf("state: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)state)[i]);
+    // }
+    // printf("\n");
+    tmp2 = _mm512_alignr_epi32(*state, *state, 13);
+    // printf("tmp2: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)&tmp2)[i]);
+    // }
+    // printf("\n");
+    mask = _mm512_set_epi32(
+        0x0000FF00, 0x00000000, 0x00000000, 0x00000000, 
+        0x0000FF00, 0x00000000, 0x00000000, 0x00000000, 
+        0x0000FF00, 0x00000000, 0x00000000, 0x00000000, 
+        0x0000FF00, 0x00000000, 0x00000000, 0x00000000 
+    );
+    tmp2 = _mm512_and_epi32(tmp2, mask);
+    // printf("tmp2: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)&tmp2)[i]);
+    // }
+    // printf("\n");
+    shifted_1 = _mm512_or_si512(tmp1, tmp2);
+
+    // printf("shifted_1: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)&shifted_1)[i]);
+    // }
+    // printf("\n");
+
+    tmp1 = _mm512_alignr_epi32(*state, *state, 2);
+    mask = _mm512_set_epi32(
+        0x00000000, 0x00000000, 0x00FF0000, 0x00FF0000,
+        0x00000000, 0x00000000, 0x00FF0000, 0x00FF0000,
+        0x00000000, 0x00000000, 0x00FF0000, 0x00FF0000,
+        0x00000000, 0x00000000, 0x00FF0000, 0x00FF0000
+    );
+    tmp1 = _mm512_and_epi32(tmp1, mask);
+    tmp2 = _mm512_alignr_epi32(*state, *state, 14);
+    mask = _mm512_set_epi32(
+        0x00FF0000, 0x00FF0000, 0x00000000, 0x00000000,
+        0x00FF0000, 0x00FF0000, 0x00000000, 0x00000000,
+        0x00FF0000, 0x00FF0000, 0x00000000, 0x00000000,
+        0x00FF0000, 0x00FF0000, 0x00000000, 0x00000000
+    );
+    tmp2 = _mm512_and_epi32(tmp2, mask);
+    shifted_2 = _mm512_or_si512(tmp1, tmp2);
+
+    // printf("shifted_2: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)&shifted_2)[i]);
+    // }
+    // printf("\n");
+    
+    tmp1 = _mm512_alignr_epi32(*state, *state, 3);
+    mask = _mm512_set_epi32(
+        0x00000000, 0x00000000, 0x00000000, 0xFF000000, 
+        0x00000000, 0x00000000, 0x00000000, 0xFF000000, 
+        0x00000000, 0x00000000, 0x00000000, 0xFF000000, 
+        0x00000000, 0x00000000, 0x00000000, 0xFF000000 
+    );
+    tmp1 = _mm512_and_epi32(tmp1, mask);
+    tmp2 = _mm512_alignr_epi32(*state, *state, 15);
+    mask = _mm512_set_epi32(
+        0xFF000000, 0xFF000000, 0xFF000000, 0x00000000, 
+        0xFF000000, 0xFF000000, 0xFF000000, 0x00000000, 
+        0xFF000000, 0xFF000000, 0xFF000000, 0x00000000, 
+        0xFF000000, 0xFF000000, 0xFF000000, 0x00000000 
+    );
+    tmp2 = _mm512_and_epi32(tmp2, mask);
+    shifted_3 = _mm512_or_si512(tmp1, tmp2);
+    // printf("shifted_3: \n");
+    // for(int i = 0; i < 16; ++i) {
+    //     printf("%02x ", ((uint8_t*)&shifted_3)[i]);
+    // }
+    // printf("\n");
+
+    *state = _mm512_or_si512(shifted_0, shifted_1);
+    *state = _mm512_or_si512(*state, shifted_2);
+    *state = _mm512_or_si512(*state, shifted_3);
+
+
+    // tmp1 = _mm512_slli_epi32(*state, 16);
+    // mask = _mm512_set_epi32(
+    //     0x00000000, 0x00000000, 0xFFFF0000, 0x00000000, 
+    //     0x00000000, 0x00000000, 0xFFFF0000, 0x00000000, 
+    //     0x00000000, 0x00000000, 0xFFFF0000, 0x00000000, 
+    //     0x00000000, 0x00000000, 0xFFFF0000, 0x00000000
+    // );
+    // tmp1 = _mm512_and_epi32(tmp1, mask);
+
+    // tmp2 = _mm512_srli_epi32(*state, 16);
+    // mask = _mm512_set_epi32(
+    //     0x00000000, 0x00000000, 0x0000FFFF, 0x00000000, 
+    //     0x00000000, 0x00000000, 0x0000FFFF, 0x00000000, 
+    //     0x00000000, 0x00000000, 0x0000FFFF, 0x00000000, 
+    //     0x00000000, 0x00000000, 0x0000FFFF, 0x00000000
+    // );
+    // tmp2 = _mm512_and_epi32(tmp2, mask);
+    // shifted_2 = _mm512_or_si512(tmp1, tmp2);
+
+    // tmp1 = _mm512_slli_epi32(*state, 24);
+    // mask = _mm512_set_epi32(
+    //     0x00000000, 0x00000000, 0x00000000, 0xFF000000, 
+    //     0x00000000, 0x00000000, 0x00000000, 0xFF000000, 
+    //     0x00000000, 0x00000000, 0x00000000, 0xFF000000, 
+    //     0x00000000, 0x00000000, 0x00000000, 0xFF000000
+    // );
+    // tmp1 = _mm512_and_epi32(tmp1, mask);
+
+    // tmp2 = _mm512_srli_epi32(*state, 8);
+    // mask = _mm512_set_epi32(
+    //     0x00000000, 0x00000000, 0x00000000, 0x00FFFFFF, 
+    //     0x00000000, 0x00000000, 0x00000000, 0x00FFFFFF, 
+    //     0x00000000, 0x00000000, 0x00000000, 0x00FFFFFF, 
+    //     0x00000000, 0x00000000, 0x00000000, 0x00FFFFFF
+    // );
+    // tmp2 = _mm512_and_epi32(tmp2, mask);
+    // shifted_3 = _mm512_or_si512(tmp1, tmp2);
+
+    // *state = _mm512_or_si512(shifted_0, shifted_1);
+    // *state = _mm512_or_si512(*state, shifted_2);
+    // *state = _mm512_or_si512(*state, shifted_3);
+
+}
+
 __m512i AES128Encrypt_vec512(__m512i input, __m128i key) {
     __m512i state = input;
     // uint8_t state[16];
@@ -108,13 +371,38 @@ __m512i AES128Encrypt_vec512(__m512i input, __m128i key) {
     // Initialize state and round keys
     // memcpy(state, input, 16);
     KeyExpansion(key, roundKeys);
+
+    AddRoundKey512(&state, roundKeys[0]);
+
+    printf("after addroundkey: \n");
+    for(int i = 0; i < 16; ++i) {
+        printf("%02x ", ((uint8_t*)&state)[i]);
+    }
+    printf("\n");
+
+    SubBytes512(&state);
+
+    printf("after subbytes: \n");
+    for(int i = 0; i < 16; ++i) {
+        printf("%02x ", ((uint8_t*)&state)[i]);
+    }
+    printf("\n");
+
+    ShiftRows(&state);
+    
+    printf("after shiftrows: \n");
+    for(int i = 0; i < 16; ++i) {
+        printf("%02x ", ((uint8_t*)&state)[i]);
+    }
+    printf("\n");
     
     return output_vec;
 }
 
 int main() {
-    alignas(64) uint8_t input[4][16] = {0};  // 16-byte plaintext
-    alignas(16) uint8_t key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};    // 16-byte key
+    alignas(64) uint8_t input[4][16] = {{0x00, 0x00, 0x01, 0x01, 0x03, 0x03, 0x07, 0x07, 0x0f, 0x0f, 0x1f, 0x1f, 0x3f, 0x3f, 0x7f, 0x7f}, {0x00, 0x00, 0x01, 0x01, 0x03, 0x03, 0x07, 0x07, 0x0f, 0x0f, 0x1f, 0x1f, 0x3f, 0x3f, 0x7f, 0x7f}, {0x00, 0x00, 0x01, 0x01, 0x03, 0x03, 0x07, 0x07, 0x0f, 0x0f, 0x1f, 0x1f, 0x3f, 0x3f, 0x7f, 0x7f}, {0x00, 0x00, 0x01, 0x01, 0x03, 0x03, 0x07, 0x07, 0x0f, 0x0f, 0x1f, 0x1f, 0x3f, 0x3f, 0x7f, 0x7f}};  // 16-byte plaintext
+    // alignas(16) uint8_t key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};    // 16-byte key
+    alignas(16) uint8_t key[16] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     alignas(64) uint8_t output[4][16] = {0};
 
     __m512i input_vec = _mm512_load_si512(input);
