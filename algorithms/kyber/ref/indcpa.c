@@ -8,6 +8,21 @@
 #include "symmetric.h"
 #include "randombytes.h"
 
+extern int ReadCC;
+extern int WriteCC;
+extern int LeftShiftInst;
+extern int RightShiftInst;
+extern int LeftShift;
+extern int RightShift;
+extern int ActCC;
+extern int OrCC;
+extern int AndCC;
+extern int XorCC;
+extern int NotCC;
+extern int CoreCycle;
+extern int EBCC;
+extern int CoreCycle;
+
 /*************************************************
 * Name:        pack_pk
 *
@@ -130,15 +145,24 @@ static unsigned int rej_uniform(int16_t *r,
   uint16_t val0, val1;
 
   ctr = pos = 0;
+  CoreCycle += 2;
   while(ctr < len && pos + 3 <= buflen) {
+    CoreCycle += 4;
     val0 = ((buf[pos+0] >> 0) | ((uint16_t)buf[pos+1] << 8)) & 0xFFF;
     val1 = ((buf[pos+1] >> 4) | ((uint16_t)buf[pos+2] << 4)) & 0xFFF;
     pos += 3;
+    CoreCycle += 8;
 
-    if(val0 < KYBER_Q)
+    if(val0 < KYBER_Q){
       r[ctr++] = val0;
-    if(ctr < len && val1 < KYBER_Q)
+      CoreCycle += 1;
+    }
+      
+    if(ctr < len && val1 < KYBER_Q){
       r[ctr++] = val1;
+      CoreCycle += 1;
+    }
+      
   }
 
   return ctr;
@@ -174,6 +198,8 @@ void gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMBYTES], int transposed)
         xof_absorb(&state, seed, i, j);
       else
         xof_absorb(&state, seed, j, i);
+      
+      CoreCycle += 1;
 
       xof_squeezeblocks(buf, GEN_MATRIX_NBLOCKS, &state);
       buflen = GEN_MATRIX_NBLOCKS*XOF_BLOCKBYTES;
@@ -181,11 +207,16 @@ void gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMBYTES], int transposed)
 
       while(ctr < KYBER_N) {
         off = buflen % 3;
-        for(k = 0; k < off; k++)
+        CoreCycle += 1;
+        for(k = 0; k < off; k++){
           buf[k] = buf[buflen - off + k];
+          CoreCycle += 1;
+        }
         xof_squeezeblocks(buf + off, 1, &state);
         buflen = off + XOF_BLOCKBYTES;
+        CoreCycle += 1;
         ctr += rej_uniform(a[i].vec[j].coeffs + ctr, KYBER_N - ctr, buf, buflen);
+        CoreCycle += 1;
       }
     }
   }
