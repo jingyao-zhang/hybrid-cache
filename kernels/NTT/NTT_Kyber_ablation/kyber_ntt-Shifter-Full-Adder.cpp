@@ -172,10 +172,7 @@ __int128_t Mont_Mult(__int128_t A, __int128_t B, __int128_t M){
 
         ReadCC_counter(1);
         WriteCC_counter(1);
-        for(int ii = 0; ii < BitW; ++ii){
-          RightShift_counter(1, 1);
-        }
-        // EBCC_counter(1);
+        EBCC_counter(1);
         AndCC_counter(1);
 
 
@@ -192,15 +189,19 @@ __int128_t Mont_Mult(__int128_t A, __int128_t B, __int128_t M){
 
         AndCC_counter(3);
         XorCC_counter(3);
+        // ReadCC_counter(1);
+        // WriteCC_counter(1);
         RightShift_counter(1, 1);
         OrCC_counter(1);
 
     }
 
     __int128_t P = 2*Carry + Sum;
-    LeftShift_counter(BitW-1, 1);
-    AndCC_counter(BitW-1);
-    XorCC_counter(BitW-1);
+    ReadCC_counter(1);
+    WriteCC_counter(1);
+    // LeftShift_counter(BitW-1, 1);
+    // AndCC_counter(BitW-1);
+    // XorCC_counter(BitW-1);
 
 
     if(P >= M){
@@ -247,42 +248,46 @@ int main()
             for (j = start; j < start + len; j++) {
                 ReadCC_counter(1);
                 WriteCC_counter(1);
-                for(int ii = 0; ii < BitW; ++ii){
-                  RightShift_counter(1, 1);
-                }
-                // EBCC_counter(1);
+                EBCC_counter(1);
                 AndCC_counter(1);
                 // add B with q (Q or 0)
-                LeftShift_counter(BitW-1, 1);
-                AndCC_counter(BitW-1);
-                XorCC_counter(BitW);
+                // LeftShift_counter(BitW-1, 1);
+                // AndCC_counter(BitW-1);
+                // XorCC_counter(BitW);
+                ReadCC_counter(1);
+                WriteCC_counter(1);
 
                 Mont_Mult(A_R, B, M);
 
                 // subtract Q/2 from B （B + (- Q/2)）to get b
-                LeftShift_counter(BitW-1, 1);
-                AndCC_counter(BitW-1);
-                XorCC_counter(BitW);
+                // LeftShift_counter(BitW-1, 1);
+                // AndCC_counter(BitW-1);
+                // XorCC_counter(BitW);
+                ReadCC_counter(1);
+                WriteCC_counter(1);
                 // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
                 ReadCC_counter(1);
                 WriteCC_counter(1);
-                for(int ii = 0; ii < BitW; ++ii){
-                  RightShift_counter(1, 1);
-                }
-                // EBCC_counter(1);
+                EBCC_counter(1);
                 AndCC_counter(1);
                 // add B with q (-Q/2 or 0)
-                LeftShift_counter(BitW-1, 1);
-                AndCC_counter(BitW-1);
-                XorCC_counter(BitW);
+                // LeftShift_counter(BitW-1, 1);
+                // AndCC_counter(BitW-1);
+                // XorCC_counter(BitW);
+                ReadCC_counter(1);
+                WriteCC_counter(1);
                 // a[j + len] = a[j] - t;
-                LeftShift_counter(BitW-1, 1);
-                AndCC_counter(BitW-1);
-                XorCC_counter(BitW);
+                // LeftShift_counter(BitW-1, 1);
+                // AndCC_counter(BitW-1);
+                // XorCC_counter(BitW);
+                ReadCC_counter(1);
+                WriteCC_counter(1);
                 // a[j] = a[j] + t;
-                LeftShift_counter(BitW-1, 1);
-                AndCC_counter(BitW-1);
-                XorCC_counter(BitW);
+                // LeftShift_counter(BitW-1, 1);
+                // AndCC_counter(BitW-1);
+                // XorCC_counter(BitW);
+                ReadCC_counter(1);
+                WriteCC_counter(1);
             }
         }
     }

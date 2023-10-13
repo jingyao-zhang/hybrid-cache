@@ -172,10 +172,7 @@ __int128_t Mont_Mult(__int128_t A, __int128_t B, __int128_t M){
 
         ReadCC_counter(1);
         WriteCC_counter(1);
-        for(int ii = 0; ii < BitW; ++ii){
-          RightShift_counter(1, 1);
-        }
-        // EBCC_counter(1);
+        EBCC_counter(1);
         AndCC_counter(1);
 
 
@@ -247,10 +244,7 @@ int main()
             for (j = start; j < start + len; j++) {
                 ReadCC_counter(1);
                 WriteCC_counter(1);
-                for(int ii = 0; ii < BitW; ++ii){
-                  RightShift_counter(1, 1);
-                }
-                // EBCC_counter(1);
+                EBCC_counter(1);
                 AndCC_counter(1);
                 // add B with q (Q or 0)
                 LeftShift_counter(BitW-1, 1);
@@ -266,10 +260,7 @@ int main()
                 // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
                 ReadCC_counter(1);
                 WriteCC_counter(1);
-                for(int ii = 0; ii < BitW; ++ii){
-                  RightShift_counter(1, 1);
-                }
-                // EBCC_counter(1);
+                EBCC_counter(1);
                 AndCC_counter(1);
                 // add B with q (-Q/2 or 0)
                 LeftShift_counter(BitW-1, 1);

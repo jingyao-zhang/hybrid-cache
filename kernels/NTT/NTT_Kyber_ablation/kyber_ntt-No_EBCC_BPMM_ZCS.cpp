@@ -29,14 +29,14 @@ int EBCC = 0;
 
 void ReadCC_counter(int num){
   ReadCC += num;
-  for (int i = 0; i < num; i++)
-    printf("rd; ");
+  // for (int i = 0; i < num; i++)
+  //   printf("rd; ");
 }
 
 void WriteCC_counter(int num){
   WriteCC += num;
-  for (int i = 0; i < num; i++)
-    printf("wr; ");
+  // for (int i = 0; i < num; i++)
+  //   printf("wr; ");
 }
 
 void LeftShift_counter(int num, int bitnum){
@@ -44,8 +44,8 @@ void LeftShift_counter(int num, int bitnum){
   LeftShift += num * bitnum;
   WriteCC += num;
   for (int i = 0; i < num; i++){
-    printf("lsh %d; ", bitnum);
-    printf("wr; ");
+    // printf("lsh %d; ", bitnum);
+    // printf("wr; ");
   }
 }
 
@@ -54,8 +54,8 @@ void RightShift_counter(int num, int bitnum){
   RightShift += num * bitnum;
   WriteCC += num;
   for (int i = 0; i < num; i++){
-    printf("rsh %d; ", bitnum);
-    printf("wr; ");
+    // printf("rsh %d; ", bitnum);
+    // printf("wr; ");
   }
 }
 
@@ -64,9 +64,9 @@ void OrCC_counter(int num){
   OrCC += num;
   WriteCC += num;
   for (int i = 0; i < num; i++){
-    printf("act; ");
-    printf("or; ");
-    printf("wr; ");
+    // printf("act; ");
+    // printf("or; ");
+    // printf("wr; ");
   }
 }
 
@@ -75,9 +75,9 @@ void AndCC_counter(int num){
   AndCC += num;
   WriteCC += num;
   for (int i = 0; i < num; i++){
-    printf("act; ");
-    printf("and; ");
-    printf("wr; ");
+    // printf("act; ");
+    // printf("and; ");
+    // printf("wr; ");
   }
 }
 
@@ -86,9 +86,9 @@ void XorCC_counter(int num){
   XorCC += num;
   WriteCC += num;
   for (int i = 0; i < num; i++){
-    printf("act; ");
-    printf("xor; ");
-    printf("wr; ");
+    // printf("act; ");
+    // printf("xor; ");
+    // printf("wr; ");
   }
 }
 
@@ -97,9 +97,9 @@ void NotCC_counter(int num){
   NotCC += num;
   WriteCC += num;
   for (int i = 0; i < num; i++){
-    printf("act; ");
-    printf("not; ");
-    printf("wr; ");
+    // printf("act; ");
+    // printf("not; ");
+    // printf("wr; ");
   }
 }
 
@@ -107,8 +107,8 @@ void EBCC_counter(int num){
     EBCC += num;
     WriteCC += num;
     for (int i = 0; i < num; i++){
-        printf("eb; ");
-        printf("wr; ");
+        // printf("eb; ");
+        // printf("wr; ");
     }
 }
 
@@ -245,42 +245,66 @@ int main()
             A = zeta;
             __int128_t A_R = A;
             for (j = start; j < start + len; j++) {
-                ReadCC_counter(1);
-                WriteCC_counter(1);
-                for(int ii = 0; ii < BitW; ++ii){
-                  RightShift_counter(1, 1);
-                }
-                // EBCC_counter(1);
-                AndCC_counter(1);
-                // add B with q (Q or 0)
-                LeftShift_counter(BitW-1, 1);
-                AndCC_counter(BitW-1);
-                XorCC_counter(BitW);
+                // ReadCC_counter(1);
+                // WriteCC_counter(1);
+                // for(int ii = 0; ii < BitW; ++ii){
+                //   RightShift_counter(1, 1);
+                // }
+                // // EBCC_counter(1);
+                // AndCC_counter(1);
+                // // add B with q (Q or 0)
+                // LeftShift_counter(BitW-1, 1);
+                // AndCC_counter(BitW-1);
+                // XorCC_counter(BitW);
 
-                Mont_Mult(A_R, B, M);
-
-                // subtract Q/2 from B （B + (- Q/2)）to get b
-                LeftShift_counter(BitW-1, 1);
-                AndCC_counter(BitW-1);
-                XorCC_counter(BitW);
-                // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
-                ReadCC_counter(1);
-                WriteCC_counter(1);
+                // Mont_Mult(A_R, B, M);
                 for(int ii = 0; ii < BitW; ++ii){
-                  RightShift_counter(1, 1);
+                  // A_R * B
+                  // LeftShift_counter(BitW-1, 1);
+                  AndCC_counter(BitW-1);
+                  XorCC_counter(BitW);
                 }
-                // EBCC_counter(1);
-                AndCC_counter(1);
-                // add B with q (-Q/2 or 0)
-                LeftShift_counter(BitW-1, 1);
-                AndCC_counter(BitW-1);
-                XorCC_counter(BitW);
+                // Montgomery_reduce
+                // t = (int16_t)a*QINV;
+                for(int jj = 0; jj < BitW; ++jj){
+                  // LeftShift_counter(BitW-1, 1);
+                  AndCC_counter(BitW-1);
+                  XorCC_counter(BitW);
+                }
+                // t = (a - (int32_t)t*KYBER_Q) >> 16;
+                for(int jj = 0; jj < BitW*2; ++jj){
+                  // LeftShift_counter(BitW*2-1, 1);
+                  AndCC_counter(BitW*2-1);
+                  XorCC_counter(BitW*2);
+                }
+                // LeftShift_counter(BitW*2-1, 1);
+                AndCC_counter(BitW*2-1);
+                XorCC_counter(BitW*2);
+                // RightShift_counter(1, BitW);
+
+
+                // // subtract Q/2 from B （B + (- Q/2)）to get b
+                // LeftShift_counter(BitW-1, 1);
+                // AndCC_counter(BitW-1);
+                // XorCC_counter(BitW);
+                // // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
+                // ReadCC_counter(1);
+                // WriteCC_counter(1);
+                // for(int ii = 0; ii < BitW; ++ii){
+                //   RightShift_counter(1, 1);
+                // }
+                // // EBCC_counter(1);
+                // AndCC_counter(1);
+                // // add B with q (-Q/2 or 0)
+                // LeftShift_counter(BitW-1, 1);
+                // AndCC_counter(BitW-1);
+                // XorCC_counter(BitW);
                 // a[j + len] = a[j] - t;
-                LeftShift_counter(BitW-1, 1);
+                // LeftShift_counter(BitW-1, 1);
                 AndCC_counter(BitW-1);
                 XorCC_counter(BitW);
                 // a[j] = a[j] + t;
-                LeftShift_counter(BitW-1, 1);
+                // LeftShift_counter(BitW-1, 1);
                 AndCC_counter(BitW-1);
                 XorCC_counter(BitW);
             }
