@@ -43,7 +43,7 @@ static inline uint32_t br_dec32le(const uint8_t *src)
 		| ((uint32_t)src[2] << 16)
 		| ((uint32_t)src[3] << 24);
 	LeftShiftInst += 3;
-	LeftShift += 8 + 16 + 24;
+	LeftShift += 3;
 	OrCC += 3;
 }
 
@@ -60,15 +60,15 @@ static inline uint32_t br_swap32(uint32_t x)
 	x = ((x & (uint32_t)0x00FF00FF) << 8)
 		| ((x >> 8) & (uint32_t)0x00FF00FF);
 	LeftShiftInst += 1;
-	LeftShift += 8;
+	LeftShift += 1;
 	RightShiftInst += 1;
-	RightShift += 8;
+	RightShift += 1;
 	AndCC += 2;
 	OrCC += 1;
 	LeftShiftInst += 1;
-	LeftShift += 16;
+	LeftShift += 1;
 	RightShiftInst += 1;
-	RightShift += 16;
+	RightShift += 1;
 	return (x << 16) | (x >> 16);
 }
 
@@ -79,7 +79,7 @@ static inline void br_enc32le(uint8_t *dst, uint32_t x)
 	dst[2] = (uint8_t)(x >> 16);
 	dst[3] = (uint8_t)(x >> 24);
 	RightShiftInst += 3;
-	RightShift += 8 + 16 + 24;
+	RightShift += 1 + 1 + 1;
 }
 
 static void br_range_enc32le(uint8_t *dst, const uint32_t *v, size_t num)
@@ -305,10 +305,10 @@ static void br_aes_ct64_ortho(uint64_t *q)
 	SWAP4(q[5], q[7]);
 	AndCC = AndCC + 4 * 4;
     LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 2 * 4;
+    LeftShift = LeftShift + 1 * 4;
     OrCC = OrCC + 2 * 4;
     RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 2 * 4;
+    RightShift = RightShift + 1 * 4;
 
 	SWAP8(q[0], q[4]);
 	SWAP8(q[1], q[5]);
@@ -316,10 +316,10 @@ static void br_aes_ct64_ortho(uint64_t *q)
 	SWAP8(q[3], q[7]);
 	AndCC = AndCC + 4 * 4;
     LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 4 * 4;
+    LeftShift = LeftShift + 1 * 4;
     OrCC = OrCC + 2 * 4;
     RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 4 * 4;
+    RightShift = RightShift + 1 * 4;
 }
 
 static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t *w)
@@ -336,7 +336,7 @@ static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t
     x2 |= (x2 << 16);
     x3 |= (x3 << 16);
     LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 16 * 4;
+    LeftShift = LeftShift + 1 * 4;
     OrCC = OrCC + 4;
 
     x0 &= (uint64_t)0x0000FFFF0000FFFF;
@@ -350,7 +350,7 @@ static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t
     x2 |= (x2 << 8);
     x3 |= (x3 << 8);
     LeftShiftInst = LeftShiftInst + 4;
-    LeftShift = LeftShift + 8 * 4;
+    LeftShift = LeftShift + 1 * 4;
     OrCC = OrCC + 4;
 
     x0 &= (uint64_t)0x00FF00FF00FF00FF;
@@ -362,7 +362,7 @@ static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t
     *q0 = x0 | (x2 << 8);
     *q1 = x1 | (x3 << 8);
     LeftShiftInst = LeftShiftInst + 2;
-    LeftShift = LeftShift + 8 * 2;
+    LeftShift = LeftShift + 1 * 2;
     OrCC = OrCC + 2;
 }
 
@@ -377,7 +377,7 @@ static void br_aes_ct64_interleave_out(uint32_t *w, uint64_t q0, uint64_t q1)
     x2 = (q0 >> 8) & (uint64_t)0x00FF00FF00FF00FF;
     x3 = (q1 >> 8) & (uint64_t)0x00FF00FF00FF00FF;
     RightShiftInst = RightShiftInst + 2;
-    RightShift = RightShift + 8 * 2;
+    RightShift = RightShift + 1 * 2;
     AndCC = AndCC + 2;
 
     x0 |= (x0 >> 8);
@@ -385,7 +385,7 @@ static void br_aes_ct64_interleave_out(uint32_t *w, uint64_t q0, uint64_t q1)
     x2 |= (x2 >> 8);
     x3 |= (x3 >> 8);
     RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 8 * 4;
+    RightShift = RightShift + 1 * 4;
     OrCC = OrCC + 4;
 
     x0 &= (uint64_t)0x0000FFFF0000FFFF;
@@ -399,7 +399,7 @@ static void br_aes_ct64_interleave_out(uint32_t *w, uint64_t q0, uint64_t q1)
     w[2] = (uint32_t)x2 | (uint32_t)(x2 >> 16);
     w[3] = (uint32_t)x3 | (uint32_t)(x3 >> 16);
     RightShiftInst = RightShiftInst + 4;
-    RightShift = RightShift + 16 * 4;
+    RightShift = RightShift + 1 * 4;
     OrCC = OrCC + 4;
 }
 
@@ -524,9 +524,9 @@ static inline void shift_rows(uint64_t *q)
 		AndCC = AndCC + 7;
         OrCC = OrCC + 6;
         RightShiftInst = RightShiftInst + 3;
-        RightShift = RightShift + 4 + 8 + 12;
+        RightShift = RightShift + 1 + 1 + 1;
         LeftShiftInst = LeftShiftInst + 3;
-        LeftShift = LeftShift + 12 + 8 + 4;
+        LeftShift = LeftShift + 1 + 1 + 1;
 	}
 }
 
@@ -557,9 +557,9 @@ static inline void mix_columns(uint64_t *q)
 	r6 = (q6 >> 16) | (q6 << 48);
 	r7 = (q7 >> 16) | (q7 << 48);
 	RightShiftInst = RightShiftInst + 8;
-    RightShift = RightShift + 16 * 8;
+    RightShift = RightShift + 1 * 8;
     LeftShiftInst = LeftShiftInst + 8;
-    LeftShift = LeftShift + 48 * 8;
+    LeftShift = LeftShift + 1 * 8;
     OrCC = OrCC + 8;
 
 	q[0] = q7 ^ r7 ^ r0 ^ rotr32(q0 ^ r0);
@@ -571,9 +571,9 @@ static inline void mix_columns(uint64_t *q)
 	q[6] = q5 ^ r5 ^ r6 ^ rotr32(q6 ^ r6);
 	q[7] = q6 ^ r6 ^ r7 ^ rotr32(q7 ^ r7);
 	LeftShiftInst = LeftShiftInst + 8;
-    LeftShift = LeftShift + 32 * 8;
+    LeftShift = LeftShift + 1 * 8;
     RightShiftInst = RightShiftInst + 8;
-    RightShift = RightShift + 32 * 8;
+    RightShift = RightShift + 1 * 8;
     OrCC = OrCC + 8;
     XorCC = XorCC + 38;
 }
