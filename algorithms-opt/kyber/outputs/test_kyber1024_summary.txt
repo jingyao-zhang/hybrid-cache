@@ -1,0 +1,13 @@
+ReadCC: 2564352
+WriteCC: 51364083
+LeftShiftInst: 8610449
+RightShiftInst: 1908384
+ActCC: 35716546
+OrCC: 2707296
+AndCC: 17330929
+XorCC: 15525360
+NotCC: 152961
+EBCC: 2564352
+CoreCycle: 0
+Total instruction: 138444712
+Total cycle: 142004136
