@@ -75,18 +75,16 @@ int32_t reduce32(int32_t a) {
   EBCC += 32;
 
   // subtract Q/2 from B （B + (- Q/2)）to get b
-  LeftShift_counter(BitW-1, 1);
-  AndCC_counter(BitW-1);
-  XorCC_counter(BitW);
+  ReadCC_counter(1);
+  WriteCC_counter(1);
   // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
   ReadCC_counter(1);
   WriteCC_counter(1);
   EBCC_counter(1);
   AndCC_counter(1);
   // add B with q (-Q/2 or 0)
-  LeftShift_counter(BitW-1, 1);
-  AndCC_counter(BitW-1);
-  XorCC_counter(BitW);
+  ReadCC_counter(1);
+  WriteCC_counter(1);
 
   return t;
 }
@@ -107,9 +105,8 @@ int32_t caddq(int32_t a) {
   EBCC_counter(1);
   AndCC_counter(1);
   // add B with q (Q or 0)
-  LeftShift_counter(BitW-1, 1);
-  AndCC_counter(BitW-1);
-  XorCC_counter(BitW);
+  ReadCC_counter(1);
+  WriteCC_counter(1);
   
   return a;
 }

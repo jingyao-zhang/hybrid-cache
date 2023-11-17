@@ -24,87 +24,87 @@ long int CoreCycle = 0;
 
 void ReadCC_counter(int num){
   ReadCC += num;
-  for (int i = 0; i < num; i++)
-    printf("rd; ");
+  // for (int i = 0; i < num; i++)
+  //   printf("rd; ");
 }
 
 void WriteCC_counter(int num){
   WriteCC += num;
-  for (int i = 0; i < num; i++)
-    printf("wr; ");
+  // for (int i = 0; i < num; i++)
+  //   printf("wr; ");
 }
 
 void LeftShift_counter(int num, int bitnum){
   LeftShiftInst += num;
   LeftShift += num * bitnum;
   WriteCC += num;
-  for (int i = 0; i < num; i++){
-    printf("lsh %d; ", bitnum);
-    printf("wr; ");
-  }
+  // for (int i = 0; i < num; i++){
+  //   printf("lsh %d; ", bitnum);
+  //   printf("wr; ");
+  // }
 }
 
 void RightShift_counter(int num, int bitnum){
   RightShiftInst += num;
   RightShift += num * bitnum;
   WriteCC += num;
-  for (int i = 0; i < num; i++){
-    printf("rsh %d; ", bitnum);
-    printf("wr; ");
-  }
+  // for (int i = 0; i < num; i++){
+  //   printf("rsh %d; ", bitnum);
+  //   printf("wr; ");
+  // }
 }
 
 void OrCC_counter(int num){
   ActCC += num;
   OrCC += num;
   WriteCC += num;
-  for (int i = 0; i < num; i++){
-    printf("act; ");
-    printf("or; ");
-    printf("wr; ");
-  }
+  // for (int i = 0; i < num; i++){
+  //   printf("act; ");
+  //   printf("or; ");
+  //   printf("wr; ");
+  // }
 }
 
 void AndCC_counter(int num){
   ActCC += num;
   AndCC += num;
   WriteCC += num;
-  for (int i = 0; i < num; i++){
-    printf("act; ");
-    printf("and; ");
-    printf("wr; ");
-  }
+  // for (int i = 0; i < num; i++){
+  //   printf("act; ");
+  //   printf("and; ");
+  //   printf("wr; ");
+  // }
 }
 
 void XorCC_counter(int num){
   ActCC += num;
   XorCC += num;
   WriteCC += num;
-  for (int i = 0; i < num; i++){
-    printf("act; ");
-    printf("xor; ");
-    printf("wr; ");
-  }
+  // for (int i = 0; i < num; i++){
+  //   printf("act; ");
+  //   printf("xor; ");
+  //   printf("wr; ");
+  // }
 }
 
 void NotCC_counter(int num){
   ActCC += num;
   NotCC += num;
   WriteCC += num;
-  for (int i = 0; i < num; i++){
-    printf("act; ");
-    printf("not; ");
-    printf("wr; ");
-  }
+  // for (int i = 0; i < num; i++){
+  //   printf("act; ");
+  //   printf("not; ");
+  //   printf("wr; ");
+  // }
 }
 
 void EBCC_counter(int num){
     EBCC += num;
     WriteCC += num;
-    for (int i = 0; i < num; i++){
-        printf("eb; ");
-        printf("wr; ");
-    }
+    // for (int i = 0; i < num; i++){
+    //     printf("eb; ");
+    //     printf("wr; ");
+    // }
 }
 
 int main(void)

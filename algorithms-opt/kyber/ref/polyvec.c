@@ -55,9 +55,8 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a)
         EBCC_counter(1);
         AndCC_counter(1);
         // add B with q (Q or 0)
-        LeftShift_counter(BitW-1, 1);
-        AndCC_counter(BitW-1);
-        XorCC_counter(BitW);
+        ReadCC_counter(1*4);
+        WriteCC_counter(1*4);
       }
 
       r[ 0] = (t[0] >>  0);
@@ -71,23 +70,23 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a)
       r[ 8] = (t[5] >>  9) | (t[6] << 2);
       r[ 9] = (t[6] >>  6) | (t[7] << 5);
       r[10] = (t[7] >>  3);
-      RightShift_counter(1, 8);
-      RightShift_counter(1, 5);
-      RightShift_counter(1, 2);
-      RightShift_counter(1, 10);
-      RightShift_counter(1, 3);
-      RightShift_counter(1, 6);
-      RightShift_counter(1, 9);
       RightShift_counter(1, 1);
-      RightShift_counter(1, 4);
-      RightShift_counter(1, 7);
-      LeftShift_counter(1, 3);
-      LeftShift_counter(1, 6);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
       LeftShift_counter(1, 1);
-      LeftShift_counter(1, 4);
-      LeftShift_counter(1, 7);
-      LeftShift_counter(1, 2);
-      LeftShift_counter(1, 5);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
       OrCC_counter(7);
 
       r += 11;
@@ -106,9 +105,8 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a)
         EBCC_counter(1);
         AndCC_counter(1);
         // add B with q (Q or 0)
-        LeftShift_counter(BitW-1, 1);
-        AndCC_counter(BitW-1);
-        XorCC_counter(BitW);
+        ReadCC_counter(1*4);
+        WriteCC_counter(1*4);
       }
 
       r[0] = (t[0] >> 0);
@@ -116,13 +114,13 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a)
       r[2] = (t[1] >> 6) | (t[2] << 4);
       r[3] = (t[2] >> 4) | (t[3] << 6);
       r[4] = (t[3] >> 2);
-      RightShift_counter(1, 8);
-      RightShift_counter(1, 6);
-      RightShift_counter(1, 4);
-      RightShift_counter(1, 2);
-      LeftShift_counter(1, 2);
-      LeftShift_counter(1, 4);
-      LeftShift_counter(1, 6);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
       OrCC_counter(3);
       r += 5;
     }
@@ -159,22 +157,22 @@ void polyvec_decompress(polyvec *r, const uint8_t a[KYBER_POLYVECCOMPRESSEDBYTES
       t[6] = (a[8] >> 2) | ((uint16_t)a[ 9] << 6);
       t[7] = (a[9] >> 5) | ((uint16_t)a[10] << 3);
       RightShift_counter(1, 1);
-      RightShift_counter(1, 3);
-      RightShift_counter(1, 6);
-      RightShift_counter(1, 4);
-      RightShift_counter(1, 7);
-      RightShift_counter(1, 2);
-      RightShift_counter(1, 5);
-      LeftShift_counter(1, 2);
-      LeftShift_counter(1, 5);
-      LeftShift_counter(1, 8);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
       LeftShift_counter(1, 1);
-      LeftShift_counter(1, 4);
-      LeftShift_counter(1, 7);
-      LeftShift_counter(1, 10);
-      LeftShift_counter(1, 3);
-      LeftShift_counter(1, 6);
-      LeftShift_counter(1, 9);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
       OrCC_counter(10);
 
       a += 11;
@@ -182,14 +180,12 @@ void polyvec_decompress(polyvec *r, const uint8_t a[KYBER_POLYVECCOMPRESSEDBYTES
       for(k=0;k<8;k++){
         r->vec[i].coeffs[8*j+k] = ((uint32_t)(t[k] & 0x7FF)*KYBER_Q + 1024) >> 11;
         LeftShift_counter(11, 1);
-        AndCC_counter(32*11);
-        XorCC_counter(32*11);
-        LeftShift_counter((32-1)*11, 1);
+        ReadCC_counter(1*11);
+        WriteCC_counter(1*11);
 
-        AndCC_counter(32);
-        XorCC_counter(32);
-        LeftShift_counter(32-1, 1);
-        RightShift_counter(1, 11);
+        ReadCC_counter(1);
+        WriteCC_counter(1);
+        RightShift_counter(1, 1);
       }
         
     }
@@ -202,13 +198,13 @@ void polyvec_decompress(polyvec *r, const uint8_t a[KYBER_POLYVECCOMPRESSEDBYTES
       t[1] = (a[1] >> 2) | ((uint16_t)a[2] << 6);
       t[2] = (a[2] >> 4) | ((uint16_t)a[3] << 4);
       t[3] = (a[3] >> 6) | ((uint16_t)a[4] << 2);
-      RightShift_counter(1, 2);
-      RightShift_counter(1, 4);
-      RightShift_counter(1, 6);
-      LeftShift_counter(1, 2);
-      LeftShift_counter(1, 4);
-      LeftShift_counter(1, 6);
-      LeftShift_counter(1, 8);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
+      LeftShift_counter(1, 1);
       OrCC_counter(4);
 
       a += 5;
@@ -216,14 +212,12 @@ void polyvec_decompress(polyvec *r, const uint8_t a[KYBER_POLYVECCOMPRESSEDBYTES
       for(k=0;k<4;k++)
         r->vec[i].coeffs[4*j+k] = ((uint32_t)(t[k] & 0x3FF)*KYBER_Q + 512) >> 10;
         LeftShift_counter(10, 1);
-        AndCC_counter(32*10);
-        XorCC_counter(32*10);
-        LeftShift_counter((32-1)*10, 1);
+        ReadCC_counter(1);
+        WriteCC_counter(1);
 
-        AndCC_counter(32);
-        XorCC_counter(32);
-        LeftShift_counter(32-1, 1);
-        RightShift_counter(1, 10);
+        ReadCC_counter(1);
+        WriteCC_counter(1);
+        RightShift_counter(1, 1);
     }
   }
 #else

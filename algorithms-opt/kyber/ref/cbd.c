@@ -42,9 +42,9 @@ static uint32_t load32_littleendian(const uint8_t x[4])
   r |= (uint32_t)x[1] << 8;
   r |= (uint32_t)x[2] << 16;
   r |= (uint32_t)x[3] << 24;
-  LeftShift_counter(1, 8);
-  LeftShift_counter(1, 16);
-  LeftShift_counter(1, 24);
+  LeftShift_counter(1, 1);
+  LeftShift_counter(1, 1);
+  LeftShift_counter(1, 1);
   OrCC_counter(3);
   return r;
 }
@@ -67,8 +67,8 @@ static uint32_t load24_littleendian(const uint8_t x[3])
   r  = (uint32_t)x[0];
   r |= (uint32_t)x[1] << 8;
   r |= (uint32_t)x[2] << 16;
-  LeftShift_counter(1, 8);
-  LeftShift_counter(1, 16);
+  LeftShift_counter(1, 1);
+  LeftShift_counter(1, 1);
   OrCC_counter(2);
   return r;
 }
@@ -103,18 +103,16 @@ static void cbd2(poly *r, const uint8_t buf[2*KYBER_N/4])
       a = (d >> (4*j+0)) & 0x3;
       b = (d >> (4*j+2)) & 0x3;
       AndCC_counter(2);
-      RightShift_counter(1, 4*j);
-      RightShift_counter(1, 4*j + 2);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
       r->coeffs[8*i+j] = a - b;
       // -b
       NotCC_counter(1);
-      AndCC_counter(BitW);
-      XorCC_counter(BitW);
-      LeftShift_counter(BitW - 1, 1);
+      ReadCC_counter(1);
+      WriteCC_counter(1);
       // a - b
-      AndCC_counter(BitW);
-      XorCC_counter(BitW);
-      LeftShift_counter(BitW - 1, 1);
+      ReadCC_counter(1);
+      WriteCC_counter(1);
     }
   }
 }
@@ -144,25 +142,23 @@ static void cbd3(poly *r, const uint8_t buf[3*KYBER_N/4])
     d += (t>>2) & 0x00249249;
     AndCC_counter(3);
     RightShift_counter(1, 1);
-    RightShift_counter(1, 2);
+    RightShift_counter(1, 1);
     XorCC_counter(2);
 
     for(j=0;j<4;j++) {
       a = (d >> (6*j+0)) & 0x7;
       b = (d >> (6*j+3)) & 0x7;
       AndCC_counter(2);
-      RightShift_counter(1, 6*j);
-      RightShift_counter(1, 6*j + 3);
+      RightShift_counter(1, 1);
+      RightShift_counter(1, 1);
       r->coeffs[4*i+j] = a - b;
       // -b
       NotCC_counter(1);
-      AndCC_counter(BitW);
-      XorCC_counter(BitW);
-      LeftShift_counter(BitW - 1, 1);
+      ReadCC_counter(1);
+      WriteCC_counter(1);
       // a - b
-      AndCC_counter(BitW);
-      XorCC_counter(BitW);
-      LeftShift_counter(BitW - 1, 1);
+      ReadCC_counter(1);
+      WriteCC_counter(1);
     }
   }
 }

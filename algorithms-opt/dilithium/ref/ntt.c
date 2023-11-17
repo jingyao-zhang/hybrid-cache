@@ -87,14 +87,15 @@ void ntt(int32_t a[N]) {
     }
   }
   // ntt data from kernels/NTT/NTT_Dilithium/dilithium_ntt.cpp
-  ReadCC += 34816; 
-  WriteCC += 1010730; 
-  LeftShiftInst += 201735; 
+
+  ReadCC += 40960; 
+  WriteCC += 440362; 
+  LeftShiftInst += 11271; 
   RightShiftInst += 32768; 
-  ActCC += 706595; 
+  ActCC += 320547; 
   OrCC += 44039; 
-  AndCC += 346126; 
-  XorCC += 316430; 
+  AndCC += 155662; 
+  XorCC += 120846; 
   NotCC += 0; 
   EBCC += 34816; 
 }
@@ -128,14 +129,14 @@ void invntt_tomont(int32_t a[N]) {
     }
   }
   // ntt data from kernels/NTT/NTT_Dilithium
-  ReadCC += 34816; 
-  WriteCC += 1010730; 
-  LeftShiftInst += 201735; 
+  ReadCC += 40960; 
+  WriteCC += 440362; 
+  LeftShiftInst += 11271; 
   RightShiftInst += 32768; 
-  ActCC += 706595; 
+  ActCC += 320547; 
   OrCC += 44039; 
-  AndCC += 346126; 
-  XorCC += 316430; 
+  AndCC += 155662; 
+  XorCC += 120846; 
   NotCC += 0; 
   EBCC += 34816; 
 
@@ -145,34 +146,40 @@ void invntt_tomont(int32_t a[N]) {
     EBCC_counter(1);
     AndCC_counter(1);
     // add B with q (Q or 0)
-    LeftShift_counter(BitW-1, 1);
-    AndCC_counter(BitW-1);
-    XorCC_counter(BitW);
+    // LeftShift_counter(BitW-1, 1);
+    // AndCC_counter(BitW-1);
+    // XorCC_counter(BitW);
+    ReadCC_counter(1);
+    WriteCC_counter(1);
 
     a[j] = montgomery_reduce((int64_t)f * a[j]);
     // montgomery multiplication data from kernels/NTT/Montgomery_Mul_Dilithium_General
-    ReadCC += 64;
-    WriteCC += 733;
-    LeftShiftInst += 63;
+    ReadCC += 65;
+    WriteCC += 641;
+    LeftShiftInst += 32;
     RightShiftInst += 32;
-    ActCC += 510;
+    ActCC += 448;
     OrCC += 64;
-    AndCC += 255;
-    XorCC += 191;
+    AndCC += 224;
+    XorCC += 160;
     NotCC += 0;
     EBCC += 64;
     // subtract Q/2 from B （B + (- Q/2)）to get b
-    LeftShift_counter(BitW-1, 1);
-    AndCC_counter(BitW-1);
-    XorCC_counter(BitW);
+    // LeftShift_counter(BitW-1, 1);
+    // AndCC_counter(BitW-1);
+    // XorCC_counter(BitW);
+    ReadCC_counter(1);
+    WriteCC_counter(1);
     // check MSB of b, if 1, then choose B (AND B with 1s), if 0, then choose b (AND b with 1s)
     ReadCC_counter(1);
     WriteCC_counter(1);
     EBCC_counter(1);
     AndCC_counter(1);
     // add B with q (-Q/2 or 0)
-    LeftShift_counter(BitW-1, 1);
-    AndCC_counter(BitW-1);
-    XorCC_counter(BitW);
+    // LeftShift_counter(BitW-1, 1);
+    // AndCC_counter(BitW-1);
+    // XorCC_counter(BitW);
+    ReadCC_counter(1);
+    WriteCC_counter(1);
   }
 }

@@ -42,7 +42,7 @@ static inline uint32_t br_dec32le(const uint8_t *src)
 		| ((uint32_t)src[2] << 16)
 		| ((uint32_t)src[3] << 24);
   LeftShift_counter(1, 1);
-  LeftShift_counter(1, 11);
+  LeftShift_counter(1, 1);
   LeftShift_counter(1, 1);
   OrCC_counter(3);
 }
